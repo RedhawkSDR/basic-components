@@ -25,7 +25,7 @@ program.  If not, see http://www.gnu.org/licenses/.
   <implementation id="firstImplementation">
     <description>The implementation contains descriptive information about the template for a software component.</description>
     <code type="SharedLibrary">
-      <localfile name="Release/libdsp.so"/>
+      <localfile name="Release"/>
     </code>
     <compiler name="/usr/bin/gcc" version="4.1.2"/>
     <programminglanguage name="C++"/>
