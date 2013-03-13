@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+source distribution.
+
+This file is part of REDHAWK Basic Components.
+
+REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
+the GNU Lesser General Public License as published by the Free Software Foundation, either 
+version 3 of the License, or (at your option) any later version.
+
+REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+PURPOSE.  See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this 
+program.  If not, see http://www.gnu.org/licenses/.
+-->
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
+<properties>
+  <simple id="alpha" mode="readwrite" type="float">
+    <description>Exponentail averaginving coeficient.  High alpha weights current values more than previous values (less averaging)
+</description>
+    <value>.999</value>
+    <range max=".999999" min="1e-6"/>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="eps" mode="readwrite" type="float">
+    <description>small value to avoid keep results sane when signal is all zeros</description>
+    <value>.1e-8</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="avgPower" mode="readwrite" type="float">
+    <description>Desired average power</description>
+    <value>1.0</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="minPower" mode="readwrite" type="float">
+    <description>Hysteriesous in AGC:  If the current power is between minPower and maxPower no agc is applied</description>
+    <value>1e99</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="maxPower" mode="readwrite" type="float">
+    <description>Hysteriesous in AGC:  If the current power is between minPower and maxPower no agc is applied</description>
+    <value>-1</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="enabled" mode="readwrite" type="boolean">
+    <description>Disable/enable agc calculations on the fly</description>
+    <value>true</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+</properties>

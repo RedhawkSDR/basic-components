@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ASCII"?>
+<!-- 
+This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+source distribution.
+
+This file is part of REDHAWK Basic Components.
+
+REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
+the GNU Lesser General Public License as published by the Free Software Foundation, either 
+version 3 of the License, or (at your option) any later version.
+
+REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+PURPOSE.  See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this 
+program.  If not, see http://www.gnu.org/licenses/.
+-->
+<codegen:WaveDevSettings xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:codegen="http://www.redhawk.gov/model/codegen">
+  <implSettings key="cpp">
+    <value outputDir="cpp" template="gov.redhawk.ide.codegen.jet.cplusplus.PullPortDataTemplate" generatorId="gov.redhawk.ide.codegen.jet.cplusplus.CplusplusGenerator" primary="true">
+      <generatedFileCRCs crc="1746641546" file="reconf"/>
+      <generatedFileCRCs crc="1719075390" file="port_impl.cpp"/>
+      <generatedFileCRCs crc="4037455673" file="struct_props.h"/>
+      <generatedFileCRCs crc="1582293222" file="AmFmPmBasebandDemod.h"/>
+      <generatedFileCRCs crc="2495934516" file="AmFmPmBasebandDemod_base.cpp"/>
+      <generatedFileCRCs crc="1305612165" file="AmFmPmBasebandDemod.cpp"/>
+      <generatedFileCRCs crc="1125524238" file="port_impl.h"/>
+      <generatedFileCRCs crc="203508024" file="configure.ac"/>
+      <generatedFileCRCs crc="864280150" file="build.sh"/>
+      <generatedFileCRCs crc="2598290043" file="../AmFmPmBasebandDemod.spec"/>
+      <generatedFileCRCs crc="617008146" file="AmFmPmBasebandDemod_base.h"/>
+      <generatedFileCRCs crc="468374558" file="main.cpp"/>
+      <generatedFileCRCs crc="1394708319" file="Makefile.am"/>
+    </value>
+  </implSettings>
+</codegen:WaveDevSettings>

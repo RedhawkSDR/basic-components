@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+source distribution.
+
+This file is part of REDHAWK Basic Components.
+
+REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
+the GNU Lesser General Public License as published by the Free Software Foundation, either 
+version 3 of the License, or (at your option) any later version.
+
+REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+PURPOSE.  See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this 
+program.  If not, see http://www.gnu.org/licenses/.
+-->
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
+<properties>
+  <simple id="SampleRate" mode="readwrite" type="double">
+    <value>336000.0</value>
+    <units>Hz</units>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="StreamID" mode="readwrite" type="string">
+    <value>dataPlayerStream</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="FrontendRF" mode="readwrite" type="long">
+    <value>0</value>
+    <units>Hz</units>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="InputFile" mode="readwrite" type="string">
+    <value>/the/path/to/my/file</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="Throttle" mode="readwrite" type="long">
+    <value>5</value>
+    <units>msec</units>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="Play" mode="readwrite" type="boolean">
+    <value>false</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ydelta" mode="readwrite" type="double">
+    <value>0.0</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="subsize" mode="readwrite" type="long">
+    <value>0</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="complex" mode="readwrite" type="boolean">
+    <description>Flag to indicate data is complex.  If true, data values assumed to be alternating real and complex float values.  </description>
+    <value>True</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="Loop" mode="readwrite" type="boolean">
+    <description>Do we continue to replay and loop over the input file when we are done or not</description>
+    <value>False</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+</properties>

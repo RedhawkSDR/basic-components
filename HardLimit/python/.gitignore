@@ -1,0 +1,10 @@
+config.*
+autom4te.cache/
+acinclude.m4
+aclocal.m4
+configure
+install-sh
+ltmain.sh
+Makefile
+Makefile.in
+missing

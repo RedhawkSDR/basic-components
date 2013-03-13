@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ASCII"?>
+<!-- 
+This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+source distribution.
+
+This file is part of REDHAWK Basic Components.
+
+REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
+the GNU Lesser General Public License as published by the Free Software Foundation, either 
+version 3 of the License, or (at your option) any later version.
+
+REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+PURPOSE.  See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this 
+program.  If not, see http://www.gnu.org/licenses/.
+-->
+<codegen:WaveDevSettings xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:codegen="http://www.redhawk.gov/model/codegen">
+  <implSettings key="DCE:f744f32f-510a-4e64-9124-3507d5568e39">
+    <value name="DataConverter" outputDir="DataConverter" template="gov.redhawk.ide.codegen.jet.cplusplus.PullPortDataTemplate" generatorId="gov.redhawk.ide.codegen.jet.cplusplus.CplusplusGenerator">
+      <generatedFileCRCs crc="1746641546" file="reconf"/>
+      <generatedFileCRCs crc="969230324" file="port_impl.cpp"/>
+      <generatedFileCRCs crc="4291200957" file="DataConverter.spec"/>
+      <generatedFileCRCs crc="1471223973" file="DataConverter_base.cpp"/>
+      <generatedFileCRCs crc="864280150" file="build.sh"/>
+      <generatedFileCRCs crc="1849436628" file="configure.ac"/>
+      <generatedFileCRCs crc="4000703274" file="port_impl.h"/>
+      <generatedFileCRCs crc="75158145" file="main.cpp"/>
+      <generatedFileCRCs crc="1147738927" file="struct_props.h"/>
+      <generatedFileCRCs crc="924420061" file="DataConverter.cpp"/>
+      <generatedFileCRCs crc="2431657449" file="DataConverter_base.h"/>
+      <generatedFileCRCs crc="180059289" file="DataConverter.h"/>
+      <generatedFileCRCs crc="3533580050" file="Makefile.am"/>
+      <generatedFileCRCs crc="1346600254" file="../DataConverter.spec"/>
+    </value>
+  </implSettings>
+</codegen:WaveDevSettings>

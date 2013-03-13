@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+source distribution.
+
+This file is part of REDHAWK Basic Components.
+
+REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
+the GNU Lesser General Public License as published by the Free Software Foundation, either 
+version 3 of the License, or (at your option) any later version.
+
+REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+PURPOSE.  See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this 
+program.  If not, see http://www.gnu.org/licenses/.
+-->
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
+<properties>
+  <simple id="equation" mode="readwrite" type="string">
+    <description>A string representing an equation you want to implement in this component.  &quot;a&quot; represents the data on input a and &quot;b&quot; represents the data on b.  Calculation is performed on a sample by sample basis.  
+
+An example equation would be &quot;math.sin(a+b)+random.random()&quot;
+
+Any operation which is supported in python is supported here.  Furthermore, use the import property to import more modules (including perhpase custom modules with custom functions) </description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simplesequence id="import" mode="readwrite" type="string">
+    <description>python modules (including perhapse custom modules) you want to import to use in your equation</description>
+    <values>
+      <value>math</value>
+      <value>random</value>
+    </values>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simplesequence>
+  <simple id="useAsri" mode="readwrite" type="boolean">
+    <description>Use input's A sri as the output sri. False = B</description>
+    <value>True</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+</properties>

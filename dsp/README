@@ -1,0 +1,30 @@
+This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this
+source distribution.
+
+This file is part of REDHAWK Basic Components.
+
+REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of
+the GNU Lesser General Public License as published by the Free Software Foundation, either
+version 3 of the License, or (at your option) any later version.
+
+REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+PURPOSE.  See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this
+program.  If not, see http://www.gnu.org/licenses/.
+
+BUILDING THIS LIBRARY:
+1) cd Release/
+2) make
+
+OR
+
+1) Import this project into the REDHAWK IDE
+2) Select the project from the 'Project Explorer' view
+3) From the top level menu select: 'Project > Build Project'
+
+INSTALLING THIS LIBRBARY:
+Once built, install this component into $SDRROOT for use by other components. This is done by 
+copying this folder into $SDROOT/dom/components/ or through the REDHAWK IDE by dragging the project 
+folder over to the 'Target SDR' in the 'SCA Explorer' view.

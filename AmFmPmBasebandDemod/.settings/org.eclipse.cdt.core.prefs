@@ -1,0 +1,29 @@
+#
+# This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+# source distribution.
+# 
+# This file is part of REDHAWK Basic Components.
+# 
+# REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
+# the GNU Lesser General Public License as published by the Free Software Foundation, either 
+# version 3 of the License, or (at your option) any later version.
+# 
+# REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+# PURPOSE.  See the GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License along with this 
+# program.  If not, see http://www.gnu.org/licenses/.
+#
+#Wed Feb 13 17:32:59 EST 2013
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1041260943/OSSIEHOME/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1041260943/OSSIEHOME/operation=replace
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1041260943/OSSIEHOME/value=${OssieHome}
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1041260943/append=true
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1041260943/appendContributed=true
+environment/project/cdt.managedbuild.config.gnu.exe.release.1311377891/OSSIEHOME/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.exe.release.1311377891/OSSIEHOME/operation=replace
+environment/project/cdt.managedbuild.config.gnu.exe.release.1311377891/OSSIEHOME/value=${OssieHome}
+environment/project/cdt.managedbuild.config.gnu.exe.release.1311377891/append=true
+environment/project/cdt.managedbuild.config.gnu.exe.release.1311377891/appendContributed=true
