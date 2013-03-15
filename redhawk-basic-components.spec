@@ -19,7 +19,7 @@ BuildRequires:	apache-log4cxx-devel >= 0.10
 BuildRequires:	boost-devel >= 1.41
 BuildRequires:	python-devel >= 2.4
 BuildRequires:	bulkioInterfaces
-BuildRequires:	jdk >= 1.5
+BuildRequires:	jdk >= 1.6
 BuildRequires:	libomniORB4.1-devel
 BuildRequires:	libomniORBpy3-devel
 %if "%{?rhel}" == "6"
@@ -31,7 +31,7 @@ Requires:	redhawk >= 1.8.3
 Requires:	apache-log4cxx >= 0.10
 Requires:	python
 Requires:	bulkioInterfaces
-Requires:	java >= 1.5
+Requires:	java >= 1.6
 Requires:	libomniORB4.1
 Requires:	omniORBpy
 %if "%{?rhel}" == "6"
