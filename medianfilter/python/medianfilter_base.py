@@ -1,29 +1,12 @@
 #!/usr/bin/env python
 #
-# This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
-# source distribution.
-# 
-# This file is part of REDHAWK Basic Components.
-# 
-# REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
-# the GNU Lesser General Public License as published by the Free Software Foundation, either 
-# version 3 of the License, or (at your option) any later version.
-# 
-# REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-# PURPOSE.  See the GNU Lesser General Public License for more details.
-# 
-# You should have received a copy of the GNU Lesser General Public License along with this 
-# program.  If not, see http://www.gnu.org/licenses/.
-#
-#
 # AUTO-GENERATED CODE.  DO NOT MODIFY!
 #
 # Source: medianfilter.spd.xml
-# Generated on: Mon Feb 25 12:46:54 EST 2013
+# Generated on: Fri Mar 22 15:33:49 EDT 2013
 # Redhawk IDE
-# Version:R.1.8.2
-# Build id: v201212041901
+# Version:N.1.8.3
+# Build id: v201302261726
 from ossie.cf import CF, CF__POA
 from ossie.utils import uuid
 
@@ -203,6 +186,7 @@ class medianfilter_base(CF__POA.Resource, Resource):
         # or by using the IDE.       
         filtLen = simple_property(id_="filtLen",
                                           type_="ushort",
+                                          defvalue=11,
                                           mode="readwrite",
                                           action="external",
                                           kinds=("configure",)
@@ -373,6 +357,9 @@ class PortBULKIODataFloatIn_i(medianfilter_base.PortBULKIODataFloatIn):
             if self.sriDict.has_key(streamID):
                 sri, sriChanged = self.sriDict[streamID]
                 self.sriDict[streamID] = (sri, False)
+            else:
+                self.sriDict[streamID] = (sri, False)
+                sriChanged = True
 
             if self.blocking:
                 packet = (data, T, EOS, streamID, copy.deepcopy(sri), sriChanged, False)
@@ -581,8 +568,10 @@ class PortBULKIODataFloatOut_i(medianfilter_base.PortBULKIODataFloatOut):
 
     def pushPacket(self, data, T, EOS, streamID):
         if self.refreshSRI:
-            if self.sriDict.has_key(streamID): 
-                self.pushSRI(self.sriDict[streamID])
+            if not self.sriDict.has_key(streamID):
+                sri = BULKIO.StreamSRI(1, 0.0, 1.0, BULKIO.UNITS_TIME, 0, 0.0, 0.0, BULKIO.UNITS_NONE, 0, streamID, True, []) 
+                self.sriDict[streamID] = copy.deepcopy(sri)
+            self.pushSRI(self.sriDict[streamID])
 
         self.port_lock.acquire()
 
