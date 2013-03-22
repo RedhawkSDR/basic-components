@@ -96,11 +96,13 @@ class fcalc_i(fcalc_base):
         #call this in case we already have a good equation 
         self.sri = None
         self.streamID = None
+        self.onconfigure_prop_import()
         self.onconfigure_prop_equation()
         self.firsttime = True
 
-    def onconfigure_prop_import(self,oldval,val):
-        fcalc_i.import_.set(self,val)
+    def onconfigure_prop_import(self,oldval=None,val=None):
+        if val!=None:
+            fcalc_i.import_.set(self,val)
         for module in self.import_:
             if not module in self.globals:
                 e = None
