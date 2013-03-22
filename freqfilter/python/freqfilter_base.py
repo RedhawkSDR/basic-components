@@ -1,29 +1,27 @@
 #!/usr/bin/env python
-#
-# This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+# This file is protected by Copyright. Please refer to the COPYRIGHT file distr
 # source distribution.
 # 
 # This file is part of REDHAWK Basic Components.
 # 
-# REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
-# the GNU Lesser General Public License as published by the Free Software Foundation, either 
+# REDHAWK Basic Components is free software: you can redistribute it and/or mod
+# the GNU Lesser General Public License as published by the Free Software Found
 # version 3 of the License, or (at your option) any later version.
 # 
-# REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+# REDHAWK Basic Components is distributed in the hope that it will be useful, b
+# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICU
 # PURPOSE.  See the GNU Lesser General Public License for more details.
 # 
-# You should have received a copy of the GNU Lesser General Public License along with this 
+# You should have received a copy of the GNU Lesser General Public License alon
 # program.  If not, see http://www.gnu.org/licenses/.
-#
 #
 # AUTO-GENERATED CODE.  DO NOT MODIFY!
 #
 # Source: freqfilter.spd.xml
-# Generated on: Mon Feb 25 16:20:50 EST 2013
+# Generated on: Fri Mar 22 16:25:06 EDT 2013
 # Redhawk IDE
-# Version:R.1.8.2
-# Build id: v201212041901
+# Version:N.1.8.3
+# Build id: v201302261726
 from ossie.cf import CF, CF__POA
 from ossie.utils import uuid
 
@@ -225,10 +223,13 @@ class freqfilter_base(CF__POA.Resource, Resource):
                                           ) 
         b = simpleseq_property(id_="b",  
                                           type_="float",
-                                          defvalue=(1.0,),
+                                          defvalue=(0.09474881,-0.17830388,-0.24363046,0.26963846,0.26963846,-0.24363046,-0.17830388,0.09474881),
                                           mode="readwrite",
                                           action="external",
-                                          kinds=("configure",)
+                                          kinds=("configure",),
+                                          description="""This is an FIR Bandpass fiter with stopbands from 0 to .1*FS and .4*FS to .5*FS and a passband from .2*FS to .3*FS.  It was designed with the following python code
+> from scipy.signal import remez
+> taps = remez(8,[0,.1,.2,.3,.4,.5],[0,1,0])""" 
                                           )
 
 '''provides port(s)'''
@@ -396,6 +397,9 @@ class PortBULKIODataFloatIn_i(freqfilter_base.PortBULKIODataFloatIn):
             if self.sriDict.has_key(streamID):
                 sri, sriChanged = self.sriDict[streamID]
                 self.sriDict[streamID] = (sri, False)
+            else:
+                self.sriDict[streamID] = (sri, False)
+                sriChanged = True
 
             if self.blocking:
                 packet = (data, T, EOS, streamID, copy.deepcopy(sri), sriChanged, False)
@@ -604,8 +608,10 @@ class PortBULKIODataFloatOut_i(freqfilter_base.PortBULKIODataFloatOut):
 
     def pushPacket(self, data, T, EOS, streamID):
         if self.refreshSRI:
-            if self.sriDict.has_key(streamID): 
-                self.pushSRI(self.sriDict[streamID])
+            if not self.sriDict.has_key(streamID):
+                sri = BULKIO.StreamSRI(1, 0.0, 1.0, BULKIO.UNITS_TIME, 0, 0.0, 0.0, BULKIO.UNITS_NONE, 0, streamID, True, []) 
+                self.sriDict[streamID] = copy.deepcopy(sri)
+            self.pushSRI(self.sriDict[streamID])
 
         self.port_lock.acquire()
 
