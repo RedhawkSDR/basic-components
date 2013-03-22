@@ -1,1 +1,3 @@
-*.pyc
+cpp/HardLimit
+java/HardLimit.jar
+java/bin
