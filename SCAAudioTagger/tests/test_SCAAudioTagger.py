@@ -40,7 +40,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         self.assertNotEqual(self.comp, None)
         self.assertEqual(self.comp.ref._non_existent(), False)
         self.assertEqual(self.comp.ref._is_a("IDL:CF/Resource:1.0"), True)
-        self.assertEqual(self.spd.get_id(), self.comp.ref._get_identifier())
+        #self.assertEqual(self.spd.get_id(), self.comp.ref._get_identifier())
         
         #######################################################################
         # Simulate regular component startup
@@ -173,8 +173,9 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
                 break
         return received_data
 
-    def _validate_data(self, received_data, expected_data, expected_frame_size=1, config_dict=None):
+    def _validate_data(self, received_data, expected_data, config_dict=None):
         config_dict = config_dict or self.config_dict
+        bytes_per_sample = 2
         exp_index = 0
         for rx_pkt in received_data:
             for d in rx_pkt.data:
@@ -184,16 +185,17 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             # Verify keywords
             rx_keywords = props_to_dict(rx_pkt.sri.keywords)
             # Added audio keywords
+            expected_frame_size = bytes_per_sample * config_dict["channels"]
             self.assertEqual(rx_keywords["AUDIO_ENCODING"], config_dict["encoding"])
             self.assertEqual(rx_keywords["AUDIO_CHANNELS"], config_dict["channels"])
-            self.assertEqual(rx_keywords["AUDIO_FRAME_SIZE"], expected_frame_size) # 1 - scalar, 2 - complex
-            self.assertEqual(rx_keywords["AUDIO_FRAME_RATE"], 1./self.t_delta)
+            self.assertEqual(rx_keywords["AUDIO_FRAME_SIZE"], expected_frame_size) # 2 * channels
+            self.assertEqual(rx_keywords["AUDIO_FRAME_RATE"], 1./self.t_delta/(expected_frame_size*8.))
             
             for k, v in self.keywords_dict.items():
                 self.assertEqual(rx_keywords[k], v)
         
     def test_scalar(self):
-        print "\n... Staring scalar data test"
+        print "\n... Staring 1 channel data test"
         self._generate_config()
         self.comp_obj.configure(props_from_dict(self.config_dict))
         
@@ -201,18 +203,19 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         self._send_data()
         rx_data = self._get_received_data()
         print "Received SRI keywords: %s" % props_to_dict(rx_data[-1].sri.keywords)
-        self._validate_data(rx_data, self.expected_data, expected_frame_size=1)
+        self._validate_data(rx_data, self.expected_data)
     
     def test_complex(self):
-        print "\n... Staring complex data test"
+        print "\n... Staring 2 channel data test"
         self._generate_config()
+        self.config_dict["channels"] = 2
         self.comp_obj.configure(props_from_dict(self.config_dict))
         
         self._generate_keywords()
         self._send_data(complex=True)
         rx_data = self._get_received_data()
         print "Received SRI keywords: %s" % props_to_dict(rx_data[-1].sri.keywords)
-        self._validate_data(rx_data, self.expected_data, expected_frame_size=2)
+        self._validate_data(rx_data, self.expected_data)
     
     def test_keyword_change(self):
         print "\n... Staring mid stream keyword change test"
@@ -237,8 +240,8 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         rx_data2 = rx_data[len(rx_data)/2:]
         print "Received SRI keywords: %s" % props_to_dict(rx_data1[-1].sri.keywords)
         print "Received SRI keywords: %s" % props_to_dict(rx_data2[-1].sri.keywords)
-        self._validate_data(rx_data1, expected_data1, expected_frame_size=1, config_dict=self.config_dict)
-        self._validate_data(rx_data2, expected_data2, expected_frame_size=1, config_dict=self.updated_config)
+        self._validate_data(rx_data1, expected_data1, config_dict=self.config_dict)
+        self._validate_data(rx_data2, expected_data2, config_dict=self.updated_config)
         
 
 if __name__ == "__main__":

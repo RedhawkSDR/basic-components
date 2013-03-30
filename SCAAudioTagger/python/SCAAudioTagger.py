@@ -53,18 +53,13 @@ class SCAAudioTagger_i(SCAAudioTagger_base):
         return NORMAL
     
     def modify_sri(self, sri):
-        audio_frame_size = 1
-        if sri.mode == 1:
-            # Complex data
-            audio_frame_size = 2
-        elif sri.mode != 0:
-            self._log.warning("Unrecognized sri.mode: %s... Assuming scalar data" % (sri.mode))
+        audio_frame_size = 2 * self.channels; # dataShort - 2 bytes
         
         audio_keywords = []
         audio_keywords.append(CF.DataType("AUDIO_ENCODING", CORBA.Any(CORBA.TC_string, self.encoding)) )
         audio_keywords.append(CF.DataType("AUDIO_CHANNELS", CORBA.Any(CORBA.TC_long, self.channels)) )
-        audio_keywords.append(CF.DataType("AUDIO_FRAME_SIZE", CORBA.Any(CORBA.TC_long, audio_frame_size)) )
-        audio_keywords.append(CF.DataType("AUDIO_FRAME_RATE", CORBA.Any(CORBA.TC_float, 1./sri.xdelta)) )
+        audio_keywords.append(CF.DataType("AUDIO_FRAME_SIZE", CORBA.Any(CORBA.TC_long, audio_frame_size)) ) # bytes
+        audio_keywords.append(CF.DataType("AUDIO_FRAME_RATE", CORBA.Any(CORBA.TC_float, 1./sri.xdelta/(audio_frame_size*8.))) ) # (bits/sec) / (bits/frame)
         
         audio_ids = []
         for k in audio_keywords:
@@ -91,7 +86,7 @@ class SCAAudioTagger_i(SCAAudioTagger_base):
         self.channels = newval
         if self.channels != oldval:
             self.channels_updated = True
-  
+
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.WARN)
     logging.debug("Starting Component")
