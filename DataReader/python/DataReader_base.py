@@ -1,29 +1,12 @@
 #!/usr/bin/env python
 #
-# This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
-# source distribution.
-# 
-# This file is part of REDHAWK Basic Components.
-# 
-# REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
-# the GNU Lesser General Public License as published by the Free Software Foundation, either 
-# version 3 of the License, or (at your option) any later version.
-# 
-# REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-# PURPOSE.  See the GNU Lesser General Public License for more details.
-# 
-# You should have received a copy of the GNU Lesser General Public License along with this 
-# program.  If not, see http://www.gnu.org/licenses/.
-#
-#
 # AUTO-GENERATED CODE.  DO NOT MODIFY!
 #
 # Source: DataReader.spd.xml
-# Generated on: Fri Mar 08 14:59:42 EST 2013
-# Redhawk IDE
-# Version:N.1.8.3
-# Build id: v201302261726
+# Generated on: Thu Apr 25 20:07:37 BST 2013
+# REDHAWK IDE
+# Version: R.1.8.3
+# Build id: v201303122306
 from ossie.cf import CF, CF__POA
 from ossie.utils import uuid
 
@@ -216,10 +199,9 @@ class DataReader_base(CF__POA.Resource, Resource):
                                           action="external",
                                           kinds=("configure",)
                                           )       
-        Throttle = simple_property(id_="Throttle",
-                                          type_="long",
-                                          defvalue=5,
-                                          units="msec", 
+        SpeedFactor = simple_property(id_="SpeedFactor",
+                                          type_="float",
+                                          defvalue=1.0,
                                           mode="readwrite",
                                           action="external",
                                           kinds=("configure",)

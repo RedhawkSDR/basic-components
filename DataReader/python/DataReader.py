@@ -115,68 +115,75 @@ class DataReader_i(DataReader_base):
         self.outputPort.refreshSRI = True
 
     def onconfigure_prop_complex(self, oldvalue, newvalue):
-        self.comlplex= newvalue
+        self.complex = newvalue
         self.outputPort.defaultStreamSRI.mode = int(self.complex)
         self.outputPort.refreshSRI = True
 
-    def makeTimeStamp(self):
+    def makeTimeStamp(self, curr_time):
         # Read current time for inclusion in packet
-        curr_time = time.time()
-        intTime = round(curr_time)
-        self.utcTime = BULKIO.PrecisionUTCTime(1, 1, curr_time-intTime, intTime, 0.0)        
+        intTime = int(curr_time)
+        self.utcTime = BULKIO.PrecisionUTCTime(1, 1, 0.0, intTime, curr_time-intTime)        
 
     def process(self):
-        if (self.Play == True):        
-            if (os.path.exists(self.InputFile)):
-                
-                if (self.inFd==None):
-                    self.inFd = open( self.InputFile, 'rb' )    
-                    self.outputPort.refreshSRI = True
-                    
-                if self.inFd:
-                    
-                    # Attempt to read one packetSize worth of floats from the file
-                    numRead = self.packetSize*self.testDataSize
-                    byteData = self.inFd.read(numRead) # read in bytes - x testDataSize
-                    byteDataLen = len(byteData)
-                    if byteDataLen!=numRead:
-                        self.EOF = True
-                        self.EOS = not self.Loop
+        
+        if (self.Play == False):
+            return NOOP
+        if not (os.path.exists(self.InputFile)):
+            return NOOP
+        
+        if (self.inFd==None):
+            self.inFd = open( self.InputFile, 'rb' )    
+            self.outputPort.refreshSRI = True
+        if not self.inFd:
+            return NOOP
+            
+        # Attempt to read one packetSize worth of floats from the file
+        numRead = self.packetSize*self.testDataSize
+        byteData = self.inFd.read(numRead) # read in bytes - x testDataSize
+        byteDataLen = len(byteData)
+        if byteDataLen!=numRead:
+            self.EOF = True
+            self.EOS = not self.Loop
 
-                        # Test whether data read from file is insufficient to create an 
-                        #integer value of elements
-                        #if not - 
-                        numDrop = byteDataLen%self.testDataSize
-                        if (numDrop) != 0:
-                            byteData = byteData[:-numDrop]
-                    
-                    if byteData:
-                        # Construct the signalData packet from the byteData read from file                            
-                        dataSize = len(byteData)/self.floatSize
-                        fmt = self.direction + str(dataSize) + self.structFormat
-                        signalData = struct.unpack(fmt, byteData)                    
-                    else:
-                        signalData = []
+            # Test whether data read from file is insufficient to create an 
+            #integer value of elements
+            #if not - 
+            numDrop = byteDataLen%self.testDataSize
+            if (numDrop) != 0:
+                byteData = byteData[:-numDrop]
+        
+        if byteData:
+            # Construct the signalData packet from the byteData read from file                            
+            dataSize = len(byteData)/self.floatSize
+            fmt = self.direction + str(dataSize) + self.structFormat
+            signalData = struct.unpack(fmt, byteData)                    
+        else:
+            signalData = []
 
-                    
-                    if signalData or self.EOS:
-                    
-                        self.makeTimeStamp()                    
-                        # Perform remote pushPacket call
-                        self.outputPort.pushPacket(signalData, self.utcTime, self.EOS, self.StreamID)
-                                    
-                        #Sleep to throttle the average data rate
-                        time.sleep( Decimal(self.Throttle)/Decimal(1000) )
-                        
-                    if self.EOF:
-                        if self.inFd:
-                            self.inFd.close()
-                            if self.Loop:
-                                self.inFd = None
-                            else:
-                                self.inFd = 0
-                        self.EOF = False
-                    return NORMAL
+        if signalData or self.EOS:
+            now = time.time()
+            sleepFor = getattr(self, "nextPacket", now) - now
+            # With python, it's unreasonable to expect sleep to be more accurate than a ms
+            if sleepFor > 0.001:
+                time.sleep(sleepFor)
+                now = time.time()
+            self.makeTimeStamp(now)
+            # Perform remote pushPacket call
+            self.outputPort.pushPacket(signalData, self.utcTime, self.EOS, self.StreamID)
+            numSamples = len(signalData)
+            if self.complex: numSamples /= 2
+            self.nextPacket = now + ((1.0/self.SampleRate)*numSamples)
+            
+        if self.EOF:
+            if self.inFd:
+                self.inFd.close()
+                if self.Loop:
+                    self.inFd = None
+                else:
+                    self.inFd = 0
+            self.EOF = False
+        self.t_out = time.time()
+        return NORMAL
         
   
 if __name__ == '__main__':
