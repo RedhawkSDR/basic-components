@@ -250,12 +250,13 @@ class fcalc_i(fcalc_base):
         """
         data, T, EOS, streamID, sri, sriChanged, inputQueueFlushed = port.getPacket()
         
+        if not data:
+            return NOOP
         
         if self.firsttime or sriChanged:
             self.port_out.pushSRI(sri)
             self.firsttime = False
-        if not data:
-            return NOOP
+
         outData=[]
         for d in data:
             if useA:           
