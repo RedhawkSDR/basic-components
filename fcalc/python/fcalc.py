@@ -26,7 +26,6 @@
 # Build id: v201212041901
 from ossie.resource import Resource, start_component
 import logging
-import uuid
 from ossie.cf import CF
 
 from fcalc_base import * 
