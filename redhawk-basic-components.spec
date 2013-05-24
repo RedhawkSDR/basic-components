@@ -3,8 +3,8 @@
 %define _prefix    %{_sdrroot}
 
 Name:		redhawk-basic-components
-Version:	1.8.4
-Release:	3%{?dist}
+Version:	1.9.0
+Release:	0.1%{?dist}
 Summary:	A collection of starter components for REDHAWK
 Prefix:		%{_sdrroot}
 
@@ -13,39 +13,18 @@ License:	LGPLv3+
 URL:		http://redhawksdr.org/	
 Source0:	%{name}-%{version}.tar.gz
 
-BuildRequires:	redhawk >= 1.8.3
-BuildRequires:	autoconf automake libtool
-BuildRequires:	apache-log4cxx-devel >= 0.10
-BuildRequires:	boost-devel >= 1.41
-BuildRequires:	python-devel >= 2.4
+BuildRequires:	redhawk-devel >= 1.9
 BuildRequires:	bulkioInterfaces
-BuildRequires:	jdk >= 1.6
-BuildRequires:	libomniORB4.1-devel
-BuildRequires:	libomniORBpy3-devel
-%if "%{?rhel}" == "6"
-BuildRequires: libuuid-devel
-%else
-BuildRequires: e2fsprogs-devel
-%endif
-Requires:	redhawk >= 1.8.3
-Requires:	apache-log4cxx >= 0.10
-Requires:	python
+Requires:	redhawk >= 1.9
 Requires:	bulkioInterfaces
-Requires:	java >= 1.6
-Requires:	libomniORB4.1
-Requires:	omniORBpy
-%if "%{?rhel}" == "6"
-Requires: libuuid
-%else
-Requires: e2fsprogs
-%endif
 Requires:	scipy
+
 AutoReqProv:	no
 
+# el5 requires BuildRoot be defined
 %if "%{?rhel}" != "6"
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 %endif
-
 
 %description
 A collection of starter components for REDHAWK
@@ -57,7 +36,7 @@ A collection of starter components for REDHAWK
 
 %build
 # Setup environment for Java
-export JAVA_HOME=/usr/java/default
+. /usr/share/java-utils/java-functions && set_jvm
 export PATH=$JAVA_HOME/bin:$PATH
 
 # Build the DSP library first
@@ -121,6 +100,9 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Tue Mar 12 2013 1.0.0-1
+* Fri May 24 2013 1.9.0-1
+- Update dependencies for Redhawk 1.9
+
+* Tue Mar 12 2013 1.8.3-4
 - Initial release
 
