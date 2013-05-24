@@ -121,6 +121,6 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Tue Mar 12 2013 1.0.0-1
+* Tue Mar 12 2013 1.8.3-4
 - Initial release
 
