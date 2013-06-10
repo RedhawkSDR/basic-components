@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
+<properties>
+  <simple id="socket_type" mode="readwrite" type="string">
+    <value>tcp</value>
+    <enumerations>
+      <enumeration label="tcp" value="tcp"/>
+      <enumeration label="udp" value="udp"/>
+    </enumerations>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="port" mode="readwrite" type="ushort">
+    <description>Port to send data over network</description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="connection_type" mode="readwrite" type="string">
+    <description>Is the socket a server or client?</description>
+    <value>server</value>
+    <enumerations>
+      <enumeration label="server" value="server"/>
+      <enumeration label="client" value="client"/>
+    </enumerations>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="nic" mode="readwrite" type="string">
+    <description>nic to use to send data over network</description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="status" mode="readonly" type="string">
+    <description>Current status of socket connection</description>
+    <enumerations>
+      <enumeration label="startup" value="startup"/>
+      <enumeration label="not_connected" value="not_connected"/>
+      <enumeration label="connected" value="connected"/>
+    </enumerations>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="total_bytes" mode="readonly" type="double">
+    <description>total bytes sent over network</description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="bytes_per_sec" mode="readonly" type="float">
+    <description>Bytes per second send over network</description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="max_bytes" mode="readwrite" type="ulong">
+    <description>Max bytes to send out in one packet</description>
+    <value>16384</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ip_address" mode="readwrite" type="string">
+    <description>IP address of source</description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="min_bytes" mode="readwrite" type="ulong">
+    <description>min bytes to send </description>
+    <value>0</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="receive_buffer_size" mode="readwrite" type="longlong">
+    <description>Size of receive buffer to block for out of orde packets</description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <struct id="sri" mode="readwrite">
+    <simple id="xstart" type="double">
+      <value>0.0</value>
+    </simple>
+    <simple id="xdelta" type="double">
+      <value>1.0</value>
+    </simple>
+    <simple id="mode" type="short">
+      <value>0</value>
+    </simple>
+    <simple id="streamID" type="string"/>
+    <simple id="blocking" type="boolean">
+      <value>True</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+</properties>

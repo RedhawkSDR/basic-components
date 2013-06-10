@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
+<properties>
+  <simple id="port" mode="readwrite" type="ushort">
+    <description>Port to send data over network</description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="connection_type" mode="readwrite" type="string">
+    <description>Is the socket a server or client?</description>
+    <value>server</value>
+    <enumerations>
+      <enumeration label="server" value="server"/>
+      <enumeration label="client" value="client"/>
+    </enumerations>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="nic" mode="readwrite" type="string">
+    <description>nic to use to send data over network</description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="status" mode="readonly" type="string">
+    <description>Current status of socket connection</description>
+    <enumerations>
+      <enumeration label="startup" value="startup"/>
+      <enumeration label="not_connected" value="not_connected"/>
+      <enumeration label="connected" value="connected"/>
+    </enumerations>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="total_bytes" mode="readonly" type="double">
+    <description>total bytes sent over network</description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="bytes_per_sec" mode="readonly" type="float">
+    <description>Bytes per second send over network</description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="max_bytes" mode="readwrite" type="ulong">
+    <description>Max bytes to send out in one packet</description>
+    <value>16384</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+</properties>
