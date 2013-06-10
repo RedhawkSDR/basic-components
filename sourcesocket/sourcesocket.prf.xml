@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
 <properties>
-  <simple id="socket_type" mode="readwrite" type="string">
-    <value>tcp</value>
-    <enumerations>
-      <enumeration label="tcp" value="tcp"/>
-      <enumeration label="udp" value="udp"/>
-    </enumerations>
-    <kind kindtype="configure"/>
-    <action type="external"/>
-  </simple>
   <simple id="port" mode="readwrite" type="ushort">
     <description>Port to send data over network</description>
     <kind kindtype="configure"/>
@@ -51,7 +42,7 @@
     <action type="external"/>
   </simple>
   <simple id="max_bytes" mode="readwrite" type="ulong">
-    <description>Max bytes to send out in one packet</description>
+    <description>Max bytes to send out in one Bulkio output packet</description>
     <value>16384</value>
     <kind kindtype="configure"/>
     <action type="external"/>
@@ -62,13 +53,8 @@
     <action type="external"/>
   </simple>
   <simple id="min_bytes" mode="readwrite" type="ulong">
-    <description>min bytes to send </description>
+    <description>min bytes to send in once Bulkio output packet</description>
     <value>0</value>
-    <kind kindtype="configure"/>
-    <action type="external"/>
-  </simple>
-  <simple id="receive_buffer_size" mode="readwrite" type="longlong">
-    <description>Size of receive buffer to block for out of orde packets</description>
     <kind kindtype="configure"/>
     <action type="external"/>
   </simple>
