@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
 <properties>
-  <simple id="port" mode="readwrite" type="ushort">
-    <description>Port to send data over network</description>
-    <kind kindtype="configure"/>
-    <action type="external"/>
-  </simple>
   <simple id="connection_type" mode="readwrite" type="string">
     <description>Is the socket a server or client?</description>
     <value>server</value>
@@ -16,8 +11,19 @@
     <kind kindtype="configure"/>
     <action type="external"/>
   </simple>
-  <simple id="nic" mode="readwrite" type="string">
-    <description>nic to use to send data over network</description>
+  <simple id="ip_address" mode="readwrite" type="string">
+    <description>IP address to connect to in client mode</description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="port" mode="readwrite" type="ushort">
+    <description>Port to listen on for server mode, or port to connect to for client mode.</description>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="dynamicPort" mode="readwrite" type="boolean">
+    <description>Applies to server mode only. Indicates the OS should assign the port number dynamically (the port property will be updated with the value).</description>
+    <value>false</value>
     <kind kindtype="configure"/>
     <action type="external"/>
   </simple>
@@ -41,9 +47,10 @@
     <kind kindtype="configure"/>
     <action type="external"/>
   </simple>
-  <simple id="max_bytes" mode="readwrite" type="ulong">
-    <description>Max bytes to send out in one packet</description>
-    <value>16384</value>
+  <simple id="min_bytes" mode="readwrite" type="ulong">
+    <description>Minimum bytes to buffer before transmitting</description>
+    <value>1</value>
+    <range max="16384" min="1"/>
     <kind kindtype="configure"/>
     <action type="external"/>
   </simple>
