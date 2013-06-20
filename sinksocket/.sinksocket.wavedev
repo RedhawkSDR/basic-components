@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="ASCII"?>
 <codegen:WaveDevSettings xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:codegen="http://www.redhawk.gov/model/codegen">
   <implSettings key="cpp">
-    <value outputDir="cpp" template="gov.redhawk.ide.codegen.jet.cplusplus.PullPortDataTemplate" generatorId="gov.redhawk.ide.codegen.jet.cplusplus.CplusplusGenerator" primary="true"/>
+    <value outputDir="cpp" template="gov.redhawk.ide.codegen.jet.cplusplus.PullPortDataTemplate" generatorId="gov.redhawk.ide.codegen.jet.cplusplus.CplusplusGenerator" primary="true">
+      <generatedFileCRCs crc="773341082" file="../sinksocket.spec"/>
+      <generatedFileCRCs crc="2487702658" file="Makefile.am"/>
+      <generatedFileCRCs crc="864280150" file="build.sh"/>
+      <generatedFileCRCs crc="581466100" file="configure.ac"/>
+      <generatedFileCRCs crc="1834625909" file="main.cpp"/>
+      <generatedFileCRCs crc="3517806095" file="port_impl.cpp"/>
+      <generatedFileCRCs crc="1436740028" file="port_impl.h"/>
+      <generatedFileCRCs crc="1746641546" file="reconf"/>
+      <generatedFileCRCs crc="251379619" file="sinksocket_base.cpp"/>
+      <generatedFileCRCs crc="3603909700" file="sinksocket_base.h"/>
+      <generatedFileCRCs crc="1942573142" file="struct_props.h"/>
+    </value>
   </implSettings>
 </codegen:WaveDevSettings>

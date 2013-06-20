@@ -22,12 +22,6 @@
     <kind kindtype="configure"/>
     <action type="external"/>
   </simple>
-  <simple id="dynamicPort" mode="readwrite" type="boolean">
-    <description>Applies to server mode only. Indicates the OS should assign the port number dynamically (the port property will be updated with the value).</description>
-    <value>false</value>
-    <kind kindtype="configure"/>
-    <action type="external"/>
-  </simple>
   <simple id="status" mode="readonly" type="string">
     <description>Current status of socket connection</description>
     <enumerations>

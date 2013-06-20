@@ -21,12 +21,6 @@
     <kind kindtype="configure"/>
     <action type="external"/>
   </simple>
-  <simple id="dynamicPort" mode="readwrite" type="boolean">
-    <description>Applies to server mode only. Indicates the OS should assign the port number dynamically (the port property will be updated with the value).</description>
-    <value>false</value>
-    <kind kindtype="configure"/>
-    <action type="external"/>
-  </simple>
   <simple id="status" mode="readonly" type="string">
     <description>Current status of socket connection</description>
     <enumerations>
@@ -44,13 +38,6 @@
   </simple>
   <simple id="bytes_per_sec" mode="readonly" type="float">
     <description>Bytes per second send over network</description>
-    <kind kindtype="configure"/>
-    <action type="external"/>
-  </simple>
-  <simple id="min_bytes" mode="readwrite" type="ulong">
-    <description>Minimum bytes to buffer before transmitting</description>
-    <value>1</value>
-    <range max="16384" min="1"/>
     <kind kindtype="configure"/>
     <action type="external"/>
   </simple>
