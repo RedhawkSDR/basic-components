@@ -5,7 +5,10 @@ import os
 from omniORB import any
 
 class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
-    """Test for all component implementations in sinksocket"""
+    """Test for all component implementations in sinksocket
+       
+       Please see unit test for sourcesocket for more tests with the sinksocket
+    """
 
     def testScaBasicBehavior(self):
         #######################################################################
