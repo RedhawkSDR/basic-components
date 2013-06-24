@@ -38,7 +38,7 @@ public:
 	void start();
 
 	template<typename T>
-	void write(std::vector<unsigned char, T> data);
+	void write(std::vector<unsigned char, T>& data);
 
 
 

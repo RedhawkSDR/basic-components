@@ -16,7 +16,7 @@ void session::start()
 }
 
 template<typename T>
-void session::write(std::vector<unsigned char, T> data)
+void session::write(std::vector<unsigned char, T>& data)
 {
 	if (socket_.is_open())
 		boost::asio::async_write(socket_,
