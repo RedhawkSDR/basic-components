@@ -68,12 +68,15 @@ sourcesocket_i::~sourcesocket_i()
 template<typename T, typename U>
 void sourcesocket_i::pushData(T* port, char* start, size_t numBytes)
 {
-	assert(numBytes%sizeof(U)==0);
-	std::string streamID(theSri.streamID._ptr);
-	std::vector<U> output(numBytes/sizeof(U));
-	memcpy(&output[0], start, numBytes);
-	now(tstamp_);
-	port->pushPacket(output, tstamp_, false, streamID);
+	if (port->state()!=BULKIO::IDLE)
+	{
+		assert(numBytes%sizeof(U)==0);
+		std::string streamID(theSri.streamID._ptr);
+		std::vector<U> output(numBytes/sizeof(U));
+		memcpy(&output[0], start, numBytes);
+		now(tstamp_);
+		port->pushPacket(output, tstamp_, false, streamID);
+	}
 }
 
 

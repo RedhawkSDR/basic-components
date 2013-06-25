@@ -15,9 +15,8 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     CHAR_DATA = [range(-128,128)*100]
     U_SHORT_DATA = [range(i*16384,(i+1)*16384) for i in xrange(4)]
     SHORT_DATA = [range(i*16384,(i+1)*16384) for i in xrange(-2,2)]
-    U_LONG_DATA = [range(i*16384,(i+1)*16384) for i in xrange(-2,2)]
-    LONG_DATA = [range(i*2**30,(i+1)*2**30, 500000) for i in xrange(-2,2)]
     U_LONG_DATA = [range(i*2**30,(i+1)*2**30, 500000) for i in xrange(0,4)]
+    LONG_DATA = [range(i*2**30,(i+1)*2**30, 500000) for i in xrange(-2,2)]
     FLOAT_DATA = DOUBLE_DATA = [[float(x) for x in range(i*4096,(i+1)*4096)] for i in xrange(16)]
     
 
@@ -147,15 +146,19 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         self.runTest(clientFirst=False, client = 'sourcesocket', dataPackets=self.DOUBLE_DATA,portType='double')
 
     def testLITTLE_PACKETS(self):
+        print "testLITTLE_PACKETS"
         self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=[range(200) for _ in xrange(50000)], maxBytes=256*256, minBytes=0)
 
     def testLITTLE_PACKETS_2(self):
+        print "testLITTLE_PACKETS_2"
         self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=[range(200) for _ in xrange(50000)], maxBytes=256*256, minBytes=0)     
 
-    def testBIG_PACKET(self):
-        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=[range(200)*50000])
-    def testBIG_PACKET_2(self):
-        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=[range(200)*50000])
+    def testBIG_PACKETS(self):
+        print "testBIG_PACKETS"
+        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=[range(200)*25000 for _ in xrange(2)])
+    def testBIG_PACKETS_2(self):
+        print "testBIG_PACKETS_2"
+        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=[range(200)*25000 for _ in xrange(2)])
 
     def runTest(self, clientFirst=True, client = 'sinksocket',dataPackets=[],maxBytes=None,minBytes=None, portType='octet'):
         self.startSourceSocket()
@@ -185,7 +188,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         time.sleep(.1)
         for packet in dataPackets:
             self.input.extend(packet)
-            time.sleep(1e-6)
+            #time.sleep(1e-6)
             self.src.push(packet, False, "test stream", 1.0)
             newdata =self.sink.getData()
             if newdata:
