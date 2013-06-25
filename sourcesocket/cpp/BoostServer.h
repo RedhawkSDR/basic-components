@@ -14,6 +14,8 @@
 #include <boost/asio.hpp>
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread.hpp>
+#include <boost/asio/error.hpp>
+#include <deque>
 
 using boost::asio::ip::tcp;
 
@@ -25,7 +27,7 @@ public:
 	session(boost::asio::io_service& io_service, server* s, size_t max_length)
 	: socket_(io_service),
 	  server_(s),
-	  data_(max_length),
+	  read_data_(max_length),
 	  max_length_(max_length)
 	{
 	}
@@ -37,8 +39,8 @@ public:
 
 	void start();
 
-	template<typename T>
-	void write(std::vector<unsigned char, T>& data);
+	template<typename T, typename U>
+	void write(std::vector<T, U>& data);
 
 
 
@@ -52,8 +54,11 @@ private:
 
 	tcp::socket socket_;
 	server* server_;
-	std::vector<char> data_;
+	std::vector<char> read_data_;
 	size_t max_length_;
+	std::deque<std::vector<char> > writeBuffer_;
+	boost::mutex writeLock_;
+
 };
 
 class server
@@ -95,10 +100,10 @@ public:
 		}
 	}
 
+	template<typename T, typename U>
+	void write(std::vector<T, U>& data);
 	template<typename T>
-	void write(std::vector<unsigned char, T>& data);
-	template<typename T>
-	void read(std::vector<unsigned char, T> & data, size_t index=0);
+	void read(std::vector<char, T> & data, size_t index=0);
 	bool is_connected();
 
 	template<typename T>
@@ -116,7 +121,7 @@ private:
 	boost::asio::io_service io_service_;
 	tcp::acceptor acceptor_;
 	std::list<session*> sessions_;
-	std::vector<unsigned char> pendingData_;
+	std::vector<char> pendingData_;
 	boost::mutex sessionsLock_;
 	boost::mutex pendingDataLock_;
 	boost::mutex pendingLock_;

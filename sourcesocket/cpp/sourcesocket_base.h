@@ -82,6 +82,13 @@ class ProcessThread
 
 class sourcesocket_base : public Resource_impl
 {
+    friend class BULKIO_dataUshort_Out_i;
+    friend class BULKIO_dataShort_Out_i;
+    friend class BULKIO_dataUlong_Out_i;
+    friend class BULKIO_dataChar_Out_i;
+    friend class BULKIO_dataDouble_Out_i;
+    friend class BULKIO_dataFloat_Out_i;
+    friend class BULKIO_dataLong_Out_i;
     friend class BULKIO_dataOctet_Out_i;
 
     public: 
@@ -118,6 +125,13 @@ class sourcesocket_base : public Resource_impl
 
         // Ports
         BULKIO_dataOctet_Out_i *dataOctet_out;
+        BULKIO_dataChar_Out_i *dataChar_out;
+        BULKIO_dataShort_Out_i *dataShort_out;
+        BULKIO_dataUshort_Out_i *dataUshort_out;
+        BULKIO_dataUlong_Out_i *dataUlong_out;
+        BULKIO_dataLong_Out_i *dataLong_out;
+        BULKIO_dataFloat_Out_i *dataFloat_out;
+        BULKIO_dataDouble_Out_i *dataDouble_out;
     
     private:
         void construct();

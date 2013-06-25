@@ -6,7 +6,7 @@
     AUTO-GENERATED CODE. DO NOT MODIFY
     
  	Source: sinksocket.spd.xml
- 	Generated on: Thu Jun 20 09:43:15 EDT 2013
+ 	Generated on: Mon Jun 24 15:52:46 EDT 2013
  	REDHAWK IDE
  	Version: 1.8.4
  	Build id: R201305151907
@@ -35,8 +35,29 @@ void sinksocket_base::construct()
     PortableServer::ObjectId_var oid;
     dataOctet_in = new BULKIO_dataOctet_In_i("dataOctet_in", this);
     oid = ossie::corba::RootPOA()->activate_object(dataOctet_in);
+    dataChar_in = new BULKIO_dataChar_In_i("dataChar_in", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataChar_in);
+    dataShort_in = new BULKIO_dataShort_In_i("dataShort_in", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataShort_in);
+    dataUshort_in = new BULKIO_dataUshort_In_i("dataUshort_in", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataUshort_in);
+    dataLong_in = new BULKIO_dataLong_In_i("dataLong_in", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataLong_in);
+    dataUlong_in = new BULKIO_dataUlong_In_i("dataUlong_in", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataUlong_in);
+    dataFloat_in = new BULKIO_dataFloat_In_i("dataFloat_in", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataFloat_in);
+    dataDouble_in = new BULKIO_dataDouble_In_i("dataDouble_in", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataDouble_in);
 
     registerInPort(dataOctet_in);
+    registerInPort(dataChar_in);
+    registerInPort(dataShort_in);
+    registerInPort(dataUshort_in);
+    registerInPort(dataLong_in);
+    registerInPort(dataUlong_in);
+    registerInPort(dataFloat_in);
+    registerInPort(dataDouble_in);
 }
 
 /*******************************************************************************************
@@ -52,6 +73,13 @@ void sinksocket_base::start() throw (CORBA::SystemException, CF::Resource::Start
     boost::mutex::scoped_lock lock(serviceThreadLock);
     if (serviceThread == 0) {
         dataOctet_in->unblock();
+        dataChar_in->unblock();
+        dataShort_in->unblock();
+        dataUshort_in->unblock();
+        dataLong_in->unblock();
+        dataUlong_in->unblock();
+        dataFloat_in->unblock();
+        dataDouble_in->unblock();
         serviceThread = new ProcessThread<sinksocket_base>(this, 0.1);
         serviceThread->start();
     }
@@ -67,6 +95,13 @@ void sinksocket_base::stop() throw (CORBA::SystemException, CF::Resource::StopEr
     // release the child thread (if it exists)
     if (serviceThread != 0) {
         dataOctet_in->block();
+        dataChar_in->block();
+        dataShort_in->block();
+        dataUshort_in->block();
+        dataLong_in->block();
+        dataUlong_in->block();
+        dataFloat_in->block();
+        dataDouble_in->block();
         if (!serviceThread->release(2)) {
             throw CF::Resource::StopError(CF::CF_NOTSET, "Processing thread did not die");
         }
@@ -88,6 +123,48 @@ CORBA::Object_ptr sinksocket_base::getPort(const char* _id) throw (CORBA::System
             BULKIO_dataOctet_In_i *ptr = dynamic_cast<BULKIO_dataOctet_In_i *>(p_in->second);
             if (ptr) {
                 return BULKIO::dataOctet::_duplicate(ptr->_this());
+            }
+        }
+        if (!strcmp(_id,"dataChar_in")) {
+            BULKIO_dataChar_In_i *ptr = dynamic_cast<BULKIO_dataChar_In_i *>(p_in->second);
+            if (ptr) {
+                return BULKIO::dataChar::_duplicate(ptr->_this());
+            }
+        }
+        if (!strcmp(_id,"dataShort_in")) {
+            BULKIO_dataShort_In_i *ptr = dynamic_cast<BULKIO_dataShort_In_i *>(p_in->second);
+            if (ptr) {
+                return BULKIO::dataShort::_duplicate(ptr->_this());
+            }
+        }
+        if (!strcmp(_id,"dataUshort_in")) {
+            BULKIO_dataUshort_In_i *ptr = dynamic_cast<BULKIO_dataUshort_In_i *>(p_in->second);
+            if (ptr) {
+                return BULKIO::dataUshort::_duplicate(ptr->_this());
+            }
+        }
+        if (!strcmp(_id,"dataLong_in")) {
+            BULKIO_dataLong_In_i *ptr = dynamic_cast<BULKIO_dataLong_In_i *>(p_in->second);
+            if (ptr) {
+                return BULKIO::dataLong::_duplicate(ptr->_this());
+            }
+        }
+        if (!strcmp(_id,"dataUlong_in")) {
+            BULKIO_dataUlong_In_i *ptr = dynamic_cast<BULKIO_dataUlong_In_i *>(p_in->second);
+            if (ptr) {
+                return BULKIO::dataUlong::_duplicate(ptr->_this());
+            }
+        }
+        if (!strcmp(_id,"dataFloat_in")) {
+            BULKIO_dataFloat_In_i *ptr = dynamic_cast<BULKIO_dataFloat_In_i *>(p_in->second);
+            if (ptr) {
+                return BULKIO::dataFloat::_duplicate(ptr->_this());
+            }
+        }
+        if (!strcmp(_id,"dataDouble_in")) {
+            BULKIO_dataDouble_In_i *ptr = dynamic_cast<BULKIO_dataDouble_In_i *>(p_in->second);
+            if (ptr) {
+                return BULKIO::dataDouble::_duplicate(ptr->_this());
             }
         }
     }
@@ -114,6 +191,13 @@ void sinksocket_base::releaseObject() throw (CORBA::SystemException, CF::LifeCyc
     releaseOutPorts();
 
     delete(dataOctet_in);
+    delete(dataChar_in);
+    delete(dataShort_in);
+    delete(dataUshort_in);
+    delete(dataLong_in);
+    delete(dataUlong_in);
+    delete(dataFloat_in);
+    delete(dataDouble_in);
  
     Resource_impl::releaseObject();
 }

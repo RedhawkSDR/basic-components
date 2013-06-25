@@ -64,38 +64,51 @@ sourcesocket_i::~sourcesocket_i()
 		delete client_;
 
 }
+
+template<typename T, typename U>
+void sourcesocket_i::pushData(T* port, char* start, size_t numBytes)
+{
+	assert(numBytes%sizeof(U)==0);
+	std::string streamID(theSri.streamID._ptr);
+	std::vector<U> output(numBytes/sizeof(U));
+	memcpy(&output[0], start, numBytes);
+	now(tstamp_);
+	port->pushPacket(output, tstamp_, false, streamID);
+}
+
+
 int sourcesocket_i::serviceFunction()
 {
 	LOG_DEBUG(sourcesocket_i, "serviceFunction() example log message");
 	//cash off max_bytes & min_bytes in case their properties are updated mid service function
-	unsigned int maxBytes = max_bytes;
-	unsigned int minBytes = min_bytes;
+	size_t multSize= sizeof(double);
+	unsigned int maxBytes = max_bytes- max_bytes%multSize;
+	unsigned int minBytes = (min_bytes+multSize-1)/multSize;
 	std::string streamID(theSri.streamID._ptr);
-	BULKIO::PrecisionUTCTime tstamp = BULKIO::PrecisionUTCTime();
 
 	//send out data if we have more than we should
 	//loop until we have less than max_bytes left
 	//this should only be called if max_bytes was DECREASED since last loop
-	if (data.size() >= maxBytes)
+	if (data_.size() >= maxBytes)
 	{
-		std::vector<unsigned char>::iterator i = data.begin();
-		std::vector<unsigned char>::iterator end;
-		std::vector<unsigned char> out;
-
-		while (data.end() -i >= maxBytes)
+	    size_t numLoops = data_.size()/maxBytes;
+		for(size_t i=0; i!=numLoops; i++)
 		{
-			end=i+max_bytes;
-			out.assign(i, end);
-			now(tstamp);
-			dataOctet_out->pushPacket(out, tstamp, false, streamID);
-			i=end;
+			pushData<BULKIO_dataOctet_Out_i, unsigned char>(dataOctet_out,&data_[i*maxBytes], maxBytes);
+			pushData<BULKIO_dataChar_Out_i, char>(dataChar_out, &data_[i*maxBytes], maxBytes);
+			pushData<BULKIO_dataUshort_Out_i, unsigned short>(dataUshort_out, &data_[i*maxBytes], maxBytes);
+			pushData<BULKIO_dataShort_Out_i, short>(dataShort_out, &data_[i*maxBytes], maxBytes);
+			pushData<BULKIO_dataUlong_Out_i, unsigned int>(dataUlong_out, &data_[i*maxBytes], maxBytes);
+			pushData<BULKIO_dataLong_Out_i, int> (dataLong_out, &data_[i*maxBytes], maxBytes);
+			pushData<BULKIO_dataDouble_Out_i, double>(dataDouble_out,&data_[i*maxBytes], maxBytes);
+			pushData<BULKIO_dataFloat_Out_i, float>(dataFloat_out, &data_[i*maxBytes], maxBytes);
 		}
-		data.erase(data.begin(), i);
+		data_.erase(data_.begin(), data_.begin()+numLoops*maxBytes);
 	}
 
-	int startIndex=data.size();
+	int startIndex=data_.size();
 	// resize the data vector to grab data from the socket
-	data.resize(max_bytes);
+	data_.resize(max_bytes);
 
 	boost::recursive_mutex::scoped_lock lock(socketLock_);
 
@@ -107,12 +120,12 @@ int sourcesocket_i::serviceFunction()
 		if (server_->is_connected())
 		{
 			status = "connected";
-			server_->read(data,startIndex);
+			server_->read(data_,startIndex);
 		}
 		else
 		{
 			status = "disconnected";
-			data.resize(startIndex);
+			data_.resize(startIndex);
 		}
 	}
 	else if (client_)
@@ -120,11 +133,11 @@ int sourcesocket_i::serviceFunction()
 		if (client_->connect_if_necessary())
 		{
 			status = "connected";
-			client_->read(data,startIndex);
+			client_->read(data_,startIndex);
 		}
 		else
 		{
-			data.resize(startIndex);
+			data_.resize(startIndex);
 			status = "disconnected";
 		}
 	}
@@ -133,7 +146,7 @@ int sourcesocket_i::serviceFunction()
 		status="error";
 		LOG_ERROR(sourcesocket_i, "no server or client initialized ");
 	}
-	int numRead = data.size()-startIndex;
+	int numRead = data_.size()-startIndex;
 
 	std::stringstream ss;
 	ss<<"Receveived " << numRead<< " bytes - max size = "<<max_bytes;
@@ -142,11 +155,21 @@ int sourcesocket_i::serviceFunction()
 	bytes_per_sec = stats_.newPacket(numRead);
 	total_bytes+=numRead;
 
-	if (! data.empty() && data.size() >= minBytes)
+	if (! data_.empty() && data_.size() >= minBytes)
 	{
-		now(tstamp);
-		dataOctet_out->pushPacket(data, tstamp, false, streamID);
-		data.clear();
+		size_t numLeft = data_.size()%multSize;
+		size_t pushBytes = data_.size() - numLeft;
+
+		pushData<BULKIO_dataOctet_Out_i, unsigned char>(dataOctet_out,&data_[0], pushBytes);
+		pushData<BULKIO_dataChar_Out_i, char>(dataChar_out, &data_[0], pushBytes);
+		pushData<BULKIO_dataUshort_Out_i, unsigned short>(dataUshort_out, &data_[0], pushBytes);
+		pushData<BULKIO_dataShort_Out_i, short>(dataShort_out, &data_[0], pushBytes);
+		pushData<BULKIO_dataUlong_Out_i, unsigned int>(dataUlong_out, &data_[0], pushBytes);
+		pushData<BULKIO_dataLong_Out_i, int> (dataLong_out, &data_[0], pushBytes);
+		pushData<BULKIO_dataDouble_Out_i, double>(dataDouble_out,&data_[0], pushBytes);
+		pushData<BULKIO_dataFloat_Out_i, float>(dataFloat_out, &data_[0], pushBytes);
+
+		data_.erase(data_.begin(), data_.end()-numLeft);
 		return NORMAL;
 	}
 	return NOOP;

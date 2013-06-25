@@ -55,16 +55,18 @@ public:
 		return s_.is_open();
 	}
 
-	template<typename T>
-	void write(std::vector<unsigned char, T>& data)
+	template<typename T, typename U>
+	void write(std::vector<T, U>& data)
 	{
-		size_t numWritten=0;
-		boost::system::error_code ec;
 		if (connect_if_necessary())
 		{
-			while (numWritten!= data.size())
+			size_t bytesWritten=0;
+			boost::system::error_code ec;
+			char* dataBytes = reinterpret_cast<char*>(&data[0]);
+			size_t numBytes = data.size()*sizeof(T);
+			while (bytesWritten!= numBytes)
 			{
-				numWritten+= boost::asio::write(s_, boost::asio::buffer(&data[numWritten], data.size()-numWritten),boost::asio::transfer_all(), ec);
+				bytesWritten+= boost::asio::write(s_, boost::asio::buffer(&dataBytes[bytesWritten], numBytes-bytesWritten),boost::asio::transfer_all(), ec);
 				if (ec)
 				{
 					s_.close();
@@ -74,7 +76,7 @@ public:
 		}
 	}
 	template<typename T>
-	void read(std::vector<unsigned char, T> & data, size_t index=0)
+	void read(std::vector<char, T> & data, size_t index=0)
 	{
 		int bytesReceived=0;
 		if (connect_if_necessary() && s_.available()!=0)

@@ -11,6 +11,15 @@ import traceback
 class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     """Test for all component implementations in sourcesocket"""
     PORT = 8645
+    OCTET_DATA = [range(256)*100]
+    CHAR_DATA = [range(-128,128)*100]
+    U_SHORT_DATA = [range(i*16384,(i+1)*16384) for i in xrange(4)]
+    SHORT_DATA = [range(i*16384,(i+1)*16384) for i in xrange(-2,2)]
+    U_LONG_DATA = [range(i*16384,(i+1)*16384) for i in xrange(-2,2)]
+    LONG_DATA = [range(i*2**30,(i+1)*2**30, 500000) for i in xrange(-2,2)]
+    U_LONG_DATA = [range(i*2**30,(i+1)*2**30, 500000) for i in xrange(0,4)]
+    FLOAT_DATA = DOUBLE_DATA = [[float(x) for x in range(i*4096,(i+1)*4096)] for i in xrange(16)]
+    
 
     def startSourceSocket(self):
         #######################################################################
@@ -65,30 +74,99 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     
     
     def testA(self):
-        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=[range(256)*100])
+        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=self.OCTET_DATA,portType='octet')
     def testB(self):
-        self.runTest(clientFirst=False, client = 'sinksocket', dataPackets=[range(256)*100])
+        self.runTest(clientFirst=False, client = 'sinksocket', dataPackets=self.OCTET_DATA,portType='octet')
     def testC(self):
-        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=[range(256)*100])
+        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=self.OCTET_DATA,portType='octet')
     def testD(self):
-        self.runTest(clientFirst=False, client = 'sourcesocket', dataPackets=[range(256)*100])
+        self.runTest(clientFirst=False, client = 'sourcesocket', dataPackets=self.OCTET_DATA,portType='octet')
 
-    def testE(self):
-        self.runTest(clientFirst=False, client = 'sinksocket', dataPackets=[range(256)*2048 for _ in xrange(32)], maxBytes=256*256)
+    def testAChar(self):
+        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=self.CHAR_DATA,portType='char')
+    def testBChar(self):
+        self.runTest(clientFirst=False, client = 'sinksocket', dataPackets=self.CHAR_DATA,portType='char')
+    def testCChar(self):
+        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=self.CHAR_DATA,portType='char')
+    def testDChar(self):
+        self.runTest(clientFirst=False, client = 'sourcesocket', dataPackets=self.CHAR_DATA,portType='char')
 
-    def testF(self):
-        self.runTest(clientFirst=False, client = 'sourcesocket', dataPackets=[range(200) for _ in xrange(1000)], maxBytes=256*256, minBytes=0)     
+    def testAUShort(self):
+        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=self.U_SHORT_DATA,portType='Ushort')
+    def testBUShort(self):
+        self.runTest(clientFirst=False, client = 'sinksocket', dataPackets=self.U_SHORT_DATA,portType='Ushort')
+    def testCUShort(self):
+        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=self.U_SHORT_DATA,portType='Ushort')
+    def testDUShort(self):
+        self.runTest(clientFirst=False, client = 'sourcesocket', dataPackets=self.U_SHORT_DATA,portType='Ushort')
 
-    def runTest(self, clientFirst=True, client = 'sinksocket',dataPackets=[],maxBytes=None,minBytes=None):
+
+    def testAShort(self):
+        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=self.SHORT_DATA,portType='short')
+    def testBShort(self):
+        self.runTest(clientFirst=False, client = 'sinksocket', dataPackets=self.SHORT_DATA,portType='short')
+    def testCShort(self):
+        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=self.SHORT_DATA,portType='short')
+    def testDShort(self):
+        self.runTest(clientFirst=False, client = 'sourcesocket', dataPackets=self.SHORT_DATA,portType='short')
+
+    def testAULong(self):
+        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=self.U_LONG_DATA,portType='Ulong')
+    def testBULong(self):
+        self.runTest(clientFirst=False, client = 'sinksocket', dataPackets=self.U_LONG_DATA,portType='Ulong')
+    def testCULong(self):
+        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=self.U_LONG_DATA,portType='Ulong')
+    def testDULong(self):
+        self.runTest(clientFirst=False, client = 'sourcesocket', dataPackets=self.U_LONG_DATA,portType='Ulong')
+
+    def testALong(self):
+        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=self.LONG_DATA,portType='long')
+    def testBLong(self):
+        self.runTest(clientFirst=False, client = 'sinksocket', dataPackets=self.LONG_DATA,portType='long')
+    def testCLong(self):
+        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=self.LONG_DATA,portType='long')
+    def testDLong(self):
+        self.runTest(clientFirst=False, client = 'sourcesocket', dataPackets=self.LONG_DATA,portType='long')
+
+    def testAFloat(self):
+        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=self.FLOAT_DATA,portType='float')
+    def testBFloat(self):
+        self.runTest(clientFirst=False, client = 'sinksocket', dataPackets=self.FLOAT_DATA,portType='float')
+    def testCFloat(self):
+        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=self.FLOAT_DATA,portType='float')
+    def testDFloat(self):
+        self.runTest(clientFirst=False, client = 'sourcesocket', dataPackets=self.FLOAT_DATA,portType='float')
+
+    def testADouble(self):
+        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=self.DOUBLE_DATA,portType='double')
+    def testBDouble(self):
+        self.runTest(clientFirst=False, client = 'sinksocket', dataPackets=self.DOUBLE_DATA,portType='double')
+    def testCDouble(self):
+        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=self.DOUBLE_DATA,portType='double')
+    def testDDouble(self):
+        self.runTest(clientFirst=False, client = 'sourcesocket', dataPackets=self.DOUBLE_DATA,portType='double')
+
+    def testLITTLE_PACKETS(self):
+        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=[range(200) for _ in xrange(50000)], maxBytes=256*256, minBytes=0)
+
+    def testLITTLE_PACKETS_2(self):
+        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=[range(200) for _ in xrange(50000)], maxBytes=256*256, minBytes=0)     
+
+    def testBIG_PACKET(self):
+        self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=[range(200)*50000])
+    def testBIG_PACKET_2(self):
+        self.runTest(clientFirst=True, client = 'sourcesocket', dataPackets=[range(200)*50000])
+
+    def runTest(self, clientFirst=True, client = 'sinksocket',dataPackets=[],maxBytes=None,minBytes=None, portType='octet'):
         self.startSourceSocket()
-        self.startTest(client)
+        self.startTest(client, portType)
         
         if maxBytes!=None:
             self.sourceSocket.max_bytes=maxBytes
         if minBytes!=None:
             self.sourceSocket.min_bytes=minBytes
         
-        print self.sourceSocket.query([])
+        #print self.sourceSocket.query([])
         
         if clientFirst:
             self.configureClient()
@@ -111,8 +189,10 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             self.src.push(packet, False, "test stream", 1.0)
             newdata =self.sink.getData()
             if newdata:
-                self.output.extend([ord(x) for x in newdata])
-
+                if portType ==  'octet':
+                    self.output.extend([ord(x) for x in newdata])
+                else:
+                    self.output.extend(newdata)
         time.sleep(.25)
 
         noData=0
@@ -120,21 +200,23 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             newdata =self.sink.getData()
             if newdata:
                 noData=0
-                self.output.extend([ord(x) for x in newdata])
+                if portType == 'octet':
+                    self.output.extend([ord(x) for x in newdata])
+                else:
+                    self.output.extend(newdata)
             else:
                 noData+=1
-                if noData==10:
+                if noData==200:
                     break
-                time.sleep(.1)
+                time.sleep(.01)
 
-#        print "self.sinkSocket.bytes_per_sec", self.sinkSocket.bytes_per_sec
-#        print "self.sourceSocket.bytes_per_sec", self.sourceSocket.bytes_per_sec
+        print "self.sourceSocket.bytes_per_sec", self.sourceSocket.bytes_per_sec
+        print "self.sinkSocket.bytes_per_sec", self.sinkSocket.bytes_per_sec
 ##        
-#        print "self.sinkSocket.total_bytes", self.sinkSocket.total_bytes
-#        print "self.sourceSocket.total_bytes",  self.sourceSocket.total_bytes
+        print "self.sinkSocket.total_bytes", self.sinkSocket.total_bytes
+        print "self.sourceSocket.total_bytes",  self.sourceSocket.total_bytes
 ##        
-#        print "len(self.input)", len(self.input), "len(self.output)", len(self.output)
-##        print "len(self.input)", len(self.input)
+        print "len(self.input)", len(self.input), "len(self.output)", len(self.output)
         
         self.assertTrue(len(self.output)> 0)
         self.assertTrue(len(self.input)-len(self.output)< self.sourceSocket.max_bytes)
@@ -156,7 +238,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         self.assertTrue(self.server.connection_type=='server')
         self.assertTrue(self.server.port==self.PORT)        
 
-    def startTest(self, client='sinksocket'):
+    def startTest(self, client='sinksocket',portType='octet'):
         self.assertNotEqual(self.comp, None)
         self.src = sb.DataSource()
         self.sink = sb.DataSink()
@@ -170,8 +252,11 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             self.server = self.sinkSocket
             self.client = self.sourceSocket
         
-        self.src.connect(self.sinkSocket)
-        self.sourceSocket.connect(self.sink)
+        sinkSocktName = 'data%s_in'%portType.capitalize()
+        #print self.sinkSocket.api()
+        #print self.sink.api()
+        self.src.connect(self.sinkSocket, sinkSocktName)
+        self.sourceSocket.connect(self.sink, None, 'data%s_out'%portType.capitalize())
         
     def stopTest(self):
         self.src.stop()

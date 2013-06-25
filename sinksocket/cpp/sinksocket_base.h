@@ -82,6 +82,13 @@ class ProcessThread
 
 class sinksocket_base : public Resource_impl
 {
+    friend class BULKIO_dataUshort_In_i;
+    friend class BULKIO_dataShort_In_i;
+    friend class BULKIO_dataUlong_In_i;
+    friend class BULKIO_dataChar_In_i;
+    friend class BULKIO_dataDouble_In_i;
+    friend class BULKIO_dataFloat_In_i;
+    friend class BULKIO_dataLong_In_i;
     friend class BULKIO_dataOctet_In_i;
 
     public: 
@@ -153,6 +160,13 @@ class sinksocket_base : public Resource_impl
 
         // Ports
         BULKIO_dataOctet_In_i *dataOctet_in;
+        BULKIO_dataChar_In_i *dataChar_in;
+        BULKIO_dataShort_In_i *dataShort_in;
+        BULKIO_dataUshort_In_i *dataUshort_in;
+        BULKIO_dataLong_In_i *dataLong_in;
+        BULKIO_dataUlong_In_i *dataUlong_in;
+        BULKIO_dataFloat_In_i *dataFloat_in;
+        BULKIO_dataDouble_In_i *dataDouble_in;
     
     private:
         void construct();

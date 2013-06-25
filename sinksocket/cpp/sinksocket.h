@@ -15,6 +15,8 @@ public:
 	sinksocket_i(const char *uuid, const char *label);
 	~sinksocket_i();
 	int serviceFunction();
+	template<typename T>
+	int serviceFunctionT(T* inputPort);
 private:
 
 	void updateSocket(const std::string&);

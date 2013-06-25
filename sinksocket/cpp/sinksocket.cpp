@@ -42,10 +42,26 @@ sinksocket_i::~sinksocket_i()
 		delete client_;
 }
 
+
 int sinksocket_i::serviceFunction()
 {
+  int ret = 0;
+  ret = ret || serviceFunctionT(dataOctet_in);
+  ret = ret || serviceFunctionT(dataChar_in);
+  ret = ret || serviceFunctionT(dataShort_in);
+  ret = ret || serviceFunctionT(dataUshort_in);
+  ret = ret || serviceFunctionT(dataLong_in);
+  ret = ret || serviceFunctionT(dataUlong_in);
+  ret = ret || serviceFunctionT(dataFloat_in);
+  ret = ret || serviceFunctionT(dataDouble_in);
+  return ret;
+}
+template<typename T>
+int sinksocket_i::serviceFunctionT(T* inputPort)
+{
 	LOG_DEBUG(sinksocket_i, "serviceFunction() example log message");
-	BULKIO_dataOctet_In_i::dataTransfer *tmp=NULL;
+	typename T::dataTransfer *tmp=NULL;
+
 	boost::recursive_mutex::scoped_lock lock(socketLock_);
 	if (server_==NULL && client_==NULL)
 		updateSocket("");
@@ -54,10 +70,12 @@ int sinksocket_i::serviceFunction()
 		if (server_->is_connected())
 		{
 			status = "connected";
-			tmp = dataOctet_in->getPacket(-1);
+			tmp = inputPort->getPacket(0.0);
 			if (tmp)
 			{
+				//std::cerr<< "server write data -- num elements = "<<tmp->dataBuffer.size()<<std::endl;
 				server_->write(tmp->dataBuffer);
+				//std::cerr<< "server write data DONE -- num elements = "<<tmp->dataBuffer.size()<<std::endl;
 			}
 		}
 		else
@@ -68,9 +86,15 @@ int sinksocket_i::serviceFunction()
 		if (client_->connect_if_necessary())
 		{
 			status = "connected";
-			tmp = dataOctet_in->getPacket(-1);
+			tmp = inputPort->getPacket(0.0);
+			//LOG_INFO(sinksocket_i, "sink socket try get data");
 			if (tmp)
+			{
+				//LOG_INFO(sinksocket_i, "sink socket got data");
+				//std::cerr<< "num elements = "<<tmp->dataBuffer.size()<<std::endl;
 				client_->write(tmp->dataBuffer);
+				//LOG_INFO(sinksocket_i, "sink socket client wrote data");
+			}
 		}
 		else
 			status = "disconnected";
@@ -82,7 +106,7 @@ int sinksocket_i::serviceFunction()
 	}
 	size_t pktSize=0;
 	if (tmp && status=="connected")
-		pktSize=tmp->dataBuffer.size();
+		pktSize=tmp->dataBuffer.size()*sizeof(tmp->dataBuffer[0]);
 
 	std::stringstream ss;
 	ss<<"Sent " << pktSize<< " bytes";

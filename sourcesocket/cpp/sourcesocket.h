@@ -14,10 +14,12 @@ class sourcesocket_i : public sourcesocket_base
 {
 	ENABLE_LOGGING
 public:
-	friend class BULKIO_dataOctet_Out_ii;
 	sourcesocket_i(const char *uuid, const char *label);
 	~sourcesocket_i();
 	int serviceFunction();
+	template<typename T, typename U>
+	void pushData(T* port, char* start, size_t numBytes);
+
 
 private:
 	void sriChanged(const std::string&);
@@ -27,8 +29,9 @@ private:
 	server* server_;
 	client* client_;
 	QuickStats stats_;
-	std::vector<unsigned char> data;
+	std::vector<char> data_;
 	boost::recursive_mutex socketLock_;
+	BULKIO::PrecisionUTCTime tstamp_;
 };
 
 #endif

@@ -6,7 +6,7 @@
     AUTO-GENERATED CODE. DO NOT MODIFY
     
  	Source: sourcesocket.spd.xml
- 	Generated on: Thu Jun 20 09:36:00 EDT 2013
+ 	Generated on: Mon Jun 24 17:48:25 EDT 2013
  	REDHAWK IDE
  	Version: 1.8.4
  	Build id: R201305151907
@@ -35,8 +35,29 @@ void sourcesocket_base::construct()
     PortableServer::ObjectId_var oid;
     dataOctet_out = new BULKIO_dataOctet_Out_i("dataOctet_out", this);
     oid = ossie::corba::RootPOA()->activate_object(dataOctet_out);
+    dataChar_out = new BULKIO_dataChar_Out_i("dataChar_out", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataChar_out);
+    dataShort_out = new BULKIO_dataShort_Out_i("dataShort_out", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataShort_out);
+    dataUshort_out = new BULKIO_dataUshort_Out_i("dataUshort_out", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataUshort_out);
+    dataUlong_out = new BULKIO_dataUlong_Out_i("dataUlong_out", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataUlong_out);
+    dataLong_out = new BULKIO_dataLong_Out_i("dataLong_out", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataLong_out);
+    dataFloat_out = new BULKIO_dataFloat_Out_i("dataFloat_out", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataFloat_out);
+    dataDouble_out = new BULKIO_dataDouble_Out_i("dataDouble_out", this);
+    oid = ossie::corba::RootPOA()->activate_object(dataDouble_out);
 
     registerOutPort(dataOctet_out, dataOctet_out->_this());
+    registerOutPort(dataChar_out, dataChar_out->_this());
+    registerOutPort(dataShort_out, dataShort_out->_this());
+    registerOutPort(dataUshort_out, dataUshort_out->_this());
+    registerOutPort(dataUlong_out, dataUlong_out->_this());
+    registerOutPort(dataLong_out, dataLong_out->_this());
+    registerOutPort(dataFloat_out, dataFloat_out->_this());
+    registerOutPort(dataDouble_out, dataDouble_out->_this());
 }
 
 /*******************************************************************************************
@@ -106,6 +127,13 @@ void sourcesocket_base::releaseObject() throw (CORBA::SystemException, CF::LifeC
     releaseOutPorts();
 
     delete(dataOctet_out);
+    delete(dataChar_out);
+    delete(dataShort_out);
+    delete(dataUshort_out);
+    delete(dataUlong_out);
+    delete(dataLong_out);
+    delete(dataFloat_out);
+    delete(dataDouble_out);
  
     Resource_impl::releaseObject();
 }
