@@ -121,6 +121,7 @@ class sourcesocket_base : public Resource_impl
         float bytes_per_sec;
         CORBA::ULong max_bytes;
         CORBA::ULong min_bytes;
+        unsigned short byte_swap;
         sri_struct sri;
 
         // Ports

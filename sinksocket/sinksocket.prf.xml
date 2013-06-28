@@ -41,4 +41,14 @@
     <kind kindtype="configure"/>
     <action type="external"/>
   </simple>
+  <simple id="byte_swap" mode="readwrite" type="ushort">
+    <description>Swap Bytes in data stream.  You can explicitly set the word size.  
+If you set 0 -- no swapping is done.
+If you set 1 -- swapping is done acording to the data size for each port
+Otherwise data will be swapped according to this value
+</description>
+    <value>0</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
 </properties>

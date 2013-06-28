@@ -16,6 +16,10 @@
 
 #include "sourcesocket.h"
 #include <sstream>
+#include "vectorswap.h"
+
+//Just now.  We're at now now
+//When will then be now?  Soon.
 void now(BULKIO::PrecisionUTCTime& tstamp)
 {
 	struct timeval tmp_time;
@@ -29,6 +33,21 @@ void now(BULKIO::PrecisionUTCTime& tstamp)
 	tstamp.twsec = wsec;
 	tstamp.tfsec = fsec;
 }
+
+size_t gcd(size_t a, size_t b)
+{
+	//find greatest common divisor using euclid's method
+	if (b==0)
+		return a;
+	return gcd(b, a%b);
+
+}
+size_t lcm(size_t a, size_t b)
+{
+	//find least common multiple
+	return a*b/(gcd(a,b));
+}
+
 
 PREPARE_LOGGING(sourcesocket_i)
 
@@ -47,7 +66,10 @@ client_(NULL)
 	setPropertyChangeListener("connection_type", this, &sourcesocket_i::updateSocket);
 	setPropertyChangeListener("ip_address", this, &sourcesocket_i::updateSocket);
 	setPropertyChangeListener("port", this, &sourcesocket_i::updateSocket);
-	setPropertyChangeListener("max_bytes", this, &sourcesocket_i::updateSocket);
+	setPropertyChangeListener("max_bytes", this, &sourcesocket_i::updateMaxBytes);
+	setPropertyChangeListener("min_bytes", this, &sourcesocket_i::updateXferLen);
+	setPropertyChangeListener("byte_swap", this, &sourcesocket_i::updateXferLen);
+
 	sriChanged("");
 	status = "initialize";
 	total_bytes=0;
@@ -66,14 +88,30 @@ sourcesocket_i::~sourcesocket_i()
 }
 
 template<typename T, typename U>
-void sourcesocket_i::pushData(T* port, char* start, size_t numBytes)
+void sourcesocket_i::pushData(T* port, char* start, size_t numBytes, unsigned int numSwap)
 {
 	if (port->state()!=BULKIO::IDLE)
 	{
+		std::string name(port->getName());
+		if (std::find(activePorts_.begin(), activePorts_.end(), name) != activePorts_.end())
+			activePorts_.push_back(name);
 		assert(numBytes%sizeof(U)==0);
 		std::string streamID(theSri.streamID._ptr);
 		std::vector<U> output(numBytes/sizeof(U));
-		memcpy(&output[0], start, numBytes);
+		if (numSwap==1)
+			numSwap = sizeof(U);
+		if (numSwap>1)
+		{
+			if (numSwap != sizeof(U))
+			{
+				std::stringstream ss;
+				ss<<"data size "<<sizeof(U)<<" is not equal to byte swap size "<< numSwap<<". ";
+				LOG_WARN(sourcesocket_i, ss.str());
+			}
+			vectorSwap(start, output, numSwap);
+		}
+		else
+			memcpy(&output[0], start, numBytes);
 		now(tstamp_);
 		port->pushPacket(output, tstamp_, false, streamID);
 	}
@@ -84,9 +122,19 @@ int sourcesocket_i::serviceFunction()
 {
 	LOG_DEBUG(sourcesocket_i, "serviceFunction() example log message");
 	//cash off max_bytes & min_bytes in case their properties are updated mid service function
-	size_t multSize= sizeof(double);
-	unsigned int maxBytes = max_bytes- max_bytes%multSize;
-	unsigned int minBytes = (min_bytes+multSize-1)/multSize;
+	unsigned int maxBytes;
+	unsigned int minBytes;
+	unsigned int byteSwap;
+	unsigned int multSize;
+	activePorts_.clear();
+	{
+		boost::recursive_mutex::scoped_lock (xferLock_);
+		maxBytes = max_bytes;
+		minBytes = min_bytes;
+		byteSwap = byte_swap;
+		multSize = multSize_;
+	}
+
 	std::string streamID(theSri.streamID._ptr);
 
 	//send out data if we have more than we should
@@ -97,14 +145,14 @@ int sourcesocket_i::serviceFunction()
 	    size_t numLoops = data_.size()/maxBytes;
 		for(size_t i=0; i!=numLoops; i++)
 		{
-			pushData<BULKIO_dataOctet_Out_i, unsigned char>(dataOctet_out,&data_[i*maxBytes], maxBytes);
-			pushData<BULKIO_dataChar_Out_i, char>(dataChar_out, &data_[i*maxBytes], maxBytes);
-			pushData<BULKIO_dataUshort_Out_i, unsigned short>(dataUshort_out, &data_[i*maxBytes], maxBytes);
-			pushData<BULKIO_dataShort_Out_i, short>(dataShort_out, &data_[i*maxBytes], maxBytes);
-			pushData<BULKIO_dataUlong_Out_i, unsigned int>(dataUlong_out, &data_[i*maxBytes], maxBytes);
-			pushData<BULKIO_dataLong_Out_i, int> (dataLong_out, &data_[i*maxBytes], maxBytes);
-			pushData<BULKIO_dataDouble_Out_i, double>(dataDouble_out,&data_[i*maxBytes], maxBytes);
-			pushData<BULKIO_dataFloat_Out_i, float>(dataFloat_out, &data_[i*maxBytes], maxBytes);
+			pushData<BULKIO_dataOctet_Out_i, unsigned char>(dataOctet_out,&data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<BULKIO_dataChar_Out_i, char>(dataChar_out, &data_[i*maxBytes], maxBytes,byteSwap);
+			pushData<BULKIO_dataUshort_Out_i, unsigned short>(dataUshort_out, &data_[i*maxBytes], maxBytes,byteSwap);
+			pushData<BULKIO_dataShort_Out_i, short>(dataShort_out, &data_[i*maxBytes], maxBytes,byteSwap);
+			pushData<BULKIO_dataUlong_Out_i, unsigned int>(dataUlong_out, &data_[i*maxBytes], maxBytes,byteSwap);
+			pushData<BULKIO_dataLong_Out_i, int> (dataLong_out, &data_[i*maxBytes], maxBytes,byteSwap);
+			pushData<BULKIO_dataDouble_Out_i, double>(dataDouble_out,&data_[i*maxBytes], maxBytes,byteSwap);
+			pushData<BULKIO_dataFloat_Out_i, float>(dataFloat_out, &data_[i*maxBytes], maxBytes,byteSwap);
 		}
 		data_.erase(data_.begin(), data_.begin()+numLoops*maxBytes);
 	}
@@ -163,16 +211,23 @@ int sourcesocket_i::serviceFunction()
 		size_t numLeft = data_.size()%multSize;
 		size_t pushBytes = data_.size() - numLeft;
 
-		pushData<BULKIO_dataOctet_Out_i, unsigned char>(dataOctet_out,&data_[0], pushBytes);
-		pushData<BULKIO_dataChar_Out_i, char>(dataChar_out, &data_[0], pushBytes);
-		pushData<BULKIO_dataUshort_Out_i, unsigned short>(dataUshort_out, &data_[0], pushBytes);
-		pushData<BULKIO_dataShort_Out_i, short>(dataShort_out, &data_[0], pushBytes);
-		pushData<BULKIO_dataUlong_Out_i, unsigned int>(dataUlong_out, &data_[0], pushBytes);
-		pushData<BULKIO_dataLong_Out_i, int> (dataLong_out, &data_[0], pushBytes);
-		pushData<BULKIO_dataDouble_Out_i, double>(dataDouble_out,&data_[0], pushBytes);
-		pushData<BULKIO_dataFloat_Out_i, float>(dataFloat_out, &data_[0], pushBytes);
+		pushData<BULKIO_dataOctet_Out_i, unsigned char>(dataOctet_out,&data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataChar_Out_i, char>(dataChar_out, &data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataUshort_Out_i, unsigned short>(dataUshort_out, &data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataShort_Out_i, short>(dataShort_out, &data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataUlong_Out_i, unsigned int>(dataUlong_out, &data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataLong_Out_i, int> (dataLong_out, &data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataDouble_Out_i, double>(dataDouble_out,&data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataFloat_Out_i, float>(dataFloat_out, &data_[0], pushBytes, byteSwap);
 
 		data_.erase(data_.begin(), data_.end()-numLeft);
+		if (activePorts_.size()>1)
+		{
+			std::string warnstr("More than one port is active: ");
+			for (std::vector<std::string>::iterator i = activePorts_.begin(); i!=activePorts_.end(); i++)
+				warnstr+=*i+" ";
+			LOG_WARN(sourcesocket_i, warnstr+".");
+		}
 		return NORMAL;
 	}
 	return NOOP;
@@ -190,6 +245,38 @@ void sourcesocket_i::sriChanged(const std::string& id)
 	theSri.streamID = sri.streamID.c_str();
 	theSri.blocking = sri.blocking;
 	dataOctet_out->pushSRI(theSri);
+}
+
+void sourcesocket_i::updateMaxBytes(const std::string& id)
+{
+	updateXferLen(id);
+	updateSocket(id);
+}
+void sourcesocket_i::updateXferLen(const std::string& id)
+{
+	//Adjust the key properties dealing with i/o in here
+	//ENSURE THE FOLLOWING GOALS:
+	//1.  multSize is an even number of the byte_swap and the size of double
+	//so we can always output a multiple number of propertly swapped elements
+	//2.  max_bytes is a multiple of multSize less than (or equal) what the user has requested
+	//3.  min_bytes is a multipele of the multSize greather than (or equal to) what the user has requested
+
+	boost::recursive_mutex::scoped_lock (xferLock_);
+	if (byte_swap >1)
+		multSize_= lcm(sizeof(double), byte_swap);
+	else
+		multSize_ = sizeof(double);
+
+	if (max_bytes < multSize_)
+		max_bytes = multSize_;
+	if (min_bytes<1)
+		min_bytes=1;
+
+	max_bytes = max_bytes- max_bytes%multSize_;
+	if (min_bytes>max_bytes)
+		min_bytes = max_bytes;
+	else
+		min_bytes = (min_bytes+multSize_-1) - ((min_bytes+multSize_-1)%multSize_);
 }
 
 void sourcesocket_i::updateSocket(const std::string& id)

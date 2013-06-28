@@ -185,11 +185,13 @@ void server::run()
 }
 
 //need to put these bad boys in here for templates or you get undefined references when linking ...grr...
-template void server::write(std::vector<unsigned char, std::allocator<unsigned char> >&);
+
 template void server::read(std::vector<char, std::allocator<char> >&, size_t);
-template void server::write(std::vector<unsigned char, _seqVector::seqVectorAllocator<unsigned char> >&);
 template void server::read(std::vector<char, _seqVector::seqVectorAllocator<char> >&, size_t);
 
+template void server::write(std::vector<unsigned char, std::allocator<unsigned char> >&);
+template void server::write(std::vector<unsigned char, _seqVector::seqVectorAllocator<unsigned char> >&);
+template void server::write(std::vector<char, std::allocator<char> >&);
 template void server::write(std::vector<char, _seqVector::seqVectorAllocator<char> >&);
 template void server::write(std::vector<unsigned short, _seqVector::seqVectorAllocator<unsigned short> >&);
 template void server::write(std::vector<short, _seqVector::seqVectorAllocator<short> >&);

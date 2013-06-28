@@ -157,6 +157,7 @@ class sinksocket_base : public Resource_impl
         std::string status;
         double total_bytes;
         float bytes_per_sec;
+        unsigned short byte_swap;
 
         // Ports
         BULKIO_dataOctet_In_i *dataOctet_in;

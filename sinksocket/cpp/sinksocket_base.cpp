@@ -6,7 +6,7 @@
     AUTO-GENERATED CODE. DO NOT MODIFY
     
  	Source: sinksocket.spd.xml
- 	Generated on: Mon Jun 24 15:52:46 EDT 2013
+ 	Generated on: Thu Jun 27 14:42:13 EDT 2013
  	REDHAWK IDE
  	Version: 1.8.4
  	Build id: R201305151907
@@ -249,6 +249,15 @@ void sinksocket_base::loadProperties()
                "bytes_per_sec",
                "",
                "readonly",
+               "",
+               "external",
+               "configure");
+
+    addProperty(byte_swap,
+                0, 
+               "byte_swap",
+               "",
+               "readwrite",
                "",
                "external",
                "configure");

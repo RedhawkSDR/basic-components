@@ -15,6 +15,7 @@
  **************************************************************************/
 
 #include "sinksocket.h"
+#include "vectorswap.h"
 #include <sstream>
 
 PREPARE_LOGGING(sinksocket_i)
@@ -46,16 +47,110 @@ sinksocket_i::~sinksocket_i()
 int sinksocket_i::serviceFunction()
 {
   int ret = 0;
-  ret = ret || serviceFunctionT(dataOctet_in);
-  ret = ret || serviceFunctionT(dataChar_in);
-  ret = ret || serviceFunctionT(dataShort_in);
-  ret = ret || serviceFunctionT(dataUshort_in);
-  ret = ret || serviceFunctionT(dataLong_in);
-  ret = ret || serviceFunctionT(dataUlong_in);
-  ret = ret || serviceFunctionT(dataFloat_in);
-  ret = ret || serviceFunctionT(dataDouble_in);
+  warn_.clear();
+  ret += serviceFunctionT(dataOctet_in);
+  ret += serviceFunctionT(dataChar_in);
+  ret += serviceFunctionT(dataShort_in);
+  ret += serviceFunctionT(dataUshort_in);
+  ret += serviceFunctionT(dataLong_in);
+  ret += serviceFunctionT(dataUlong_in);
+  ret += serviceFunctionT(dataFloat_in);
+  ret += serviceFunctionT(dataDouble_in);
+  if (ret > 1)
+  {
+	  LOG_WARN(sinksocket_i, "More than one data port received data.  " +  warn_.str());
+  	  return NORMAL;
+  }
   return ret;
 }
+
+
+template<typename T, typename U>
+void sinksocket_i::newData(std::vector<T, U>& newData)
+{
+	unsigned int numSwap = byte_swap;
+	size_t dataSize = sizeof(T);
+	//if 1 is requested - do the word size associated with the data
+	if (numSwap==1)
+		numSwap = dataSize;
+
+	size_t numBytes =newData.size()*dataSize;
+	size_t oldSize = leftover_.size();
+	size_t totalSize = numBytes+oldSize;
+
+	size_t newLeftoverSize;
+	//make sure you send an exact mutlple of numSwap if its greater than 0
+	if (numSwap > 1)
+	{
+		newLeftoverSize = totalSize %(numSwap);
+		if (numSwap !=dataSize)
+		{
+			std::stringstream ss;
+			ss<<"data size "<<dataSize<<" is not equal to byte swap size "<< numSwap<<". ";
+			LOG_WARN(sinksocket_i, ss.str());
+		}
+	}
+	else
+		newLeftoverSize = 0;
+
+	if (newLeftoverSize ==0 && oldSize==0)
+	{
+		//don't have to deal with leftover data -- this should be the typical case
+		if (numSwap>1)
+			vectorSwap(newData, numSwap);
+		sendData(newData);
+	}
+	else
+	{
+		LOG_WARN(sinksocket_i, "Byte swapping and packet sizes are not compatible.  Swapping bytes over adjacent packets");
+		//copy the right ammount of data into leftover_
+		size_t outSize =totalSize - newLeftoverSize;
+		size_t numCopy =outSize-oldSize;
+		leftover_.resize(outSize);
+		memcpy(&leftover_[oldSize], &newData[0], numCopy);
+		if (numSwap>1)
+			vectorSwap(leftover_, numSwap);
+		//send the leftover
+		sendData(leftover_);
+		//if we have new leftover - populate it now
+		if (newLeftoverSize!=0)
+		{
+			leftover_.resize(newLeftoverSize);
+			memcpy(&leftover_[0], reinterpret_cast<char*>(&newData[0])+numCopy, newLeftoverSize);
+		}
+		else
+			leftover_.clear();
+	}
+}
+
+template<typename T, typename U>
+void sinksocket_i::sendData(std::vector<T, U>& outData)
+{
+	//we should only get into this loop if we are already connected
+	bool sentData=true;
+	if (server_ && server_->is_connected())
+		server_->write(outData);
+	else if (client_ && client_->connect_if_necessary())
+		client_->write(outData);
+	else
+		sentData=false;
+	if (sentData)
+	{
+		size_t pktSize=outData.size()*sizeof(T);
+
+		std::stringstream ss;
+		ss<<"Sent " << pktSize<< " bytes";
+		LOG_DEBUG(sinksocket_i, ss.str());
+
+		bytes_per_sec = stats_.newPacket(pktSize);
+		total_bytes+=pktSize;
+	}
+	else
+		LOG_ERROR(sinksocket_i, "server and client are both not ready.  Let the data on the floor -- let the data hit the floor");
+
+
+}
+
 template<typename T>
 int sinksocket_i::serviceFunctionT(T* inputPort)
 {
@@ -73,9 +168,8 @@ int sinksocket_i::serviceFunctionT(T* inputPort)
 			tmp = inputPort->getPacket(0.0);
 			if (tmp)
 			{
-				//std::cerr<< "server write data -- num elements = "<<tmp->dataBuffer.size()<<std::endl;
-				server_->write(tmp->dataBuffer);
-				//std::cerr<< "server write data DONE -- num elements = "<<tmp->dataBuffer.size()<<std::endl;
+				newData(tmp->dataBuffer);
+				warn_<<"Got data from "<<inputPort->getName()<<".  ";
 			}
 		}
 		else
@@ -90,10 +184,7 @@ int sinksocket_i::serviceFunctionT(T* inputPort)
 			//LOG_INFO(sinksocket_i, "sink socket try get data");
 			if (tmp)
 			{
-				//LOG_INFO(sinksocket_i, "sink socket got data");
-				//std::cerr<< "num elements = "<<tmp->dataBuffer.size()<<std::endl;
-				client_->write(tmp->dataBuffer);
-				//LOG_INFO(sinksocket_i, "sink socket client wrote data");
+				newData(tmp->dataBuffer);
 			}
 		}
 		else
@@ -104,16 +195,6 @@ int sinksocket_i::serviceFunctionT(T* inputPort)
 		status="error";
 		LOG_ERROR(sinksocket_i, "no server or client initialized");
 	}
-	size_t pktSize=0;
-	if (tmp && status=="connected")
-		pktSize=tmp->dataBuffer.size()*sizeof(tmp->dataBuffer[0]);
-
-	std::stringstream ss;
-	ss<<"Sent " << pktSize<< " bytes";
-	LOG_DEBUG(sinksocket_i, ss.str());
-
-	bytes_per_sec = stats_.newPacket(pktSize);
-	total_bytes+=pktSize;
 
 	if (tmp)
 	{

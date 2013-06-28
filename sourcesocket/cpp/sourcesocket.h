@@ -18,12 +18,15 @@ public:
 	~sourcesocket_i();
 	int serviceFunction();
 	template<typename T, typename U>
-	void pushData(T* port, char* start, size_t numBytes);
+	void pushData(T* port, char* start, size_t numBytes, unsigned int numSwap);
 
 
 private:
 	void sriChanged(const std::string&);
 	void updateSocket(const std::string&);
+	void updateMaxBytes(const std::string&);
+	void updateXferLen(const std::string&);
+
 
 	BULKIO::StreamSRI theSri;
 	server* server_;
@@ -31,7 +34,10 @@ private:
 	QuickStats stats_;
 	std::vector<char> data_;
 	boost::recursive_mutex socketLock_;
+	boost::recursive_mutex xferLock_;
 	BULKIO::PrecisionUTCTime tstamp_;
+	size_t multSize_;
+	std::vector<std::string> activePorts_;
 };
 
 #endif

@@ -6,7 +6,7 @@
     AUTO-GENERATED CODE. DO NOT MODIFY
     
  	Source: sourcesocket.spd.xml
- 	Generated on: Mon Jun 24 17:48:25 EDT 2013
+ 	Generated on: Fri Jun 28 14:59:23 EDT 2013
  	REDHAWK IDE
  	Version: 1.8.4
  	Build id: R201305151907
@@ -201,6 +201,15 @@ void sourcesocket_base::loadProperties()
     addProperty(min_bytes,
                 16384, 
                "min_bytes",
+               "",
+               "readwrite",
+               "",
+               "external",
+               "configure");
+
+    addProperty(byte_swap,
+                0, 
+               "byte_swap",
                "",
                "readwrite",
                "",
