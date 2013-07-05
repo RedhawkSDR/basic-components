@@ -19,7 +19,7 @@ BuildRequires:	apache-log4cxx-devel >= 0.10
 BuildRequires:	boost-devel >= 1.41
 BuildRequires:	python-devel >= 2.4
 BuildRequires:	bulkioInterfaces
-BuildRequires:	jdk >= 1.6
+BuildRequires:	java-devel >= 1.6
 BuildRequires:	libomniORB4.1-devel
 BuildRequires:	libomniORBpy3-devel
 %if "%{?rhel}" == "6"
@@ -57,7 +57,7 @@ A collection of starter components for REDHAWK
 
 %build
 # Setup environment for Java
-export JAVA_HOME=/usr/java/default
+. /usr/share/java-utils/java-functions && set_jvm
 export PATH=$JAVA_HOME/bin:$PATH
 
 # Build the DSP library first
@@ -121,6 +121,12 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Tue Mar 12 2013 1.8.3-4
+* Fri Jul 5 2013 - 1.8.5
+- Use OpenJDK
+
+* Fri Mar 15 2013 - 1.8.4-3
+- Update Java dependency to 1.6
+
+* Tue Mar 12 2013 - 1.8.3-4
 - Initial release
 
