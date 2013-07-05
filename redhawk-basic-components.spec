@@ -103,6 +103,12 @@ rm -rf %{buildroot}
 * Fri May 24 2013 1.9.0-1
 - Update dependencies for Redhawk 1.9
 
-* Tue Mar 12 2013 1.8.3-4
+* Fri Jul 5 2013 - 1.8.5
+- Use OpenJDK
+
+* Fri Mar 15 2013 - 1.8.4-3
+- Update Java dependency to 1.6
+
+* Tue Mar 12 2013 - 1.8.3-4
 - Initial release
 
