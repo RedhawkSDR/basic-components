@@ -48,13 +48,14 @@ popd
 for dir in agc/cpp AmFmPmBasebandDemod/cpp DataConverter/DataConverter DataReader/python \
            DataWriter/python fcalc/python freqfilter/python HardLimit/cpp HardLimit/java \
            HardLimit/python medianfilter/python SCAAudioTagger/python SigGen/cpp \
-           SigGen/python SigGen/java TuneFilterDecimate/cpp whitenoise/cpp;
+           SigGen/python SigGen/java sinksocket/cpp sourcesocket/cpp \
+           TuneFilterDecimate/cpp whitenoise/cpp;
 do
-    pushd $dir
+    cd $dir
     ./reconf
     %configure
     make %{?_smp_mflags}
-    popd
+    cd -
 done
 
 
@@ -65,7 +66,8 @@ rm -rf %{buildroot}
 for dir in agc/cpp AmFmPmBasebandDemod/cpp DataConverter/DataConverter DataReader/python \
            DataWriter/python fcalc/python freqfilter/python HardLimit/cpp HardLimit/java \
            HardLimit/python medianfilter/python SCAAudioTagger/python SigGen/cpp \
-           SigGen/python SigGen/java TuneFilterDecimate/cpp whitenoise/cpp;
+           SigGen/python SigGen/java sinksocket/cpp sourcesocket/cpp \
+           TuneFilterDecimate/cpp whitenoise/cpp;
 do
     make -C $dir install DESTDIR=%{buildroot}
 done
@@ -95,13 +97,16 @@ rm -rf %{buildroot}
 %{_sdrroot}/dom/components/medianfilter
 %{_sdrroot}/dom/components/SCAAudioTagger
 %{_sdrroot}/dom/components/SigGen
+%{_sdrroot}/dom/components/sinksocket
+%{_sdrroot}/dom/components/sourcesocket
 %{_sdrroot}/dom/components/TuneFilterDecimate
 %{_sdrroot}/dom/components/whitenoise
 
 
 %changelog
-* Fri May 24 2013 1.9.0-1
+* Tue Jul 9 2013 - 1.9.0-1
 - Update dependencies for Redhawk 1.9
+- Add new components
 
 * Fri Jul 5 2013 - 1.8.5
 - Use OpenJDK
