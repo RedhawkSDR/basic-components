@@ -210,6 +210,7 @@ template void server::write(std::vector<short, _seqVector::seqVectorAllocator<sh
 template void server::write(std::vector<unsigned int, _seqVector::seqVectorAllocator<unsigned int> >&);
 template void server::write(std::vector<int, _seqVector::seqVectorAllocator<int> >&);
 template void server::write(std::vector<unsigned long, _seqVector::seqVectorAllocator<unsigned long> >&);
+template void server::write(std::vector<long, _seqVector::seqVectorAllocator<long> >&);
 template void server::write(std::vector<float, _seqVector::seqVectorAllocator<float> >&);
 template void server::write(std::vector<double, _seqVector::seqVectorAllocator<double> >&);
 
