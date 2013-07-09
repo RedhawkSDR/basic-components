@@ -201,9 +201,9 @@ void server::run()
 template void server::read(std::vector<char, std::allocator<char> >&, size_t);
 template void server::read(std::vector<char, _seqVector::seqVectorAllocator<char> >&, size_t);
 
-//template void server::write(std::vector<unsigned char, std::allocator<unsigned char> >&);
+template void server::write(std::vector<unsigned char, std::allocator<unsigned char> >&);
 template void server::write(std::vector<unsigned char, _seqVector::seqVectorAllocator<unsigned char> >&);
-//template void server::write(std::vector<char, std::allocator<char> >&);
+template void server::write(std::vector<char, std::allocator<char> >&);
 template void server::write(std::vector<char, _seqVector::seqVectorAllocator<char> >&);
 template void server::write(std::vector<CORBA::UShort, _seqVector::seqVectorAllocator<CORBA::UShort> >&);
 template void server::write(std::vector<CORBA::Short, _seqVector::seqVectorAllocator<CORBA::Short> >&);
