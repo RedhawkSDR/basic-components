@@ -162,14 +162,14 @@ int sourcesocket_i::serviceFunction()
 	    size_t numLoops = data_.size()/maxBytes;
 		for(size_t i=0; i!=numLoops; i++)
 		{
-			pushData<BULKIO_dataOctet_Out_i, unsigned char>(dataOctet_out,&data_[i*maxBytes], maxBytes, byteSwap);
-			pushData<BULKIO_dataChar_Out_i, char>(dataChar_out, &data_[i*maxBytes], maxBytes,byteSwap);
-			pushData<BULKIO_dataUshort_Out_i, unsigned short>(dataUshort_out, &data_[i*maxBytes], maxBytes,byteSwap);
-			pushData<BULKIO_dataShort_Out_i, short>(dataShort_out, &data_[i*maxBytes], maxBytes,byteSwap);
-			pushData<BULKIO_dataUlong_Out_i, unsigned int>(dataUlong_out, &data_[i*maxBytes], maxBytes,byteSwap);
-			pushData<BULKIO_dataLong_Out_i, int> (dataLong_out, &data_[i*maxBytes], maxBytes,byteSwap);
-			pushData<BULKIO_dataDouble_Out_i, double>(dataDouble_out,&data_[i*maxBytes], maxBytes,byteSwap);
-			pushData<BULKIO_dataFloat_Out_i, float>(dataFloat_out, &data_[i*maxBytes], maxBytes,byteSwap);
+			pushData<BULKIO_dataOctet_Out_i, CORBA::Octet>(dataOctet_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<BULKIO_dataChar_Out_i, char>(dataChar_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<BULKIO_dataUshort_Out_i, CORBA::UShort>(dataUshort_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<BULKIO_dataShort_Out_i, CORBA::Short>(dataShort_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<BULKIO_dataUlong_Out_i, CORBA::ULong>(dataUlong_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<BULKIO_dataLong_Out_i, CORBA::Long> (dataLong_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<BULKIO_dataDouble_Out_i, CORBA::Double>(dataDouble_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<BULKIO_dataFloat_Out_i, CORBA::Float>(dataFloat_out, &data_[i*maxBytes], maxBytes, byteSwap);
 		}
 		data_.erase(data_.begin(), data_.begin()+numLoops*maxBytes);
 	}
@@ -228,14 +228,14 @@ int sourcesocket_i::serviceFunction()
 		size_t numLeft = data_.size()%multSize;
 		size_t pushBytes = data_.size() - numLeft;
 
-		pushData<BULKIO_dataOctet_Out_i, unsigned char>(dataOctet_out,&data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataOctet_Out_i, CORBA::Octet>(dataOctet_out,&data_[0], pushBytes,byteSwap);
 		pushData<BULKIO_dataChar_Out_i, char>(dataChar_out, &data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataUshort_Out_i, unsigned short>(dataUshort_out, &data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataShort_Out_i, short>(dataShort_out, &data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataUlong_Out_i, unsigned int>(dataUlong_out, &data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataLong_Out_i, int> (dataLong_out, &data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataDouble_Out_i, double>(dataDouble_out,&data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataFloat_Out_i, float>(dataFloat_out, &data_[0], pushBytes, byteSwap);
+		pushData<BULKIO_dataUshort_Out_i, CORBA::UShort>(dataUshort_out, &data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataShort_Out_i, CORBA::Short>(dataShort_out, &data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataUlong_Out_i, CORBA::ULong>(dataUlong_out, &data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataLong_Out_i, CORBA::Long> (dataLong_out, &data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataDouble_Out_i, CORBA::Double>(dataDouble_out,&data_[0], pushBytes,byteSwap);
+		pushData<BULKIO_dataFloat_Out_i, CORBA::Float>(dataFloat_out, &data_[0], pushBytes, byteSwap);
 
 		data_.erase(data_.begin(), data_.end()-numLeft);
 		if (activePorts_.size()>1)

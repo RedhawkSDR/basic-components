@@ -201,16 +201,14 @@ void server::run()
 template void server::read(std::vector<char, std::allocator<char> >&, size_t);
 template void server::read(std::vector<char, _seqVector::seqVectorAllocator<char> >&, size_t);
 
-template void server::write(std::vector<unsigned char, std::allocator<unsigned char> >&);
+//template void server::write(std::vector<unsigned char, std::allocator<unsigned char> >&);
 template void server::write(std::vector<unsigned char, _seqVector::seqVectorAllocator<unsigned char> >&);
-template void server::write(std::vector<char, std::allocator<char> >&);
+//template void server::write(std::vector<char, std::allocator<char> >&);
 template void server::write(std::vector<char, _seqVector::seqVectorAllocator<char> >&);
-template void server::write(std::vector<unsigned short, _seqVector::seqVectorAllocator<unsigned short> >&);
-template void server::write(std::vector<short, _seqVector::seqVectorAllocator<short> >&);
-template void server::write(std::vector<unsigned int, _seqVector::seqVectorAllocator<unsigned int> >&);
-template void server::write(std::vector<int, _seqVector::seqVectorAllocator<int> >&);
-template void server::write(std::vector<unsigned long, _seqVector::seqVectorAllocator<unsigned long> >&);
-template void server::write(std::vector<long, _seqVector::seqVectorAllocator<long> >&);
-template void server::write(std::vector<float, _seqVector::seqVectorAllocator<float> >&);
-template void server::write(std::vector<double, _seqVector::seqVectorAllocator<double> >&);
+template void server::write(std::vector<CORBA::UShort, _seqVector::seqVectorAllocator<CORBA::UShort> >&);
+template void server::write(std::vector<CORBA::Short, _seqVector::seqVectorAllocator<CORBA::Short> >&);
+template void server::write(std::vector<CORBA::ULong, _seqVector::seqVectorAllocator<CORBA::ULong> >&);
+template void server::write(std::vector<CORBA::Long, _seqVector::seqVectorAllocator<CORBA::Long> >&);
+template void server::write(std::vector<CORBA::Float, _seqVector::seqVectorAllocator<CORBA::Float> >&);
+template void server::write(std::vector<CORBA::Double, _seqVector::seqVectorAllocator<CORBA::Double> >&);
 
