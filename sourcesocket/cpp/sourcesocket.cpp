@@ -262,6 +262,13 @@ void sourcesocket_i::sriChanged(const std::string& id)
 	theSri.streamID = sri.streamID.c_str();
 	theSri.blocking = sri.blocking;
 	dataOctet_out->pushSRI(theSri);
+	dataChar_out->pushSRI(theSri);
+	dataUshort_out->pushSRI(theSri);
+	dataShort_out->pushSRI(theSri);
+	dataUlong_out->pushSRI(theSri);
+	dataLong_out->pushSRI(theSri);
+	dataDouble_out->pushSRI(theSri);
+	dataFloat_out->pushSRI(theSri);
 }
 
 void sourcesocket_i::updateMaxBytes(const std::string& id)
