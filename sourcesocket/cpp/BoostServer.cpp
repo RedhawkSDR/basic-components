@@ -40,7 +40,7 @@ void session::write(std::vector<T, U>& data)
 		{
 			boost::asio::async_write(socket_,
 				boost::asio::buffer(writeBuffer_[0]),
-				boost::bind(&session::handle_write, this,
+				boost::bind(&session::handle_write, shared_from_this(),
 						boost::asio::placeholders::error));
 		}
 	}
@@ -55,14 +55,14 @@ void session::handle_read(const boost::system::error_code& error,
 		server_->newSessionData(read_data_);
 		read_data_.resize(max_length_);
 		socket_.async_read_some(boost::asio::buffer(read_data_, max_length_),
-				boost::bind(&session::handle_read, this,
+				boost::bind(&session::handle_read, shared_from_this(),
 						boost::asio::placeholders::error,
 						boost::asio::placeholders::bytes_transferred));
 	}
 	else
 	{
 		std::cerr<<"ERROR reading session data: "<<error<<std::endl;
-		server_->closeSession(this);
+		server_->closeSession(shared_from_this());
 	}
 }
 
@@ -73,13 +73,13 @@ void session::handle_write(const boost::system::error_code& error)
 	if (error)
 	{
 		std::cerr<<"ERROR writting session data: "<<error<<std::endl;
-		server_->closeSession(this);
+		server_->closeSession(shared_from_this());
 	}
 	else if(!writeBuffer_.empty())
 	{
 		boost::asio::async_write(socket_,
 						boost::asio::buffer(writeBuffer_[0]),
-						boost::bind(&session::handle_write, this,
+						boost::bind(&session::handle_write, shared_from_this(),
 								boost::asio::placeholders::error));
 	}
 }
@@ -89,9 +89,9 @@ template<typename T, typename U>
 void server::write(std::vector<T, U>& data)
 {
 	boost::mutex::scoped_lock lock(sessionsLock_);
-	for (std::list<session*>::iterator i = sessions_.begin(); i!=sessions_.end(); i++)
+	for (std::list<session_ptr>::iterator i = sessions_.begin(); i!=sessions_.end(); i++)
 	{
-		session* thisSession= *i;
+		session_ptr thisSession= *i;
 		thisSession->write(data);
 	}
 }
@@ -128,15 +128,14 @@ void server::newSessionData(std::vector<char, T>& data)
 		newData++;
 	}
 }
-void server::closeSession(session* ptr)
+void server::closeSession(session_ptr ptr)
 {
 	boost::mutex::scoped_lock lock(sessionsLock_);
-	for (std::list<session*>::iterator i=sessions_.begin(); i!=sessions_.end(); i++)
+	for (std::list<session_ptr>::iterator i=sessions_.begin(); i!=sessions_.end(); i++)
 	{
 		if (ptr==*i)
 		{
 			sessions_.remove(ptr);
-			delete ptr;
 			break;
 		}
 	}
@@ -146,41 +145,31 @@ void server::closeSession(session* ptr)
 void server::start_accept()
 {
 	{
-		boost::mutex::scoped_lock lock(pendingLock_);
-		assert(pending_==NULL);
-		pending_ = new session(io_service_, this, maxLength_);
+		session_ptr new_session(new session(io_service_, this, maxLength_));
 
-		acceptor_.async_accept(pending_->socket(),
-				boost::bind(&server::handle_accept, this, pending_,
+		acceptor_.async_accept(new_session->socket(),
+				boost::bind(&server::handle_accept, this, new_session,
 						boost::asio::placeholders::error));
 	}
 }
 
-void server::handle_accept(session* new_session,
+void server::handle_accept(session_ptr new_session,
 		const boost::system::error_code& error)
 {
-	if (pending_)
-	{
+		if (!error)
 		{
-			assert(new_session==pending_);
+			{
+				boost::mutex::scoped_lock lock(sessionsLock_);
+				sessions_.push_back(new_session);
 
-			boost::mutex::scoped_lock lock(pendingLock_);
-			if (!error)
-			{
-				{
-					boost::mutex::scoped_lock lock(sessionsLock_);
-					sessions_.push_back(new_session);
-				}
-				new_session->start();
+				session_ptr new_session(new session(io_service_, this, maxLength_));
+				acceptor_.async_accept(new_session->socket(),
+								boost::bind(&server::handle_accept, this, new_session,
+										boost::asio::placeholders::error));
 			}
-			else
-			{
-				delete new_session;
-			}
-			pending_=NULL;
+			new_session->start();
 		}
 		start_accept();
-	}
 }
 
 void server::run()

@@ -26,13 +26,15 @@
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread.hpp>
 #include <boost/asio/error.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <deque>
 
 using boost::asio::ip::tcp;
 
 class server;
 
-class session
+class session :  public boost::enable_shared_from_this<session>
 {
 public:
 	session(boost::asio::io_service& io_service, server* s, size_t max_length)
@@ -72,13 +74,14 @@ private:
 
 };
 
+typedef boost::shared_ptr<session> session_ptr;
+
 class server
 {
 public:
 	server(short port, size_t maxLength=1024) :
 		acceptor_(io_service_, tcp::endpoint(tcp::v4(), port)),
 		thread_(NULL),
-		pending_(NULL),
 		maxLength_(maxLength)
 	{
 		start_accept();
@@ -89,19 +92,7 @@ public:
 	{
 		{
 			boost::mutex::scoped_lock lock(sessionsLock_);
-			for (std::list<session*>::iterator i=sessions_.begin(); i!= sessions_.end(); i++)
-			{
-				delete *i;
-			}
 			sessions_.clear();
-		}
-		{
-			boost::mutex::scoped_lock lock(pendingLock_);
-			if (pending_)
-			{
-				delete pending_;
-				pending_=NULL;
-			}
 		}
 		if(thread_)
 		{
@@ -119,25 +110,23 @@ public:
 
 	template<typename T>
 	void newSessionData(std::vector<char, T>& data);
-	void closeSession(session* ptr);
+	void closeSession(session_ptr ptr);
 
 
 private:
 	void start_accept();
-	void handle_accept(session* new_session,
+	void handle_accept(session_ptr new_session,
 			const boost::system::error_code& error);
 
 	void run();
 
 	boost::asio::io_service io_service_;
 	tcp::acceptor acceptor_;
-	std::list<session*> sessions_;
+	std::list<session_ptr> sessions_;
 	std::vector<char> pendingData_;
 	boost::mutex sessionsLock_;
 	boost::mutex pendingDataLock_;
-	boost::mutex pendingLock_;
 	boost::thread* thread_;
-	session* pending_;
 	size_t maxLength_;
 };
 
