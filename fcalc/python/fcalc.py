@@ -32,6 +32,42 @@ from fcalc_base import *
 import re
 
 import sys
+class CxPortBULKIODataDoubleIn_i(PortBULKIODataDoubleIn_i):
+    def getPacket(self):
+        """Convert data to complex if the mode is set
+        """
+        data, T, EOS, streamID, sri, sriChanged, inputQueueFlushed = PortBULKIODataDoubleIn_i.getPacket(self)
+        if data !=None and sri !=None:
+            if sri.mode==1:
+                data = [complex(*arg) for arg in zip(data[::2],data[1::2])]
+        return data, T, EOS, streamID, sri, sriChanged, inputQueueFlushed
+   
+
+class CxPortBULKIODataDoubleOut_i(PortBULKIODataDoubleOut_i):
+    def pushPacket(self, data, T, EOS, streamID, convertCx):
+        """Convert data to complex if the mode is set
+        """
+        if not convertCx:
+            #even if we don't know to convertCx - if the equation made the data complex then we 
+            #need to convert it anyway
+            for x in data:
+                if isinstance(x,complex):
+                    convertCx=True
+                    if self.sriDict[streamID].mode==0:
+                        self.sriDict[streamID].mode=1
+                        self.refreshSRI = True
+                    break        
+        if convertCx:
+            realData = []
+            for x in data:
+                if isinstance(x, complex):
+                    realData.append(x.real)
+                    realData.append(x.imag)
+                else:
+                    realData.append(x)
+                    realData.append(0)
+            data = realData
+        return PortBULKIODataDoubleOut_i.pushPacket(self, data, T, EOS, streamID)
 
 class fcalc_i(fcalc_base):
     """Implementation for the calculator component
@@ -80,7 +116,10 @@ class fcalc_i(fcalc_base):
         similar to the following:
           self.some_port = MyPortImplementation()
         """
-        fcalc_base.initialize(self)        
+        fcalc_base.initialize(self) 
+        self.port_a = CxPortBULKIODataDoubleIn_i(self, "a", self.DEFAULT_QUEUE_SIZE)
+        self.port_b = CxPortBULKIODataDoubleIn_i(self, "b", self.DEFAULT_QUEUE_SIZE)
+        self.port_out = CxPortBULKIODataDoubleOut_i(self, "out")       
         
         #take care of the requested imports    
         #we are supporting both syntax for imports
@@ -194,10 +233,14 @@ class fcalc_i(fcalc_base):
             if sriA:
                 self.sri = sriA
                 self.streamID = streamID_A
+                if sriB and sriB.mode==1:
+                    self.sri.mode=1
         else:
             if sriB:
                 self.sri = sriB
                 self.streamID = streamID_B
+                if sriA and sriA.mode==1:
+                    self.sri.mode=1
                         
         if  self.firsttime or sriChangedA or sriChangedB :
             if self.sri:
@@ -234,8 +277,8 @@ class fcalc_i(fcalc_base):
             if tA:
                 T = tA
             elif tB:
-                T = tB       
-            self.port_out.pushPacket(outData, T, EOS, self.streamID)
+                T = tB
+            self.port_out.pushPacket(outData, T, EOS, self.streamID, self.sri.mode)
         #append data at this point
         elif dataA:
             self.oldA = dataA
@@ -263,7 +306,7 @@ class fcalc_i(fcalc_base):
             else:
                 res = self.evaluate(b=d)
             outData.append(res)    
-        self.port_out.pushPacket(outData, T, bool(EOS), streamID)
+        self.port_out.pushPacket(outData, T, bool(EOS), streamID, sri.mode)
         return NORMAL        
                 
     def evaluate(self,**keys):

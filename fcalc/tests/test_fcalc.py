@@ -130,6 +130,88 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         """
         self.myTestCase("math.sin(.01*a)+math.cos(.1*b)",[float(x) for x in xrange(1024)],[float(x-512) for x in xrange(1024)])
     
+    def testComplexA(self):
+        """multiply complex input times j
+        """
+        inData= [float(x) for x in xrange(1024)]
+        outData = []
+        for (re,cx) in zip(inData[::2],inData[1::2]):
+            outData.append(-cx)
+            outData.append(re)
+        self.myTestCase("a*1j", inData,None, outData, data1Cx=True)
+
+    def testComplexB(self):
+        """multiply real input times j
+        """
+        inData= [float(x) for x in xrange(1024)]
+        outData = []
+        for x in inData:
+            outData.append(0)
+            outData.append(x)
+        self.myTestCase("1j*a", inData,None, outData)
+
+    def testComplexC(self):
+        """multiply real input times j
+        """
+        inData= [float(x) for x in xrange(1024)]
+        outData = []
+        for x in inData:
+            outData.append(0)
+            outData.append(x)
+        self.myTestCase("1j*b", None, inData, outData)
+    
+    def testComplexD(self):
+        inDataA= [float(x) for x in xrange(1024)]
+        inDataB = [2*float(x) for x in xrange(1024)]
+        outData = []
+        for re,cx in zip(inDataA, inDataB):
+            outData.append(re)
+            outData.append(cx)
+        self.myTestCase("a+1j*b", inDataA, inDataB, outData)
+
+    def testComplexE(self):
+        inDataA= [float(x) for x in xrange(1024)]
+        inDataB = [2*float(x) for x in xrange(2048)]
+        outData = []
+        for i in xrange(1024):
+            outData.append(inDataA[i]+inDataB[2*i])
+            outData.append(inDataB[2*i+1])
+        self.myTestCase("a+b", inDataA, inDataB, outData,data2Cx=True)
+
+    def testComplexF(self):
+        inDataA= [float(x) for x in xrange(2048)]
+        inDataB = [2*float(x) for x in xrange(1024)]
+        outData = []
+        for i in xrange(1024):
+            outData.append(inDataA[2*i]+2*inDataB[i])
+            outData.append(inDataA[2*i+1])
+        self.myTestCase("a+2*b", inDataA, inDataB, outData,data1Cx=True)
+
+    def testComplexG(self):
+        inDataA= [float(x) for x in xrange(1024)]
+        inDataB = [2*float(x) for x in xrange(1024)]
+        outData = []
+        for i in xrange(512):
+            outData.append(inDataA[2*i])
+            outData.append(inDataB[2*i+1])
+        self.myTestCase("complex(a.real,b.imag)", inDataA, inDataB, outData,data1Cx=True,data2Cx=True)
+
+    def testComplexH(self):
+        inDataA= [float(x) for x in xrange(1024)]
+        outData = []
+        for i in xrange(512):
+            outData.append(inDataA[2*i])
+            outData.append(0.0)
+        self.myTestCase("a.real", inDataA, None, outData,data1Cx=True)
+
+    def testComplexI(self):
+        inDataA= [float(x) for x in xrange(1024)]
+        outData = []
+        for i in xrange(512):
+            outData.append(0.0)
+            outData.append(inDataA[2*i+1])
+        self.myTestCase("1j*a.imag", inDataA, None, outData,data1Cx=True)
+    
     def testBothLag(self):
         """Test sending data to a and b but send data to b in two different chunks to demonstrate asychronous buffering behavior
         """
@@ -160,7 +242,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         self.assertTrue(len(out)==1024)
         self.assertTrue(math.isnan(out[0]))
                 
-    def myTestCase(self, testEquation, data1,data2,checkResults=True):
+    def myTestCase(self, testEquation, data1,data2,checkResults=True,data1Cx=False, data2Cx = False):
         """The main engine for all the test cases - configure the equation, push data, and get output
            As applicable
         """    
@@ -168,9 +250,9 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             print "\n... running myTestCase %s" %testEquation
             self.comp.configure(props_from_dict({'equation':testEquation}))
         if data1:
-            self.src1.push(data1)
+            self.src1.push(data1,complexData=data1Cx)
         if data2:
-            self.src2.push(data2)
+            self.src2.push(data2,complexData=data2Cx)
         #data processing is asynchronos - so wait until the data is all processed
         count=0
         while True:
@@ -182,7 +264,13 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             time.sleep(.01)
             count+=1        
         if checkResults:
-            numOut = self.checkResults(testEquation,data1, data2, out)
+            if isinstance(checkResults, list):
+                numOut=0
+                for got, expected in zip(out,checkResults):
+                   self.assertEqual(got,expected)  
+                   numOut+=1 
+            else:
+                numOut = self.checkResults(testEquation,data1, data2, out)
             self.assertNotEqual(numOut,0)
         return out
     
