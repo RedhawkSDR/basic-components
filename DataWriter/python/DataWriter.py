@@ -45,6 +45,10 @@ class DataWriter_i(DataWriter_base):
         
         self._direction = "<" # Little endian
         self._format = 'f' # float
+    
+    def stop(self):
+        self._close_file()
+        DataWriter_base.stop(self)
 
     def process(self):
         data, T, EOS, stream_id, sri, sri_changed, input_queue_flushed = self.port_dataFloat.getPacket()
@@ -146,7 +150,7 @@ class DataWriter_i(DataWriter_base):
             self._reset_metadata(clear_metadata)
     
     def _open_file(self):
-        if self._file is None and self.write:
+        if self._file is None and self.write and self._started:
             self._check_filename_avail()
             self._file = open(self.filename, "wb")
             self._log.info("Opened data file: %s" % self._file.name)
