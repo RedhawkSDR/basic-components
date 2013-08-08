@@ -1,21 +1,20 @@
 /*
- * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+ * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This file is part of REDHAWK Basic Components.
- * 
- * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
- * the GNU Lesser General Public License as published by the Free Software Foundation, either 
+ *
+ * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
- * 
- * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ *
+ * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  * PURPOSE.  See the GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this 
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this
  * program.  If not, see http://www.gnu.org/licenses/.
  */
- 
 #ifndef STRUCTPROPS_H
 #define STRUCTPROPS_H
 
@@ -26,81 +25,7 @@
 *******************************************************************************************/
 
 #include <ossie/CorbaUtils.h>
-
-struct Char_struct {
-	Char_struct ()
-	{
-		Char__MaxValue = '~';
-	};
-
-    std::string getId() {
-        return std::string("Char");
-    };
-	
-	char Char__MaxValue;
-	char Char__MinValue;
-};
-
-inline bool operator>>= (const CORBA::Any& a, Char_struct& s) {
-	CF::Properties* temp;
-	if (!(a >>= temp)) return false;
-	CF::Properties& props = *temp;
-	for (unsigned int idx = 0; idx < props.length(); idx++) {
-		if (!strcmp("Char::MaxValue", props[idx].id)) {
-		CORBA::Char temp_Char__MaxValue;
-			if (!(props[idx].value >>= CORBA::Any::to_char(temp_Char__MaxValue))) return false;
-			s.Char__MaxValue = temp_Char__MaxValue;	
-		}
-		if (!strcmp("Char::MinValue", props[idx].id)) {
-		CORBA::Char temp_Char__MinValue;
-			if (!(props[idx].value >>= CORBA::Any::to_char(temp_Char__MinValue))) return false;
-			s.Char__MinValue = temp_Char__MinValue;	
-		}
-	}
-	return true;
-};
-
-inline void operator<<= (CORBA::Any& a, const Char_struct& s) {
-	CF::Properties props;
-	props.length(2);
-	props[0].id = CORBA::string_dup("Char::MaxValue");
-	props[0].value <<= CORBA::Any::from_char(s.Char__MaxValue);
-	props[1].id = CORBA::string_dup("Char::MinValue");
-	props[1].value <<= CORBA::Any::from_char(s.Char__MinValue);
-	a <<= props;
-};
-
-inline bool operator== (const Char_struct& s1, const Char_struct& s2) {
-    if (s1.Char__MaxValue!=s2.Char__MaxValue)
-        return false;
-    if (s1.Char__MinValue!=s2.Char__MinValue)
-        return false;
-    return true;
-};
-
-inline bool operator!= (const Char_struct& s1, const Char_struct& s2) {
-    return !(s1==s2);
-};
-
-template<> inline short StructProperty<Char_struct>::compare (const CORBA::Any& a) {
-    if (super::isNil_) {
-        if (a.type()->kind() == (CORBA::tk_null)) {
-            return 0;
-        }
-        return 1;
-    }
-
-    Char_struct tmp;
-    if (fromAny(a, tmp)) {
-        if (tmp != this->value_) {
-            return 1;
-        }
-
-        return 0;
-    } else {
-        return 1;
-    }
-}
+#include <ossie/PropertyInterface.h>
 
 struct Octet_struct {
 	Octet_struct ()
@@ -595,90 +520,6 @@ template<> inline short StructProperty<Double_struct>::compare (const CORBA::Any
     }
 
     Double_struct tmp;
-    if (fromAny(a, tmp)) {
-        if (tmp != this->value_) {
-            return 1;
-        }
-
-        return 0;
-    } else {
-        return 1;
-    }
-}
-
-struct Char_out_struct {
-	Char_out_struct ()
-	{
-		Char_out__MaxValue = '~';
-		Char_out__scale_enabled = false;
-	};
-
-    std::string getId() {
-        return std::string("Char_out");
-    };
-	
-	char Char_out__MaxValue;
-	char Char_out__MinValue;
-	bool Char_out__scale_enabled;
-};
-
-inline bool operator>>= (const CORBA::Any& a, Char_out_struct& s) {
-	CF::Properties* temp;
-	if (!(a >>= temp)) return false;
-	CF::Properties& props = *temp;
-	for (unsigned int idx = 0; idx < props.length(); idx++) {
-		if (!strcmp("Char_out::MaxValue", props[idx].id)) {
-		CORBA::Char temp_Char_out__MaxValue;
-			if (!(props[idx].value >>= CORBA::Any::to_char(temp_Char_out__MaxValue))) return false;
-			s.Char_out__MaxValue = temp_Char_out__MaxValue;	
-		}
-		if (!strcmp("Char_out::MinValue", props[idx].id)) {
-		CORBA::Char temp_Char_out__MinValue;
-			if (!(props[idx].value >>= CORBA::Any::to_char(temp_Char_out__MinValue))) return false;
-			s.Char_out__MinValue = temp_Char_out__MinValue;	
-		}
-		if (!strcmp("Char_out::scale_enabled", props[idx].id)) {
-			if (!(props[idx].value >>= s.Char_out__scale_enabled)) return false;
-		}
-	}
-	return true;
-};
-
-inline void operator<<= (CORBA::Any& a, const Char_out_struct& s) {
-	CF::Properties props;
-	props.length(3);
-	props[0].id = CORBA::string_dup("Char_out::MaxValue");
-	props[0].value <<= CORBA::Any::from_char(s.Char_out__MaxValue);
-	props[1].id = CORBA::string_dup("Char_out::MinValue");
-	props[1].value <<= CORBA::Any::from_char(s.Char_out__MinValue);
-	props[2].id = CORBA::string_dup("Char_out::scale_enabled");
-	props[2].value <<= s.Char_out__scale_enabled;
-	a <<= props;
-};
-
-inline bool operator== (const Char_out_struct& s1, const Char_out_struct& s2) {
-    if (s1.Char_out__MaxValue!=s2.Char_out__MaxValue)
-        return false;
-    if (s1.Char_out__MinValue!=s2.Char_out__MinValue)
-        return false;
-    if (s1.Char_out__scale_enabled!=s2.Char_out__scale_enabled)
-        return false;
-    return true;
-};
-
-inline bool operator!= (const Char_out_struct& s1, const Char_out_struct& s2) {
-    return !(s1==s2);
-};
-
-template<> inline short StructProperty<Char_out_struct>::compare (const CORBA::Any& a) {
-    if (super::isNil_) {
-        if (a.type()->kind() == (CORBA::tk_null)) {
-            return 0;
-        }
-        return 1;
-    }
-
-    Char_out_struct tmp;
     if (fromAny(a, tmp)) {
         if (tmp != this->value_) {
             return 1;

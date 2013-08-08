@@ -177,12 +177,6 @@ template <typename OUT_TYPE> bool DataConverter_i::isEnabled(OUT_TYPE* min, OUT_
 	return false;
 }
 //specialize the templates to get the right guys pending the data type
-template <> bool DataConverter_i::isEnabled<char>(char* min, char*max)
-{
-	*max = Char_out.Char_out__MaxValue;
-	*min =  Char_out.Char_out__MinValue;
-	return Char_out.Char_out__scale_enabled;
-}
 template <> bool DataConverter_i::isEnabled<unsigned char>(unsigned char* min, unsigned char* max)
 {
 	*max = Octet_out.Octet_out__MaxValue;
@@ -231,12 +225,6 @@ template <> bool DataConverter_i::isEnabled<double>(double* min, double*max)
 template <typename IN_TYPE> void DataConverter_i::getMinMax(IN_TYPE* min, IN_TYPE* max)
 {
 	std::cout<<"DataConverter_i::getMinMax this shoud never be called"<<std::endl;
-}
-//specialize the template for out input types
-template <> void DataConverter_i::getMinMax<char>(char* min, char* max)
-{
-	*max = Char.Char__MaxValue;
-	*min = Char.Char__MinValue;
 }
 template <> void DataConverter_i::getMinMax<unsigned char>(unsigned char* min, unsigned char* max)
 {
@@ -421,7 +409,6 @@ int DataConverter_i::serviceFunction()
 
     //call each of the service functions and if any are legit
 
-	retService = singleService(dataChar) || retService;
 	retService = singleService(dataOctet) || retService;
 	retService = singleService(dataShort) || retService;
 	retService = singleService(dataUshort) || retService;
@@ -446,7 +433,6 @@ template <class IN_PORT_TYPE> bool DataConverter_i::singleService(IN_PORT_TYPE *
         //std::cout<<"doing data for input "<<dataPortIn->getName()<<std::endl;
 
         //call for each of the outputs
-        pushDataService<char>(&(packet->dataBuffer), dataChar_out, packet->EOS, packet->T, packet->streamID, packet->sriChanged, packet->SRI, &charVec);
         pushDataService<unsigned char>(&(packet->dataBuffer), dataOctet_out, packet->EOS, packet->T, packet->streamID, packet->sriChanged, packet->SRI, &uCharVec);
         pushDataService<short>(&(packet->dataBuffer), dataShort_out, packet->EOS, packet->T, packet->streamID, packet->sriChanged, packet->SRI, &shortVec);
         pushDataService<unsigned short>(&(packet->dataBuffer), dataUshort_out, packet->EOS, packet->T, packet->streamID, packet->sriChanged, packet->SRI, &uShortVec);
