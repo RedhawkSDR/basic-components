@@ -229,7 +229,7 @@ void AmFmPmBasebandDemod_i::remakeDemod()
 	boost::mutex::scoped_lock lock(demodLock);
 	double freqGain;
 	if (freqDeviation <=0)
-		freqGain = 1.0/sampleRate;
+		freqGain = sampleRate;
 	else
 		freqGain=freqDeviation;
 	float inialPhase = 0;
