@@ -22,7 +22,7 @@ BuildRequires:	bulkioInterfaces
 BuildRequires:	java-devel >= 1.6
 BuildRequires:	libomniORB4.1-devel
 BuildRequires:	libomniORBpy3-devel
-%if "%{?rhel}" == "6"
+%if 0%{?rhel} >= 6
 BuildRequires: libuuid-devel
 %else
 BuildRequires: e2fsprogs-devel
@@ -34,7 +34,7 @@ Requires:	bulkioInterfaces
 Requires:	java >= 1.6
 Requires:	libomniORB4.1
 Requires:	omniORBpy
-%if "%{?rhel}" == "6"
+%if 0%{?rhel} >= 6
 Requires: libuuid
 %else
 Requires: e2fsprogs
@@ -42,7 +42,7 @@ Requires: e2fsprogs
 Requires:	scipy
 AutoReqProv:	no
 
-%if "%{?rhel}" != "6"
+%if 0%{?rhel} < 6
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 %endif
 
