@@ -21,8 +21,7 @@ Requires:	scipy
 
 AutoReqProv:	no
 
-# el5 requires BuildRoot be defined
-%if "%{?rhel}" != "6"
+%if 0%{?rhel} < 6
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 %endif
 
