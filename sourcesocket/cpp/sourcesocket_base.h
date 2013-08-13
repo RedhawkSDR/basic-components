@@ -1,28 +1,27 @@
 /*
- * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+ * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This file is part of REDHAWK Basic Components.
- * 
- * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
- * the GNU Lesser General Public License as published by the Free Software Foundation, either 
+ *
+ * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
- * 
- * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ *
+ * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  * PURPOSE.  See the GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this 
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this
  * program.  If not, see http://www.gnu.org/licenses/.
  */
- 
 #ifndef SOURCESOCKET_IMPL_BASE_H
 #define SOURCESOCKET_IMPL_BASE_H
 
 #include <boost/thread.hpp>
 #include <ossie/Resource_impl.h>
 
-#include "port_impl.h"
+#include "bulkio/bulkio.h"
 #include "struct_props.h"
 
 #define NOOP 0
@@ -30,7 +29,6 @@
 #define NORMAL 1
 
 class sourcesocket_base;
-
 
 template < typename TargetClass >
 class ProcessThread
@@ -100,16 +98,7 @@ class ProcessThread
 
 class sourcesocket_base : public Resource_impl
 {
-    friend class BULKIO_dataUshort_Out_i;
-    friend class BULKIO_dataShort_Out_i;
-    friend class BULKIO_dataUlong_Out_i;
-    friend class BULKIO_dataChar_Out_i;
-    friend class BULKIO_dataDouble_Out_i;
-    friend class BULKIO_dataFloat_Out_i;
-    friend class BULKIO_dataLong_Out_i;
-    friend class BULKIO_dataOctet_Out_i;
-
-    public: 
+    public:
         sourcesocket_base(const char *uuid, const char *label);
 
         void start() throw (CF::Resource::StartError, CORBA::SystemException);
@@ -128,7 +117,7 @@ class sourcesocket_base : public Resource_impl
 
     protected:
         ProcessThread<sourcesocket_base> *serviceThread; 
-        boost::mutex serviceThreadLock;  
+        boost::mutex serviceThreadLock;
 
         // Member variables exposed as properties
         std::string connection_type;
@@ -143,15 +132,15 @@ class sourcesocket_base : public Resource_impl
         sri_struct sri;
 
         // Ports
-        BULKIO_dataOctet_Out_i *dataOctet_out;
-        BULKIO_dataChar_Out_i *dataChar_out;
-        BULKIO_dataShort_Out_i *dataShort_out;
-        BULKIO_dataUshort_Out_i *dataUshort_out;
-        BULKIO_dataUlong_Out_i *dataUlong_out;
-        BULKIO_dataLong_Out_i *dataLong_out;
-        BULKIO_dataFloat_Out_i *dataFloat_out;
-        BULKIO_dataDouble_Out_i *dataDouble_out;
-    
+        bulkio::OutOctetPort *dataOctet_out;
+        bulkio::OutCharPort *dataChar_out;
+        bulkio::OutShortPort *dataShort_out;
+        bulkio::OutUShortPort *dataUshort_out;
+        bulkio::OutULongPort *dataUlong_out;
+        bulkio::OutLongPort *dataLong_out;
+        bulkio::OutFloatPort *dataFloat_out;
+        bulkio::OutDoublePort *dataDouble_out;
+
     private:
         void construct();
 

@@ -17,7 +17,6 @@
  */
 
 #include "BoostServer.h"
-#include "port_impl.h"
 
 void session::start()
 {
@@ -188,16 +187,15 @@ void server::run()
 //need to put these bad boys in here for templates or you get undefined references when linking ...grr...
 
 template void server::read(std::vector<char, std::allocator<char> >&, size_t);
-template void server::read(std::vector<char, _seqVector::seqVectorAllocator<char> >&, size_t);
+//template void server::read(std::vector<char, _seqVector::seqVectorAllocator<char> >&, size_t);
 
 template void server::write(std::vector<unsigned char, std::allocator<unsigned char> >&);
-template void server::write(std::vector<unsigned char, _seqVector::seqVectorAllocator<unsigned char> >&);
 template void server::write(std::vector<char, std::allocator<char> >&);
-template void server::write(std::vector<char, _seqVector::seqVectorAllocator<char> >&);
-template void server::write(std::vector<CORBA::UShort, _seqVector::seqVectorAllocator<CORBA::UShort> >&);
-template void server::write(std::vector<CORBA::Short, _seqVector::seqVectorAllocator<CORBA::Short> >&);
-template void server::write(std::vector<CORBA::ULong, _seqVector::seqVectorAllocator<CORBA::ULong> >&);
-template void server::write(std::vector<CORBA::Long, _seqVector::seqVectorAllocator<CORBA::Long> >&);
-template void server::write(std::vector<CORBA::Float, _seqVector::seqVectorAllocator<CORBA::Float> >&);
-template void server::write(std::vector<CORBA::Double, _seqVector::seqVectorAllocator<CORBA::Double> >&);
+template void server::write(std::vector<signed char, std::allocator<signed char> >&);
+template void server::write(std::vector<short, std::allocator<short> >&);
+template void server::write(std::vector<unsigned short, std::allocator<unsigned short> >&);
+template void server::write(std::vector<int, std::allocator<int> >&);
+template void server::write(std::vector<unsigned int, std::allocator<unsigned int> >&);
+template void server::write(std::vector<float, std::allocator<float> >&);
+template void server::write(std::vector<double, std::allocator<double> >&);
 

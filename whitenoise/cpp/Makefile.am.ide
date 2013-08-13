@@ -21,8 +21,6 @@
 # by opening the Properties dialog of your project and choosing C/C++ Build ->
 # Tool Chain Editor, and un-checking "Exclude resource from build "
 redhawk_SOURCES_auto = main.cpp
-redhawk_SOURCES_auto += port_impl.cpp
-redhawk_SOURCES_auto += port_impl.h
 redhawk_SOURCES_auto += struct_props.h
 redhawk_SOURCES_auto += whitenoise.cpp
 redhawk_SOURCES_auto += whitenoise.h

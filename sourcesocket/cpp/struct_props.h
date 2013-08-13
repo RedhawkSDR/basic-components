@@ -26,65 +26,66 @@
 *******************************************************************************************/
 
 #include <ossie/CorbaUtils.h>
+#include <ossie/PropertyInterface.h>
 
 struct sri_struct {
-	sri_struct ()
-	{
-		xstart = 0.0;
-		xdelta = 1.0;
-		mode = 0;
-		blocking = true;
-	};
+    sri_struct ()
+    {
+        xstart = 0.0;
+        xdelta = 1.0;
+        mode = 0;
+        blocking = true;
+    };
 
     std::string getId() {
         return std::string("sri");
     };
-	
-	double xstart;
-	double xdelta;
-	short mode;
-	std::string streamID;
-	bool blocking;
+
+    double xstart;
+    double xdelta;
+    short mode;
+    std::string streamID;
+    bool blocking;
 };
 
 inline bool operator>>= (const CORBA::Any& a, sri_struct& s) {
-	CF::Properties* temp;
-	if (!(a >>= temp)) return false;
-	CF::Properties& props = *temp;
-	for (unsigned int idx = 0; idx < props.length(); idx++) {
-		if (!strcmp("xstart", props[idx].id)) {
-			if (!(props[idx].value >>= s.xstart)) return false;
-		}
-		if (!strcmp("xdelta", props[idx].id)) {
-			if (!(props[idx].value >>= s.xdelta)) return false;
-		}
-		if (!strcmp("mode", props[idx].id)) {
-			if (!(props[idx].value >>= s.mode)) return false;
-		}
-		if (!strcmp("streamID", props[idx].id)) {
-			if (!(props[idx].value >>= s.streamID)) return false;
-		}
-		if (!strcmp("blocking", props[idx].id)) {
-			if (!(props[idx].value >>= s.blocking)) return false;
-		}
-	}
-	return true;
+    CF::Properties* temp;
+    if (!(a >>= temp)) return false;
+    CF::Properties& props = *temp;
+    for (unsigned int idx = 0; idx < props.length(); idx++) {
+        if (!strcmp("xstart", props[idx].id)) {
+            if (!(props[idx].value >>= s.xstart)) return false;
+        }
+        if (!strcmp("xdelta", props[idx].id)) {
+            if (!(props[idx].value >>= s.xdelta)) return false;
+        }
+        if (!strcmp("mode", props[idx].id)) {
+            if (!(props[idx].value >>= s.mode)) return false;
+        }
+        if (!strcmp("streamID", props[idx].id)) {
+            if (!(props[idx].value >>= s.streamID)) return false;
+        }
+        if (!strcmp("blocking", props[idx].id)) {
+            if (!(props[idx].value >>= s.blocking)) return false;
+        }
+    }
+    return true;
 };
 
 inline void operator<<= (CORBA::Any& a, const sri_struct& s) {
-	CF::Properties props;
-	props.length(5);
-	props[0].id = CORBA::string_dup("xstart");
-	props[0].value <<= s.xstart;
-	props[1].id = CORBA::string_dup("xdelta");
-	props[1].value <<= s.xdelta;
-	props[2].id = CORBA::string_dup("mode");
-	props[2].value <<= s.mode;
-	props[3].id = CORBA::string_dup("streamID");
-	props[3].value <<= s.streamID;
-	props[4].id = CORBA::string_dup("blocking");
-	props[4].value <<= s.blocking;
-	a <<= props;
+    CF::Properties props;
+    props.length(5);
+    props[0].id = CORBA::string_dup("xstart");
+    props[0].value <<= s.xstart;
+    props[1].id = CORBA::string_dup("xdelta");
+    props[1].value <<= s.xdelta;
+    props[2].id = CORBA::string_dup("mode");
+    props[2].value <<= s.mode;
+    props[3].id = CORBA::string_dup("streamID");
+    props[3].value <<= s.streamID;
+    props[4].id = CORBA::string_dup("blocking");
+    props[4].value <<= s.blocking;
+    a <<= props;
 };
 
 inline bool operator== (const sri_struct& s1, const sri_struct& s2) {

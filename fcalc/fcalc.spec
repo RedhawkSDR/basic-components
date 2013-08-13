@@ -36,8 +36,8 @@ Group: REDHAWK/Components
 Source: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-root
 
-Requires: redhawk >= 1.8
-BuildRequires: redhawk >= 1.8
+Requires: redhawk >= 1.9
+BuildRequires: redhawk-devel >= 1.9
 BuildRequires: autoconf automake libtool
 
 # Interface requirements
@@ -46,17 +46,13 @@ BuildRequires: bulkioInterfaces
 
 BuildArch: noarch
 
-# Python requirements
-Requires: python omniORBpy
-BuildRequires: libomniORBpy3-devel
-BuildRequires: python-devel >= 2.3
-
-
 %description
 Component %{name}
 
+
 %prep
 %setup
+
 
 %build
 # Implementation python
@@ -64,24 +60,28 @@ pushd python
 ./reconf
 %define _bindir %{_prefix}/dom/components/fcalc/python
 %configure
-make
+make %{?_smp_mflags}
 popd
+
 
 %install
 rm -rf $RPM_BUILD_ROOT
 # Implementation python
 pushd python
-%define _bindir %{_prefix}/dom/components/fcalc/python 
+%define _bindir %{_prefix}/dom/components/fcalc/python
 make install DESTDIR=$RPM_BUILD_ROOT
 popd
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+
 %files
 %defattr(-,redhawk,redhawk)
 %dir %{_prefix}/dom/components/%{name}
-%{_prefix}/dom/components/%{name}/fcalc.spd.xml
-%{_prefix}/dom/components/%{name}/fcalc.prf.xml
 %{_prefix}/dom/components/%{name}/fcalc.scd.xml
+%{_prefix}/dom/components/%{name}/fcalc.prf.xml
+%{_prefix}/dom/components/%{name}/fcalc.spd.xml
 %{_prefix}/dom/components/%{name}/python
+

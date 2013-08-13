@@ -20,25 +20,17 @@
 /*******************************************************************************************
 
     AUTO-GENERATED CODE. DO NOT MODIFY
-    
- 	Source: DataConverter.spd.xml
- 	Generated on: Thu Aug 08 18:56:39 UTC 2013
- 	REDHAWK IDE
- 	Version:  1.9.0
- 	Build id: N201308081242
-
-*******************************************************************************************/
-
-/******************************************************************************************
 
     The following class functions are for the base class for the component class. To
     customize any of these functions, do not modify them here. Instead, overload them
     on the child class
 
 ******************************************************************************************/
- 
+
 DataConverter_base::DataConverter_base(const char *uuid, const char *label) :
-                                     Resource_impl(uuid, label), serviceThread(0) {
+    Resource_impl(uuid, label),
+    serviceThread(0)
+{
     construct();
 }
 
@@ -49,33 +41,33 @@ void DataConverter_base::construct()
     serviceThread = 0;
     
     PortableServer::ObjectId_var oid;
-    dataOctet = new BULKIO_dataOctet_In_i("dataOctet", this);
+    dataOctet = new bulkio::InOctetPort("dataOctet");
     oid = ossie::corba::RootPOA()->activate_object(dataOctet);
-    dataUshort = new BULKIO_dataUshort_In_i("dataUshort", this);
+    dataUshort = new bulkio::InUShortPort("dataUshort");
     oid = ossie::corba::RootPOA()->activate_object(dataUshort);
-    dataShort = new BULKIO_dataShort_In_i("dataShort", this);
+    dataShort = new bulkio::InShortPort("dataShort");
     oid = ossie::corba::RootPOA()->activate_object(dataShort);
-    dataUlong = new BULKIO_dataUlong_In_i("dataUlong", this);
+    dataUlong = new bulkio::InULongPort("dataUlong");
     oid = ossie::corba::RootPOA()->activate_object(dataUlong);
-    dataLong = new BULKIO_dataLong_In_i("dataLong", this);
+    dataLong = new bulkio::InLongPort("dataLong");
     oid = ossie::corba::RootPOA()->activate_object(dataLong);
-    dataFloat = new BULKIO_dataFloat_In_i("dataFloat", this);
+    dataFloat = new bulkio::InFloatPort("dataFloat");
     oid = ossie::corba::RootPOA()->activate_object(dataFloat);
-    dataDouble = new BULKIO_dataDouble_In_i("dataDouble", this);
+    dataDouble = new bulkio::InDoublePort("dataDouble");
     oid = ossie::corba::RootPOA()->activate_object(dataDouble);
-    dataOctet_out = new BULKIO_dataOctet_Out_i("dataOctet_out", this);
+    dataOctet_out = new bulkio::OutOctetPort("dataOctet_out");
     oid = ossie::corba::RootPOA()->activate_object(dataOctet_out);
-    dataShort_out = new BULKIO_dataShort_Out_i("dataShort_out", this);
+    dataShort_out = new bulkio::OutShortPort("dataShort_out");
     oid = ossie::corba::RootPOA()->activate_object(dataShort_out);
-    dataUshort_out = new BULKIO_dataUshort_Out_i("dataUshort_out", this);
+    dataUshort_out = new bulkio::OutUShortPort("dataUshort_out");
     oid = ossie::corba::RootPOA()->activate_object(dataUshort_out);
-    dataLong_out = new BULKIO_dataLong_Out_i("dataLong_out", this);
+    dataLong_out = new bulkio::OutLongPort("dataLong_out");
     oid = ossie::corba::RootPOA()->activate_object(dataLong_out);
-    dataUlong_out = new BULKIO_dataUlong_Out_i("dataUlong_out", this);
+    dataUlong_out = new bulkio::OutULongPort("dataUlong_out");
     oid = ossie::corba::RootPOA()->activate_object(dataUlong_out);
-    dataFloat_out = new BULKIO_dataFloat_Out_i("dataFloat_out", this);
+    dataFloat_out = new bulkio::OutFloatPort("dataFloat_out");
     oid = ossie::corba::RootPOA()->activate_object(dataFloat_out);
-    dataDouble_out = new BULKIO_dataDouble_Out_i("dataDouble_out", this);
+    dataDouble_out = new bulkio::OutDoublePort("dataDouble_out");
     oid = ossie::corba::RootPOA()->activate_object(dataDouble_out);
 
     registerInPort(dataOctet);
@@ -106,13 +98,6 @@ void DataConverter_base::start() throw (CORBA::SystemException, CF::Resource::St
 {
     boost::mutex::scoped_lock lock(serviceThreadLock);
     if (serviceThread == 0) {
-        dataOctet->unblock();
-        dataUshort->unblock();
-        dataShort->unblock();
-        dataUlong->unblock();
-        dataLong->unblock();
-        dataFloat->unblock();
-        dataDouble->unblock();
         serviceThread = new ProcessThread<DataConverter_base>(this, 0.1);
         serviceThread->start();
     }
@@ -127,13 +112,13 @@ void DataConverter_base::stop() throw (CORBA::SystemException, CF::Resource::Sto
     boost::mutex::scoped_lock lock(serviceThreadLock);
     // release the child thread (if it exists)
     if (serviceThread != 0) {
-        dataOctet->block();
-        dataUshort->block();
-        dataShort->block();
-        dataUlong->block();
-        dataLong->block();
-        dataFloat->block();
-        dataDouble->block();
+		dataOctet->block();
+		dataUshort->block();
+		dataShort->block();
+		dataUlong->block();
+		dataLong->block();
+		dataFloat->block();
+		dataDouble->block();
         if (!serviceThread->release(2)) {
             throw CF::Resource::StopError(CF::CF_NOTSET, "Processing thread did not die");
         }
@@ -150,47 +135,46 @@ CORBA::Object_ptr DataConverter_base::getPort(const char* _id) throw (CORBA::Sys
 
     std::map<std::string, Port_Provides_base_impl *>::iterator p_in = inPorts.find(std::string(_id));
     if (p_in != inPorts.end()) {
-
         if (!strcmp(_id,"dataOctet")) {
-            BULKIO_dataOctet_In_i *ptr = dynamic_cast<BULKIO_dataOctet_In_i *>(p_in->second);
+            bulkio::InOctetPort *ptr = dynamic_cast<bulkio::InOctetPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataOctet::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataUshort")) {
-            BULKIO_dataUshort_In_i *ptr = dynamic_cast<BULKIO_dataUshort_In_i *>(p_in->second);
+            bulkio::InUShortPort *ptr = dynamic_cast<bulkio::InUShortPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataUshort::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataShort")) {
-            BULKIO_dataShort_In_i *ptr = dynamic_cast<BULKIO_dataShort_In_i *>(p_in->second);
+            bulkio::InShortPort *ptr = dynamic_cast<bulkio::InShortPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataShort::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataUlong")) {
-            BULKIO_dataUlong_In_i *ptr = dynamic_cast<BULKIO_dataUlong_In_i *>(p_in->second);
+            bulkio::InULongPort *ptr = dynamic_cast<bulkio::InULongPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataUlong::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataLong")) {
-            BULKIO_dataLong_In_i *ptr = dynamic_cast<BULKIO_dataLong_In_i *>(p_in->second);
+            bulkio::InLongPort *ptr = dynamic_cast<bulkio::InLongPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataLong::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataFloat")) {
-            BULKIO_dataFloat_In_i *ptr = dynamic_cast<BULKIO_dataFloat_In_i *>(p_in->second);
+            bulkio::InFloatPort *ptr = dynamic_cast<bulkio::InFloatPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataFloat::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataDouble")) {
-            BULKIO_dataDouble_In_i *ptr = dynamic_cast<BULKIO_dataDouble_In_i *>(p_in->second);
+            bulkio::InDoublePort *ptr = dynamic_cast<bulkio::InDoublePort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataDouble::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
     }
@@ -230,122 +214,136 @@ void DataConverter_base::releaseObject() throw (CORBA::SystemException, CF::Life
     delete(dataUlong_out);
     delete(dataFloat_out);
     delete(dataDouble_out);
- 
+
     Resource_impl::releaseObject();
 }
 
 void DataConverter_base::loadProperties()
 {
     addProperty(Octet,
-               "Octet",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Octet_struct(),
+                "Octet",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(Ushort,
-               "Ushort",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Ushort_struct(),
+                "Ushort",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(Short,
-               "Short",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Short_struct(),
+                "Short",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(ULong,
-               "ULong",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                ULong_struct(),
+                "ULong",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(Long,
-               "Long",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Long_struct(),
+                "Long",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(Float,
-               "Float",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Float_struct(),
+                "Float",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(Double,
-               "Double",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Double_struct(),
+                "Double",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(Octet_out,
-               "Octet_out",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Octet_out_struct(),
+                "Octet_out",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(Ushort_out,
-               "Ushort_out",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Ushort_out_struct(),
+                "Ushort_out",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(Short_out,
-               "Short_out",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Short_out_struct(),
+                "Short_out",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(Ulong_out,
-               "Ulong_out",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Ulong_out_struct(),
+                "Ulong_out",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(Long_out,
-               "Long_out",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Long_out_struct(),
+                "Long_out",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(Float_out,
-               "Float_out",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Float_out_struct(),
+                "Float_out",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(Double_out,
-               "Double_out",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                Double_out_struct(),
+                "Double_out",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
 }

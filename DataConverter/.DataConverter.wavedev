@@ -18,7 +18,7 @@ program.  If not, see http://www.gnu.org/licenses/.
 -->
 <codegen:WaveDevSettings xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:codegen="http://www.redhawk.gov/model/codegen">
   <implSettings key="DCE:f744f32f-510a-4e64-9124-3507d5568e39">
-    <value name="DataConverter" outputDir="DataConverter" template="gov.redhawk.ide.codegen.jet.cplusplus.PullPortDataTemplate" generatorId="gov.redhawk.ide.codegen.jet.cplusplus.CplusplusGenerator">
+    <value name="DataConverter" outputDir="DataConverter" template="redhawk.codegen.jinja.cpp.component.pull" generatorId="gov.redhawk.ide.codegen.jinja.cplusplus.CplusplusGenerator">
       <generatedFileCRCs crc="1746641546" file="reconf"/>
       <generatedFileCRCs crc="969230324" file="port_impl.cpp"/>
       <generatedFileCRCs crc="4291200957" file="DataConverter.spec"/>

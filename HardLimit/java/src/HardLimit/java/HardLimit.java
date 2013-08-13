@@ -17,248 +17,146 @@
  */
 package HardLimit.java;
 
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
-import org.omg.CORBA.ORB;
-import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAPackage.ServantNotActive;
-import org.omg.PortableServer.POAPackage.WrongPolicy;
-import org.omg.CosNaming.NamingContextPackage.CannotProceed;
-import org.omg.CosNaming.NamingContextPackage.InvalidName;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
-import CF.PropertiesHolder;
-import CF.ResourceHelper;
-import CF.UnknownProperties;
-import CF.LifeCyclePackage.InitializeError;
-import CF.LifeCyclePackage.ReleaseError;
-import CF.InvalidObjectReference;
-import CF.PropertySetPackage.InvalidConfiguration;
-import CF.PropertySetPackage.PartialConfiguration;
-import CF.ResourcePackage.StartError;
-import CF.ResourcePackage.StopError;
-import CF.DataType;
-import org.omg.CORBA.UserException;
-import org.omg.CosNaming.NameComponent;
-import org.apache.log4j.Logger;
-import org.ossie.component.*;
-import org.ossie.properties.*;
-import BULKIO.StreamSRI;
-import HardLimit.java.ports.*;
+
+import bulkio.InDoublePort;
 
 /**
- * This is the component code. This file contains all the access points
- * you need to use to be able to access all input and output ports,
- * respond to incoming data, and perform general component housekeeping
+ * This is the component code. This file contains the derived class where custom
+ * functionality can be added to the component. You may add methods and code to
+ * this class to handle property changes, respond to incoming data, and perform
+ * general component housekeeping
  *
  * Source: HardLimit.spd.xml
- * Generated on: Thu Feb 21 13:40:17 EST 2013
- * Redhawk IDE
- * Version:M.1.8.2
- * Build id: v201211201139RC3 
- 
- * @generated
  */
-public class HardLimit extends Resource implements Runnable {
+public class HardLimit extends HardLimit_base {
     /**
-     * @generated
+     * This is the component constructor. In this method, you may add additional
+     * functionality to properties, such as listening for changes and handling
+     * allocation, and set up internal state for your component.
+     *
+     * A component may listen for external changes to properties (i.e., by a
+     * call to configure) using the PropertyListener interface. Listeners are
+     * registered by calling addPropertyListener() on the property instance
+     * with an object that implements the PropertyListener interface for that
+     * data type (e.g., "PropertyListener<Float>" for a float property). More
+     * than one listener can be connected to a property.
+     *
+     *   Example:
+     *       // This example makes use of the following properties:
+     *       //  - A float value called scaleValue
+     *       // The file must import "org.ossie.properties.PropertyListener"
+     *
+     *       this.scaleValue.addPropertyListener(new PropertyListener<Float>() {
+     *           public void valueChanged(Float oldValue, Float newValue) {
+     *               logger.debug("Changed scaleValue " + oldValue + " to " + newValue);
+     *           }
+     *       });
+     *
+     * The recommended practice is for the implementation of valueChanged() to
+     * contain only glue code to dispatch the call to a private method on the
+     * component class.
      */
-    public final static Logger logger = Logger.getLogger(HardLimit.class.getName());
-    
-	/**
-	 * The property upper_limit
-	 * If the meaning of this property isn't clear, a description should be added.
-	 * 
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public final SimpleProperty<Double> upper_limit =
-		new SimpleProperty<Double>(
-			"upper_limit", //id
-			null, //name
-			"double", //type
-			1.0, //default value
-			"readwrite", //mode
-			"external", //action
-			new String[] {"configure"} //kind
-			);
-    
-	/**
-	 * The property lower_limit
-	 * If the meaning of this property isn't clear, a description should be added.
-	 * 
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public final SimpleProperty<Double> lower_limit =
-		new SimpleProperty<Double>(
-			"lower_limit", //id
-			null, //name
-			"double", //type
-			-1.0, //default value
-			"readwrite", //mode
-			"external", //action
-			new String[] {"configure"} //kind
-			); 
-    // Provides/inputs
-    /**
-     * @generated
-     */
-    public BULKIO_dataDoubleInPort port_dataDouble_in;
-
-    public class MyBULKIO_dataDoubleOutPort extends BULKIO_dataDoubleOutPort
-    {
-    	public MyBULKIO_dataDoubleOutPort(String portName) {
-			super(portName);
-		}
-
-		public boolean hasSri(String streamID)
-    	{
-    		return this.currentSRIs.containsKey(streamID);
-    	}
-    };
-    
-    // Uses/outputs
-    /**
-     * @generated
-     */
-    public MyBULKIO_dataDoubleOutPort port_dataDouble_out;
-
-    /**
-     * @generated
-     */
-    public HardLimit() 
-    {
-        super();      
-        addProperty(upper_limit);
-        addProperty(lower_limit);
-
-        // Provides/input
-        this.port_dataDouble_in = new BULKIO_dataDoubleInPort(this, "dataDouble_in");
-        this.addPort("dataDouble_in", this.port_dataDouble_in);
-
-        // Uses/output
-        this.port_dataDouble_out = new MyBULKIO_dataDoubleOutPort("dataDouble_out");
-        this.addPort("dataDouble_out", this.port_dataDouble_out);
-    
-       //begin-user-code
-       //end-user-code
+    public HardLimit() {
+        super();
     }
 
+    public boolean hasSri(String streamID)
+	{
+		return Arrays.asList(port_dataDouble_out.activeSRIs()).contains(streamID);
+	}
     
     /**
-     * @generated
-     */
-    public boolean compareSRI(StreamSRI SRI_1, StreamSRI SRI_2){
-        if (SRI_1.hversion != SRI_2.hversion)
-            return false;
-        if (SRI_1.xstart != SRI_2.xstart)
-            return false;
-        if (SRI_1.xdelta != SRI_2.xdelta)
-            return false;
-        if (SRI_1.xunits != SRI_2.xunits)
-            return false;
-        if (SRI_1.subsize != SRI_2.subsize)
-            return false;
-        if (SRI_1.ystart != SRI_2.ystart)
-            return false;
-        if (SRI_1.ydelta != SRI_2.ydelta)
-            return false;
-        if (SRI_1.yunits != SRI_2.yunits)
-            return false;
-        if (SRI_1.mode != SRI_2.mode)
-            return false;
-        if (SRI_1.streamID != SRI_2.streamID)
-            return false;
-        if (SRI_1.keywords.length != SRI_2.keywords.length)
-            return false;
-        String action = "eq";
-        for (int i=0; i < SRI_1.keywords.length; i++) {
-            if (!SRI_1.keywords[i].id.equals(SRI_2.keywords[i].id)) {
-                return false;
-            }
-            if (!SRI_1.keywords[i].value.type().equivalent(SRI_2.keywords[i].value.type())) {
-                return false;
-            }
-            if (AnyUtils.compareAnys(SRI_1.keywords[i].value, SRI_2.keywords[i].value, action)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      *
-     * Main processing thread
+     * Main processing function
      *
-     * <!-- begin-user-doc -->
-     * 
      * General functionality:
-     * 
-     *    This function is running as a separate thread from the component's main thread. 
-     *    
-     *    The IDE uses JMerge during the generation (and re-generation) process.  To keep
-     *    customizations to this file from being over-written during subsequent generations,
-     *    put your customization in between the following tags:
-     *      - //begin-user-code
-     *      - //end-user-code
-     *    or, alternatively, set the @generated flag located before the code you wish to 
-     *    modify, in the following way:
-     *      - "@generated NOT"
-     * 
+     *
+     * The serviceFunction() is called repeatedly by the component's processing
+     * thread, which runs independently of the main thread. Each invocation
+     * should perform a single unit of work, such as reading and processing one
+     * data packet.
+     *
+     * The return status of serviceFunction() determines how soon the next
+     * invocation occurs:
+     *   - NORMAL: the next call happens immediately
+     *   - NOOP:   the next call happens after a pre-defined delay (100 ms)
+     *   - FINISH: no more calls occur
+     *
      * StreamSRI:
      *    To create a StreamSRI object, use the following code:
-     *        this.stream_id = "stream";
-     * 		  StreamSRI sri = new StreamSRI();
-     * 		  sri.mode = 0;
-     * 		  sri.xdelta = 0.0;
-     * 		  sri.ydelta = 1.0;
-     * 		  sri.subsize = 0;
-     * 		  sri.xunits = 1; // TIME_S
-     * 		  sri.streamID = (this.stream_id.getValue() != null) ? this.stream_id.getValue() : "";
-     * 
+     *            String stream_id = "testStream";
+     *            BULKIO.StreamSRI sri = new BULKIO.StreamSRI();
+     *            sri.mode = 0;
+     *            sri.xdelta = 0.0;
+     *            sri.ydelta = 1.0;
+     *            sri.subsize = 0;
+     *            sri.xunits = 1; // TIME_S
+     *            sri.streamID = (stream_id != null) ? stream_id : "";
+     *
      * PrecisionUTCTime:
      *    To create a PrecisionUTCTime object, use the following code:
-     * 		  long tmp_time = System.currentTimeMillis();
-     * 		  double wsec = tmp_time / 1000;
-     * 		  double fsec = tmp_time % 1000;
-     * 		  PrecisionUTCTime tstamp = new PrecisionUTCTime(BULKIO.TCM_CPU.value, (short)1, (short)0, wsec, fsec);
-     * 
+     *            BULKIO.PrecisionUTCTime tstamp = bulkio.time.utils.now();
+     *
      * Ports:
-     * 
-     *    Each port instance is accessed through members of the following form: this.port_<PORT NAME>
-     * 
-     *    Data is obtained in the run function through the getPacket call (BULKIO only) on a
-     *    provides port member instance. The getPacket function call is non-blocking; it takes
-     *    one argument which is the time to wait on new data. If you pass 0, it will return
-     *    immediately if no data available (won't wait).
-     *    
-     *    To send data, call the appropriate function in the port directly. In the case of BULKIO,
-     *    convenience functions have been added in the port classes that aid in output.
-     *    
-     *    Interactions with non-BULKIO ports are left up to the component developer's discretion.
-     *    
+     *
+     *    Each port instance is accessed through members of the following form:
+     *
+     *        this.port_<PORT NAME>
+     *
+     *    Input BULKIO data is obtained by calling getPacket on the provides
+     *    port. The getPacket method takes one argument: the time to wait for
+     *    data to arrive, in milliseconds. A timeout of 0 causes getPacket to
+     *    return immediately, while a negative timeout indicates an indefinite
+     *    wait. If no data is queued and no packet arrives during the waiting
+     *    period, getPacket returns null.
+     *
+     *    Output BULKIO data is sent by calling pushPacket on the uses port. In
+     *    the case of numeric data, the pushPacket method takes a primitive
+     *    array (e.g., "float[]"), a timestamp, an end-of-stream flag and a
+     *    stream ID. You must make at least one call to pushSRI to associate a
+     *    StreamSRI with the stream ID before calling pushPacket, or receivers
+     *    may drop the data.
+     *
+     *    When all processing on a stream is complete, a call should be made to
+     *    pushPacket with the end-of-stream flag set to "true".
+     *
+     *    Interactions with non-BULKIO ports are left up to the discretion of
+     *    the component developer.
+     *
      * Properties:
-     * 
-     *    Properties are accessed through members of the same name with helper functions. If the 
-     *    property name is baudRate, then reading the value is achieved by: this.baudRate.getValue();
-     *    and writing a new value is achieved by: this.baudRate.setValue(new_value);
-     *    
+     *
+     *    Properties are accessed through members of the same name; characters
+     *    that are invalid for a Java identifier are replaced with "_". The
+     *    current value of the property is read with getValue and written with
+     *    setValue:
+     *
+     *        float val = this.float_prop.getValue();
+     *        ...
+     *        this.float_prop.setValue(1.5f);
+     *
+     *    Primitive data types are stored using the corresponding Java object
+     *    wrapper class. For example, a property of type "float" is stored as a
+     *    Float. Java will automatically box and unbox primitive types where
+     *    appropriate.
+     *
+     *    Numeric properties support assignment via setValue from any numeric
+     *    type. The standard Java type coercion rules apply (e.g., truncation
+     *    of floating point values when converting to integer types).
+     *
      * Example:
-     * 
+     *
      *    This example assumes that the component has two ports:
-     *        - A provides (input) port of type BULKIO::dataShort called dataShort_in
-     *        - A uses (output) port of type BULKIO::dataFloat called dataFloat_out
-     *    The mapping between the port and the class is found the class of the same name.
+     *        - A bulkio.InShortPort provides (input) port called dataShort_in
+     *        - A bulkio.InFloatPort uses (output) port called dataFloat_out
+     *    The mapping between the port and the class is found in the component
+     *    base class file.
      *    This example also makes use of the following Properties:
      *        - A float value called amplitude with a default value of 2.0
      *        - A boolean called increaseAmplitude with a default value of true
-     *    
-     *    BULKIO_dataShortInPort.Packet<short[]> data = this.port_dataShort_in.getPacket(125);
+     *
+     *    InShortPort.Packet data = this.port_dataShort_in.getPacket(125);
      *
      *    if (data != null) {
      *        float[] outData = new float[data.getData().length];
@@ -276,95 +174,39 @@ public class HardLimit extends Resource implements Runnable {
      *        }
      *        this.port_dataFloat_out.pushPacket(outData, data.getTime(), data.getEndOfStream(), data.getStreamID());
      *    }
-     *      
-     * <!-- end-user-doc -->
-     * 
-     * @generated
+     *
      */
-    public void run() 
-    {
-        //begin-user-code
-        //end-user-code
-        
-        while(this.started())
-        {
-            //begin-user-code
-            // Process data here
-            try {
-            	BULKIO_dataDoubleInPort.Packet<double[]> data = this.port_dataDouble_in.getPacket(-1);
-               
-                if (data !=null) {
-                	if (data.sriChanged() || (!this.port_dataDouble_out.hasSri(data.getStreamID()))) {
-                        this.port_dataDouble_out.pushSRI(data.getSRI());
-                    }	
-                	
-                	for (int i =0; i<data.getData().length; i++) {
-                		if (data.getData()[i] > this.upper_limit.getValue()) {
-                			data.getData()[i] = this.upper_limit.getValue();
-                		}
-                		else if (data.getData()[i] < this.lower_limit.getValue()) {
-                			data.getData()[i] = this.lower_limit.getValue();
-                		}
-                		
-                	}
-                	this.port_dataDouble_out.pushPacket(data.getData(), data.getTime(), data.getEndOfStream(), data.getStreamID());
-                }
-                else {
-                	Thread.sleep(100);
-                }
-            	
-                
-            } catch (InterruptedException e) {
-                break;
-            }
-            
-            //end-user-code
+    protected int serviceFunction() {
+    	InDoublePort.Packet data = this.port_dataDouble_in.getPacket(-1);
+
+        if (data !=null) {
+        	if (data.sriChanged() || (!this.hasSri(data.getStreamID()))) {
+                this.port_dataDouble_out.pushSRI(data.getSRI());
+            }	
+        	
+        	for (int i =0; i<data.getData().length; i++) {
+        		if (data.getData()[i] > this.upper_limit.getValue()) {
+        			data.getData()[i] = this.upper_limit.getValue();
+        		}
+        		else if (data.getData()[i] < this.lower_limit.getValue()) {
+        			data.getData()[i] = this.lower_limit.getValue();
+        		}
+        		
+        	}
+        	this.port_dataDouble_out.pushPacket(data.getData(), data.getTime(), data.getEndOfStream(), data.getStreamID());    	
+        return NORMAL;
         }
-        
-        //begin-user-code
-        //end-user-code
+        else
+        	return NOOP;
     }
 
-        
     /**
-     * The main function of your component.  If no args are provided, then the
-     * CORBA object is not bound to an SCA Domain or NamingService and can
-     * be run as a standard Java application.
-     * 
-     * @param args
-     * @generated
+     * Set additional options for ORB startup. For example:
+     *
+     *   orbProps.put("com.sun.CORBA.giop.ORBFragmentSize", Integer.toString(fragSize));
+     *
+     * @param orbProps
      */
-    public static void main(String[] args) 
-    {
-        final Properties orbProps = new Properties();
-
-        //begin-user-code
-        // TODO You may add extra startup code here, for example:
-        // orbProps.put("com.sun.CORBA.giop.ORBFragmentSize", Integer.toString(fragSize));
-        //end-user-code
-
-        try {
-            Resource.start_component(HardLimit.class, args, orbProps);
-        } catch (InvalidObjectReference e) {
-            e.printStackTrace();
-        } catch (NotFound e) {
-            e.printStackTrace();
-        } catch (CannotProceed e) {
-            e.printStackTrace();
-        } catch (InvalidName e) {
-            e.printStackTrace();
-        } catch (ServantNotActive e) {
-            e.printStackTrace();
-        } catch (WrongPolicy e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        //begin-user-code
-        // TODO You may add extra shutdown code here
-        //end-user-code
+    public static void configureOrb(final Properties orbProps) {
     }
 }

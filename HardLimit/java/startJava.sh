@@ -23,18 +23,25 @@ libDir=$OSSIEHOME/lib
 libFiles=`ls -1 $libDir/*.jar`
 for file in $libFiles
 do
-	if [ x"$CLASSPATH" = "x" ]
-	then
-		export CLASSPATH=$file
-	else
-		export CLASSPATH=$file:$CLASSPATH
-	fi
+  if [ x"$CLASSPATH" = "x" ]
+  then
+    export CLASSPATH=$file
+  else
+    export CLASSPATH=$file:$CLASSPATH
+  fi
 done
+
+# Path for Java
+if test -x $JAVA_HOME/bin/java; then
+  JAVA=$JAVA_HOME/bin/java
+else
+  JAVA=java
+fi
 
 # NOTE: the $@ must be quoted "$@" for arguments to be passed correctly
 
 #Sun ORB start line
-$JAVA_HOME/bin/java -cp ::$myDir/HardLimit.jar:$myDir/bin:$CLASSPATH HardLimit.java.HardLimit "$@"
+exec $JAVA -cp :$myDir/HardLimit.jar:$myDir/bin:$CLASSPATH HardLimit.java.HardLimit "$@"
 
 #JacORB start lines
-#$JAVA_HOME/bin/java -cp ::$myDir/jacorb.jar:$myDir/antlr.jar:$myDir/avalon-framework.jar:$myDir/backport-util-concurrent.jar:$myDir/logkit.jar:$myDir/HardLimit.jar:$myDir/bin:$CLASSPATH HardLimit.java.HardLimit "$@"
+#exec $JAVA -cp :$myDir/jacorb.jar:$myDir/antlr.jar:$myDir/avalon-framework.jar:$myDir/backport-util-concurrent.jar:$myDir/logkit.jar:$myDir/HardLimit.jar:$myDir/bin:$CLASSPATH HardLimit.java.HardLimit "$@"

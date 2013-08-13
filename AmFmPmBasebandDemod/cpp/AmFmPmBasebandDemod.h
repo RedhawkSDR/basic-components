@@ -1,28 +1,30 @@
 /*
- * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+ * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This file is part of REDHAWK Basic Components.
- * 
- * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
- * the GNU Lesser General Public License as published by the Free Software Foundation, either 
+ *
+ * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
- * 
- * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ *
+ * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  * PURPOSE.  See the GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this 
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this
  * program.  If not, see http://www.gnu.org/licenses/.
  */
- 
-#ifndef BASEBANDDEMOD_IMPL_H
-#define BASEBANDDEMOD_IMPL_H
+
+#ifndef AMFMPMBASEBANDDEMOD_IMPL_H
+#define AMFMPMBASEBANDDEMOD_IMPL_H
 
 #include "AmFmPmBasebandDemod_base.h"
 #include "am_fm_pm_baseband_demod.h"
 
 #define BUFFER_LENGTH 8192
+
+class AmFmPmBasebandDemod_i;
 
 class AmFmPmBasebandDemod_i : public AmFmPmBasebandDemod_base
 {
@@ -30,10 +32,11 @@ class AmFmPmBasebandDemod_i : public AmFmPmBasebandDemod_base
 	//This component wraps the AmFmPmBasebandDemod from the dsp library
 	//to perform am, pm, and fm demdulation of complex baseband input signals
     ENABLE_LOGGING
-    public: 
+    public:
         AmFmPmBasebandDemod_i(const char *uuid, const char *label);
         ~AmFmPmBasebandDemod_i();
         int serviceFunction();
+
         //redefine the base class' configure function
         void configure(const CF::Properties &props) throw (CORBA::SystemException, CF::PropertySet::InvalidConfiguration, CF::PropertySet::PartialConfiguration);
 

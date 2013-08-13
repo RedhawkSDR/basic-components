@@ -1,21 +1,20 @@
 /*
- * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+ * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This file is part of REDHAWK Basic Components.
- * 
- * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
- * the GNU Lesser General Public License as published by the Free Software Foundation, either 
+ *
+ * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
- * 
- * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ *
+ * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  * PURPOSE.  See the GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this 
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this
  * program.  If not, see http://www.gnu.org/licenses/.
  */
-
 /**************************************************************************
 
     This is the component code. This file contains the child class where
@@ -23,18 +22,11 @@
     functionality to the base class can be extended here. Access to
     the ports can also be done from this class
 
- 	Source: DataConverter.spd.xml
- 	Generated on: Thu Feb 28 15:31:50 EST 2013
- 	Redhawk IDE
- 	Version:R.1.8.2
- 	Build id: v201212041901
-
 **************************************************************************/
 
 #include "DataConverter.h"
 
 PREPARE_LOGGING(DataConverter_i)
-
 
 //make a calc_type which is always float unless either an input or output type is double
 //then it is double
@@ -70,44 +62,6 @@ template <> struct calc_type<double, CORBA::ULong> {
    typedef double type;
 };
 
-
-template<typename T> struct max_min
-{
-	const static T maxVal=1e99;
-	const static T minVal=-1e99;
-};
-template<> struct max_min<char>
-{
-	const static char maxVal=127;
-	const static char minVal=-128;
-};
-template<> struct max_min<unsigned char>
-{
-	const static unsigned char maxVal=255;
-	const static unsigned char minVal=0;
-};
-template<> struct max_min<unsigned short>
-{
-	const static unsigned short maxVal=65535;
-	const static unsigned short minVal=0;
-};
-template<> struct max_min<short>
-{
-	const static short maxVal=32767;
-	const static short minVal=-32768;
-};
-template<> struct max_min<CORBA::ULong>
-{
-	const static CORBA::ULong maxVal=4294967295;
-	const static CORBA::ULong minVal=0;
-};
-template<> struct max_min<CORBA::Long>
-{
-	const static CORBA::Long maxVal=2147483647;
-	const static CORBA::Long minVal=-2147483648;
-};
-
-
 template<typename TIn, typename TOut, typename IN_TYPE_ALLOC, typename OUT_TYPE_ALLOC>
 void convert(std::vector<TIn, IN_TYPE_ALLOC>* in, std::vector<TOut, OUT_TYPE_ALLOC>* out, TIn maxIn, TIn minIn, TOut maxOut, TOut minOut)
 {
@@ -136,36 +90,11 @@ void convert(std::vector<TIn, IN_TYPE_ALLOC>* in, std::vector<TOut, OUT_TYPE_ALL
 	}
 }
 
-template<typename TIn, typename TOut, typename IN_TYPE_ALLOC, typename OUT_TYPE_ALLOC>
-void cast(std::vector<TIn, IN_TYPE_ALLOC>* in, std::vector<TOut, OUT_TYPE_ALLOC>* out)
-{
-	out->resize(in->size());
-	typename std::vector<TOut, OUT_TYPE_ALLOC>::iterator o = out->begin();
-	//I'm not particularly happy with this solution -- but because of rounding errors and limitations of
-	//floating point I've had to make these guys doubles
-	//check for clipping and clip signal rather than truncating it
-	double MAX_VAL = max_min<TOut>::maxVal;
-	double MIN_VAL = max_min<TOut>::minVal;
-
-	for (typename std::vector<TIn, IN_TYPE_ALLOC>::iterator i = in->begin(); i!=in->end(); i++)
-	{
-		if (*i>MAX_VAL)
-			*o = static_cast<TOut>(MAX_VAL);
-		else if(*i<MIN_VAL)
-			*o = static_cast<TOut>(MIN_VAL);
-		else
-			*o = static_cast<TOut>(*i);
-		o++;
-	}
-}
-
-//constructor - nothing to do
-DataConverter_i::DataConverter_i(const char *uuid, const char *label) : 
+DataConverter_i::DataConverter_i(const char *uuid, const char *label) :
     DataConverter_base(uuid, label)
 {
 }
 
-//destructor - nothing to do
 DataConverter_i::~DataConverter_i()
 {
 }
@@ -262,6 +191,7 @@ template <> void DataConverter_i::getMinMax<double>(double* min, double* max)
 	*min = Double.Double__MinValue;
 }
 
+
 /***********************************************************************************************
 
     Basic functionality:
@@ -274,32 +204,13 @@ template <> void DataConverter_i::getMinMax<double>(double* min, double* max)
         
     SRI:
         To create a StreamSRI object, use the following code:
-        	stream_id = "";
-	    	sri = BULKIO::StreamSRI();
-	    	sri.hversion = 1;
-	    	sri.xstart = 0.0;
-	    	sri.xdelta = 0.0;
-	    	sri.xunits = BULKIO::UNITS_TIME;
-	    	sri.subsize = 0;
-	    	sri.ystart = 0.0;
-	    	sri.ydelta = 0.0;
-	    	sri.yunits = BULKIO::UNITS_NONE;
-	    	sri.mode = 0;
-	    	sri.streamID = this->stream_id.c_str();
+                std::string stream_id = "testStream";
+                BULKIO::StreamSRI sri = bulkio::sri::create(stream_id);
 
 	Time:
 	    To create a PrecisionUTCTime object, use the following code:
-	        struct timeval tmp_time;
-	        struct timezone tmp_tz;
-	        gettimeofday(&tmp_time, &tmp_tz);
-	        double wsec = tmp_time.tv_sec;
-	        double fsec = tmp_time.tv_usec / 1e6;;
-	        BULKIO::PrecisionUTCTime tstamp = BULKIO::PrecisionUTCTime();
-	        tstamp.tcmode = BULKIO::TCM_CPU;
-	        tstamp.tcstatus = (short)1;
-	        tstamp.toff = 0.0;
-	        tstamp.twsec = wsec;
-	        tstamp.tfsec = fsec;
+                BULKIO::PrecisionUTCTime tstamp = bulkio::time::utils::now();
+
         
     Ports:
 
@@ -309,7 +220,8 @@ template <> void DataConverter_i::getMinMax<double>(double* min, double* max)
 
         The argument to the getPacket function is a floating point number that specifies
         the time to wait in seconds. A zero value is non-blocking. A negative value
-        is blocking.
+        is blocking.  Constants have been defined for these values, bulkio::Const::BLOCKING and
+        bulkio::Const::NON_BLOCKING.
 
         Each received dataTransfer is owned by serviceFunction and *MUST* be
         explicitly deallocated.
@@ -322,12 +234,12 @@ template <> void DataConverter_i::getMinMax<double>(double* min, double* max)
 
         Example:
             // this example assumes that the component has two ports:
-            //  A provides (input) port of type BULKIO::dataShort called short_in
-            //  A uses (output) port of type BULKIO::dataFloat called float_out
+            //  A provides (input) port of type bulkio::InShortPort called short_in
+            //  A uses (output) port of type bulkio::OutFloatPort called float_out
             // The mapping between the port and the class is found
             // in the component base class header file
 
-            BULKIO_dataShort_In_i::dataTransfer *tmp = short_in->getPacket(-1);
+            bulkio::InShortPort::dataTransfer *tmp = short_in->getPacket(bulkio::Const::BLOCKING);
             if (not tmp) { // No data is available
                 return NOOP;
             }
@@ -346,6 +258,16 @@ template <> void DataConverter_i::getMinMax<double>(double* min, double* max)
 
             delete tmp; // IMPORTANT: MUST RELEASE THE RECEIVED DATA BLOCK
             return NORMAL;
+
+        If working with complex data (i.e., the "mode" on the SRI is set to
+        true), the std::vector passed from/to BulkIO can be typecast to/from
+        std::vector< std::complex<dataType> >.  For example, for short data:
+
+            bulkio::InShortPort::dataTransfer *tmp = myInput->getPacket(bulkio::Const::BLOCKING);
+            std::vector<std::complex<short> >* intermediate = (std::vector<std::complex<short> >*) &(tmp->dataBuffer);
+            // do work here
+            std::vector<short>* output = (std::vector<short>*) intermediate;
+            myOutput->pushPacket(*output, tmp->T, tmp->EOS, tmp->streamID);
 
         Interactions with non-BULKIO ports are left up to the component developer's discretion
 
@@ -378,7 +300,7 @@ template <> void DataConverter_i::getMinMax<double>(double* min, double* max)
             
         A callback method can be associated with a property so that the method is
         called each time the property value changes.  This is done by calling 
-        setPropertyChangeListener(<property name>, this, &DataConverter::<callback method>)
+        setPropertyChangeListener(<property name>, this, &DataConverter_i::<callback method>)
         in the constructor.
             
         Example:
@@ -446,8 +368,13 @@ template <class IN_PORT_TYPE> bool DataConverter_i::singleService(IN_PORT_TYPE *
         return true;
 }
 
-template <typename OUT_TYPE, typename IN_TYPE, typename IN_TYPE_ALLOC, class OUT, typename OUT_TYPE_ALLOC> void DataConverter_i::pushDataService(std::vector<IN_TYPE, IN_TYPE_ALLOC> *data,
-                OUT *output, bool EOS, BULKIO::PrecisionUTCTime tt, std::string streamID, bool sriChanged, BULKIO::StreamSRI& SRI, std::vector<OUT_TYPE, OUT_TYPE_ALLOC>* outputVec)
+template <typename OUT_TYPE, typename IN_TYPE, typename IN_TYPE_ALLOC, class OUT, typename OUT_TYPE_ALLOC>
+void DataConverter_i::pushDataService(std::vector<IN_TYPE, IN_TYPE_ALLOC> *data,
+                                                              OUT *output,
+                                                              bool EOS,
+                                                              BULKIO::PrecisionUTCTime tt, std::string streamID,
+                                                              bool sriChanged,
+                                                              BULKIO::StreamSRI& SRI, std::vector<OUT_TYPE, OUT_TYPE_ALLOC>* outputVec)
 {
 	//if the output isn't hooked up - just quit now
 	if (!output->isActive())
@@ -456,8 +383,8 @@ template <typename OUT_TYPE, typename IN_TYPE, typename IN_TYPE_ALLOC, class OUT
 	//std::cout<<"doing data for output "<<output->getName()<<std::endl;
 
 	// Reconfigure if SRI Changed
-
-	if (sriChanged || (output->currentSRIs.count(streamID)==0)) {
+    std::cerr<<"remove uncomented code for next 1.9 release candidate"<<std::endl;
+	if (sriChanged) {// || (output->currentSRIs.count(streamID)==0)) {
 		output->pushSRI(SRI);
 	}
 

@@ -1,45 +1,36 @@
 /*
- * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+ * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This file is part of REDHAWK Basic Components.
- * 
- * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
- * the GNU Lesser General Public License as published by the Free Software Foundation, either 
+ *
+ * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
- * 
- * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ *
+ * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  * PURPOSE.  See the GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this 
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this
  * program.  If not, see http://www.gnu.org/licenses/.
  */
-
 #include "whitenoise_base.h"
 
 /*******************************************************************************************
 
     AUTO-GENERATED CODE. DO NOT MODIFY
-    
- 	Source: whitenoise.spd.xml
- 	Generated on: Thu Feb 21 13:52:44 EST 2013
- 	Redhawk IDE
- 	Version:R.1.8.2
- 	Build id: v201212041901
-
-*******************************************************************************************/
-
-/******************************************************************************************
 
     The following class functions are for the base class for the component class. To
     customize any of these functions, do not modify them here. Instead, overload them
     on the child class
 
 ******************************************************************************************/
- 
+
 whitenoise_base::whitenoise_base(const char *uuid, const char *label) :
-                                     Resource_impl(uuid, label), serviceThread(0) {
+    Resource_impl(uuid, label),
+    serviceThread(0)
+{
     construct();
 }
 
@@ -50,7 +41,7 @@ void whitenoise_base::construct()
     serviceThread = 0;
     
     PortableServer::ObjectId_var oid;
-    dataFloatOut = new BULKIO_dataFloat_Out_i("dataFloatOut", this);
+    dataFloatOut = new bulkio::OutFloatPort("dataFloatOut");
     oid = ossie::corba::RootPOA()->activate_object(dataFloatOut);
 
     registerOutPort(dataFloatOut, dataFloatOut->_this());
@@ -98,7 +89,6 @@ CORBA::Object_ptr whitenoise_base::getPort(const char* _id) throw (CORBA::System
 
     std::map<std::string, Port_Provides_base_impl *>::iterator p_in = inPorts.find(std::string(_id));
     if (p_in != inPorts.end()) {
-
     }
 
     std::map<std::string, CF::Port_var>::iterator p_out = outPorts_var.find(std::string(_id));
@@ -123,53 +113,55 @@ void whitenoise_base::releaseObject() throw (CORBA::SystemException, CF::LifeCyc
     releaseOutPorts();
 
     delete(dataFloatOut);
- 
+
     Resource_impl::releaseObject();
 }
 
 void whitenoise_base::loadProperties()
 {
     addProperty(mean,
-                0.0, 
-               "mean",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                0.0,
+                "mean",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(stddev,
-               "stddev",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
-
-    addProperty(sri,
-               "sri",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                1.0,
+                "stddev",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(xfer_len,
-                16384, 
-               "xfer_len",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                16384,
+                "xfer_len",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(packetTime,
-                0.0, 
-               "packetTime",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                0.0,
+                "packetTime",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
+
+    addProperty(sri,
+                sri_struct(),
+                "sri",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
 }

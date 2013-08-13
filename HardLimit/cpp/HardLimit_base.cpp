@@ -21,25 +21,17 @@
 /*******************************************************************************************
 
     AUTO-GENERATED CODE. DO NOT MODIFY
-    
- 	Source: HardLimit.spd.xml
- 	Generated on: Thu Feb 21 13:40:22 EST 2013
- 	Redhawk IDE
- 	Version:M.1.8.2
- 	Build id: v201211201139RC3
-
-*******************************************************************************************/
-
-/******************************************************************************************
 
     The following class functions are for the base class for the component class. To
     customize any of these functions, do not modify them here. Instead, overload them
     on the child class
 
 ******************************************************************************************/
- 
+
 HardLimit_base::HardLimit_base(const char *uuid, const char *label) :
-                                     Resource_impl(uuid, label), serviceThread(0) {
+    Resource_impl(uuid, label),
+    serviceThread(0)
+{
     construct();
 }
 
@@ -50,9 +42,9 @@ void HardLimit_base::construct()
     serviceThread = 0;
     
     PortableServer::ObjectId_var oid;
-    dataDouble_in = new BULKIO_dataDouble_In_i("dataDouble_in", this);
+    dataDouble_in = new bulkio::InDoublePort("dataDouble_in");
     oid = ossie::corba::RootPOA()->activate_object(dataDouble_in);
-    dataDouble_out = new BULKIO_dataDouble_Out_i("dataDouble_out", this);
+    dataDouble_out = new bulkio::OutDoublePort("dataDouble_out");
     oid = ossie::corba::RootPOA()->activate_object(dataDouble_out);
 
     registerInPort(dataDouble_in);
@@ -71,7 +63,6 @@ void HardLimit_base::start() throw (CORBA::SystemException, CF::Resource::StartE
 {
     boost::mutex::scoped_lock lock(serviceThreadLock);
     if (serviceThread == 0) {
-        dataDouble_in->unblock();
         serviceThread = new ProcessThread<HardLimit_base>(this, 0.1);
         serviceThread->start();
     }
@@ -86,7 +77,7 @@ void HardLimit_base::stop() throw (CORBA::SystemException, CF::Resource::StopErr
     boost::mutex::scoped_lock lock(serviceThreadLock);
     // release the child thread (if it exists)
     if (serviceThread != 0) {
-        dataDouble_in->block();
+    	dataDouble_in->block();
         if (!serviceThread->release(2)) {
             throw CF::Resource::StopError(CF::CF_NOTSET, "Processing thread did not die");
         }
@@ -103,11 +94,10 @@ CORBA::Object_ptr HardLimit_base::getPort(const char* _id) throw (CORBA::SystemE
 
     std::map<std::string, Port_Provides_base_impl *>::iterator p_in = inPorts.find(std::string(_id));
     if (p_in != inPorts.end()) {
-
         if (!strcmp(_id,"dataDouble_in")) {
-            BULKIO_dataDouble_In_i *ptr = dynamic_cast<BULKIO_dataDouble_In_i *>(p_in->second);
+            bulkio::InDoublePort *ptr = dynamic_cast<bulkio::InDoublePort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataDouble::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
     }
@@ -135,28 +125,28 @@ void HardLimit_base::releaseObject() throw (CORBA::SystemException, CF::LifeCycl
 
     delete(dataDouble_in);
     delete(dataDouble_out);
- 
+
     Resource_impl::releaseObject();
 }
 
 void HardLimit_base::loadProperties()
 {
     addProperty(upper_limit,
-                1, 
-               "upper_limit",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                1,
+                "upper_limit",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(lower_limit,
-                -1, 
-               "lower_limit",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                -1,
+                "lower_limit",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
 }

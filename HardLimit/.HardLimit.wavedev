@@ -18,7 +18,7 @@ program.  If not, see http://www.gnu.org/licenses/.
 -->
 <codegen:WaveDevSettings xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:codegen="http://www.redhawk.gov/model/codegen">
   <implSettings key="cpp">
-    <value outputDir="cpp" template="gov.redhawk.ide.codegen.jet.cplusplus.PullPortDataTemplate" generatorId="gov.redhawk.ide.codegen.jet.cplusplus.CplusplusGenerator" primary="true">
+    <value outputDir="cpp" template="redhawk.codegen.jinja.cpp.component.pull" generatorId="gov.redhawk.ide.codegen.jinja.cplusplus.CplusplusGenerator" primary="true">
       <generatedFileCRCs crc="2307858501" file="../HardLimit.spec"/>
       <generatedFileCRCs crc="29059092" file="HardLimit.cpp"/>
       <generatedFileCRCs crc="2911597335" file="HardLimit.h"/>
@@ -35,7 +35,7 @@ program.  If not, see http://www.gnu.org/licenses/.
     </value>
   </implSettings>
   <implSettings key="python">
-    <value outputDir="python" template="gov.redhawk.ide.codegen.jet.python.pattern.PullPortDataTemplate" generatorId="gov.redhawk.ide.codegen.jet.python.PythonGenerator">
+    <value outputDir="python" template="redhawk.codegen.jinja.python.component.pull" generatorId="gov.redhawk.ide.codegen.jinja.python.PythonGenerator">
       <generatedFileCRCs crc="2307858501" file="../HardLimit.spec"/>
       <generatedFileCRCs crc="4268102433" file="HardLimit_base.py"/>
       <generatedFileCRCs crc="3675082142" file="Makefile.am"/>
@@ -44,7 +44,7 @@ program.  If not, see http://www.gnu.org/licenses/.
     </value>
   </implSettings>
   <implSettings key="java">
-    <value outputDir="java" template="gov.redhawk.ide.codegen.jet.java.JavaGenerator" generatorId="gov.redhawk.ide.codegen.jet.java.JavaGenerator">
+    <value outputDir="java" template="redhawk.codegen.jinja.java.component.pull" generatorId="gov.redhawk.ide.codegen.jinja.java.JavaGenerator">
       <properties id="java_package" value="HardLimit.java"/>
       <generatedFileCRCs crc="2307858501" file="../HardLimit.spec"/>
       <generatedFileCRCs crc="1470235827" file="Makefile.am"/>

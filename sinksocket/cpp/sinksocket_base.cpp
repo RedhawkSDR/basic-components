@@ -1,45 +1,36 @@
 /*
- * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+ * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This file is part of REDHAWK Basic Components.
- * 
- * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
- * the GNU Lesser General Public License as published by the Free Software Foundation, either 
+ *
+ * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
- * 
- * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ *
+ * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  * PURPOSE.  See the GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this 
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this
  * program.  If not, see http://www.gnu.org/licenses/.
  */
-
 #include "sinksocket_base.h"
 
 /*******************************************************************************************
 
     AUTO-GENERATED CODE. DO NOT MODIFY
-    
- 	Source: sinksocket.spd.xml
- 	Generated on: Thu Jun 27 14:42:13 EDT 2013
- 	REDHAWK IDE
- 	Version: 1.8.4
- 	Build id: R201305151907
-
-*******************************************************************************************/
-
-/******************************************************************************************
 
     The following class functions are for the base class for the component class. To
     customize any of these functions, do not modify them here. Instead, overload them
     on the child class
 
 ******************************************************************************************/
- 
+
 sinksocket_base::sinksocket_base(const char *uuid, const char *label) :
-                                     Resource_impl(uuid, label), serviceThread(0) {
+    Resource_impl(uuid, label),
+    serviceThread(0)
+{
     construct();
 }
 
@@ -50,21 +41,21 @@ void sinksocket_base::construct()
     serviceThread = 0;
     
     PortableServer::ObjectId_var oid;
-    dataOctet_in = new BULKIO_dataOctet_In_i("dataOctet_in", this);
+    dataOctet_in = new bulkio::InOctetPort("dataOctet_in");
     oid = ossie::corba::RootPOA()->activate_object(dataOctet_in);
-    dataChar_in = new BULKIO_dataChar_In_i("dataChar_in", this);
+    dataChar_in = new bulkio::InCharPort("dataChar_in");
     oid = ossie::corba::RootPOA()->activate_object(dataChar_in);
-    dataShort_in = new BULKIO_dataShort_In_i("dataShort_in", this);
+    dataShort_in = new bulkio::InShortPort("dataShort_in");
     oid = ossie::corba::RootPOA()->activate_object(dataShort_in);
-    dataUshort_in = new BULKIO_dataUshort_In_i("dataUshort_in", this);
+    dataUshort_in = new bulkio::InUShortPort("dataUshort_in");
     oid = ossie::corba::RootPOA()->activate_object(dataUshort_in);
-    dataLong_in = new BULKIO_dataLong_In_i("dataLong_in", this);
+    dataLong_in = new bulkio::InLongPort("dataLong_in");
     oid = ossie::corba::RootPOA()->activate_object(dataLong_in);
-    dataUlong_in = new BULKIO_dataUlong_In_i("dataUlong_in", this);
+    dataUlong_in = new bulkio::InULongPort("dataUlong_in");
     oid = ossie::corba::RootPOA()->activate_object(dataUlong_in);
-    dataFloat_in = new BULKIO_dataFloat_In_i("dataFloat_in", this);
+    dataFloat_in = new bulkio::InFloatPort("dataFloat_in");
     oid = ossie::corba::RootPOA()->activate_object(dataFloat_in);
-    dataDouble_in = new BULKIO_dataDouble_In_i("dataDouble_in", this);
+    dataDouble_in = new bulkio::InDoublePort("dataDouble_in");
     oid = ossie::corba::RootPOA()->activate_object(dataDouble_in);
 
     registerInPort(dataOctet_in);
@@ -89,14 +80,6 @@ void sinksocket_base::start() throw (CORBA::SystemException, CF::Resource::Start
 {
     boost::mutex::scoped_lock lock(serviceThreadLock);
     if (serviceThread == 0) {
-        dataOctet_in->unblock();
-        dataChar_in->unblock();
-        dataShort_in->unblock();
-        dataUshort_in->unblock();
-        dataLong_in->unblock();
-        dataUlong_in->unblock();
-        dataFloat_in->unblock();
-        dataDouble_in->unblock();
         serviceThread = new ProcessThread<sinksocket_base>(this, 0.1);
         serviceThread->start();
     }
@@ -135,53 +118,52 @@ CORBA::Object_ptr sinksocket_base::getPort(const char* _id) throw (CORBA::System
 
     std::map<std::string, Port_Provides_base_impl *>::iterator p_in = inPorts.find(std::string(_id));
     if (p_in != inPorts.end()) {
-
         if (!strcmp(_id,"dataOctet_in")) {
-            BULKIO_dataOctet_In_i *ptr = dynamic_cast<BULKIO_dataOctet_In_i *>(p_in->second);
+            bulkio::InOctetPort *ptr = dynamic_cast<bulkio::InOctetPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataOctet::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataChar_in")) {
-            BULKIO_dataChar_In_i *ptr = dynamic_cast<BULKIO_dataChar_In_i *>(p_in->second);
+            bulkio::InCharPort *ptr = dynamic_cast<bulkio::InCharPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataChar::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataShort_in")) {
-            BULKIO_dataShort_In_i *ptr = dynamic_cast<BULKIO_dataShort_In_i *>(p_in->second);
+            bulkio::InShortPort *ptr = dynamic_cast<bulkio::InShortPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataShort::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataUshort_in")) {
-            BULKIO_dataUshort_In_i *ptr = dynamic_cast<BULKIO_dataUshort_In_i *>(p_in->second);
+            bulkio::InUShortPort *ptr = dynamic_cast<bulkio::InUShortPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataUshort::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataLong_in")) {
-            BULKIO_dataLong_In_i *ptr = dynamic_cast<BULKIO_dataLong_In_i *>(p_in->second);
+            bulkio::InLongPort *ptr = dynamic_cast<bulkio::InLongPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataLong::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataUlong_in")) {
-            BULKIO_dataUlong_In_i *ptr = dynamic_cast<BULKIO_dataUlong_In_i *>(p_in->second);
+            bulkio::InULongPort *ptr = dynamic_cast<bulkio::InULongPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataUlong::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataFloat_in")) {
-            BULKIO_dataFloat_In_i *ptr = dynamic_cast<BULKIO_dataFloat_In_i *>(p_in->second);
+            bulkio::InFloatPort *ptr = dynamic_cast<bulkio::InFloatPort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataFloat::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
         if (!strcmp(_id,"dataDouble_in")) {
-            BULKIO_dataDouble_In_i *ptr = dynamic_cast<BULKIO_dataDouble_In_i *>(p_in->second);
+            bulkio::InDoublePort *ptr = dynamic_cast<bulkio::InDoublePort *>(p_in->second);
             if (ptr) {
-                return BULKIO::dataDouble::_duplicate(ptr->_this());
+                return ptr->_this();
             }
         }
     }
@@ -215,68 +197,68 @@ void sinksocket_base::releaseObject() throw (CORBA::SystemException, CF::LifeCyc
     delete(dataUlong_in);
     delete(dataFloat_in);
     delete(dataDouble_in);
- 
+
     Resource_impl::releaseObject();
 }
 
 void sinksocket_base::loadProperties()
 {
     addProperty(connection_type,
-                "server", 
-               "connection_type",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                "server",
+                "connection_type",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(ip_address,
-               "ip_address",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                "ip_address",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(port,
-               "port",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                "port",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
     addProperty(status,
-               "status",
-               "",
-               "readonly",
-               "",
-               "external",
-               "configure");
+                "status",
+                "",
+                "readonly",
+                "",
+                "external",
+                "configure");
 
     addProperty(total_bytes,
-               "total_bytes",
-               "",
-               "readonly",
-               "",
-               "external",
-               "configure");
+                "total_bytes",
+                "",
+                "readonly",
+                "",
+                "external",
+                "configure");
 
     addProperty(bytes_per_sec,
-               "bytes_per_sec",
-               "",
-               "readonly",
-               "",
-               "external",
-               "configure");
+                "bytes_per_sec",
+                "",
+                "readonly",
+                "",
+                "external",
+                "configure");
 
     addProperty(byte_swap,
-                0, 
-               "byte_swap",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
+                0,
+                "byte_swap",
+                "",
+                "readwrite",
+                "",
+                "external",
+                "configure");
 
 }

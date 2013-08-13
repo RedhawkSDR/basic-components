@@ -21,7 +21,7 @@
 #include <boost/thread.hpp>
 #include <ossie/Resource_impl.h>
 
-#include "port_impl.h"
+#include "bulkio/bulkio.h"
 #include "struct_props.h"
 
 #define NOOP 0
@@ -29,8 +29,6 @@
 #define NORMAL 1
 
 class DataConverter_base;
-
-#include <ossie/prop_helpers.h>
 
 template < typename TargetClass >
 class ProcessThread
@@ -100,22 +98,7 @@ class ProcessThread
 
 class DataConverter_base : public Resource_impl
 {
-    friend class BULKIO_dataUshort_In_i;
-    friend class BULKIO_dataShort_In_i;
-    friend class BULKIO_dataUlong_In_i;
-    friend class BULKIO_dataDouble_In_i;
-    friend class BULKIO_dataFloat_In_i;
-    friend class BULKIO_dataLong_In_i;
-    friend class BULKIO_dataOctet_In_i;
-    friend class BULKIO_dataUshort_Out_i;
-    friend class BULKIO_dataShort_Out_i;
-    friend class BULKIO_dataUlong_Out_i;
-    friend class BULKIO_dataDouble_Out_i;
-    friend class BULKIO_dataFloat_Out_i;
-    friend class BULKIO_dataLong_Out_i;
-    friend class BULKIO_dataOctet_Out_i;
-
-    public: 
+    public:
         DataConverter_base(const char *uuid, const char *label);
 
         void start() throw (CF::Resource::StartError, CORBA::SystemException);
@@ -132,47 +115,9 @@ class DataConverter_base : public Resource_impl
 
         virtual int serviceFunction() = 0;
 
-        bool compareSRI(BULKIO::StreamSRI &SRI_1, BULKIO::StreamSRI &SRI_2){
-            if (SRI_1.hversion != SRI_2.hversion)
-                return false;
-            if (SRI_1.xstart != SRI_2.xstart)
-                return false;
-            if (SRI_1.xdelta != SRI_2.xdelta)
-                return false;
-            if (SRI_1.xunits != SRI_2.xunits)
-                return false;
-            if (SRI_1.subsize != SRI_2.subsize)
-                return false;
-            if (SRI_1.ystart != SRI_2.ystart)
-                return false;
-            if (SRI_1.ydelta != SRI_2.ydelta)
-                return false;
-            if (SRI_1.yunits != SRI_2.yunits)
-                return false;
-            if (SRI_1.mode != SRI_2.mode)
-                return false;
-            if (strcmp(SRI_1.streamID, SRI_2.streamID) != 0)
-                return false;
-            if (SRI_1.keywords.length() != SRI_2.keywords.length())
-                return false;
-            std::string action = "eq";
-            for (unsigned int i=0; i<SRI_1.keywords.length(); i++) {
-                if (strcmp(SRI_1.keywords[i].id, SRI_2.keywords[i].id)) {
-                    return false;
-                }
-                if (!ossie::compare_anys(SRI_1.keywords[i].value, SRI_2.keywords[i].value, action)) {
-                    return false;
-                }
-            }
-            if (SRI_1.blocking != SRI_2.blocking) {
-                return false;
-            }
-            return true;
-        }
-        
     protected:
         ProcessThread<DataConverter_base> *serviceThread; 
-        boost::mutex serviceThreadLock;  
+        boost::mutex serviceThreadLock;
 
         // Member variables exposed as properties
         Octet_struct Octet;
@@ -191,21 +136,21 @@ class DataConverter_base : public Resource_impl
         Double_out_struct Double_out;
 
         // Ports
-        BULKIO_dataOctet_In_i *dataOctet;
-        BULKIO_dataUshort_In_i *dataUshort;
-        BULKIO_dataShort_In_i *dataShort;
-        BULKIO_dataUlong_In_i *dataUlong;
-        BULKIO_dataLong_In_i *dataLong;
-        BULKIO_dataFloat_In_i *dataFloat;
-        BULKIO_dataDouble_In_i *dataDouble;
-        BULKIO_dataOctet_Out_i *dataOctet_out;
-        BULKIO_dataShort_Out_i *dataShort_out;
-        BULKIO_dataUshort_Out_i *dataUshort_out;
-        BULKIO_dataLong_Out_i *dataLong_out;
-        BULKIO_dataUlong_Out_i *dataUlong_out;
-        BULKIO_dataFloat_Out_i *dataFloat_out;
-        BULKIO_dataDouble_Out_i *dataDouble_out;
-    
+        bulkio::InOctetPort *dataOctet;
+        bulkio::InUShortPort *dataUshort;
+        bulkio::InShortPort *dataShort;
+        bulkio::InULongPort *dataUlong;
+        bulkio::InLongPort *dataLong;
+        bulkio::InFloatPort *dataFloat;
+        bulkio::InDoublePort *dataDouble;
+        bulkio::OutOctetPort *dataOctet_out;
+        bulkio::OutShortPort *dataShort_out;
+        bulkio::OutUShortPort *dataUshort_out;
+        bulkio::OutLongPort *dataLong_out;
+        bulkio::OutULongPort *dataUlong_out;
+        bulkio::OutFloatPort *dataFloat_out;
+        bulkio::OutDoublePort *dataDouble_out;
+
     private:
         void construct();
 

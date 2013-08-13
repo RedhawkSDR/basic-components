@@ -27,35 +27,61 @@
 
 class sourcesocket_i;
 
-
 class sourcesocket_i : public sourcesocket_base
 {
-	ENABLE_LOGGING
-public:
-	sourcesocket_i(const char *uuid, const char *label);
-	~sourcesocket_i();
-	int serviceFunction();
-	template<typename T, typename U>
-	void pushData(T* port, char* start, size_t numBytes, unsigned int numSwap);
+    ENABLE_LOGGING
+    public:
+        sourcesocket_i(const char *uuid, const char *label);
+        ~sourcesocket_i();
+        int serviceFunction();
+
+    private:
+        template<typename T, typename U>
+        void pushData(T* port, char* start, size_t numBytes, unsigned int numSwap)
+        {
+        	if (port->state()!=BULKIO::IDLE)
+        	{
+        		std::string name(port->getName());
+        		if (std::find(activePorts_.begin(), activePorts_.end(), name) != activePorts_.end())
+        			activePorts_.push_back(name);
+        		assert(numBytes%sizeof(U)==0);
+        		std::string streamID(theSri.streamID._ptr);
+        		std::vector<U> output(numBytes/sizeof(U));
+        		if (numSwap==1)
+        			numSwap = sizeof(U);
+        		if (numSwap>1)
+        		{
+        			if (numSwap != sizeof(U))
+        			{
+        				std::stringstream ss;
+        				ss<<"data size "<<sizeof(U)<<" is not equal to byte swap size "<< numSwap<<". ";
+        				LOG_WARN(sourcesocket_i, ss.str());
+        			}
+        			vectorSwap(start, output, numSwap);
+        		}
+        		else
+        			memcpy(&output[0], start, numBytes);
+        		tstamp_ = bulkio::time::utils::now();;
+        		port->pushPacket(output, tstamp_, false, streamID);
+        	}
+        };
+
+    	void sriChanged(const std::string&);
+    	void updateSocket(const std::string&);
+    	void updateMaxBytes(const std::string&);
+    	void updateXferLen(const std::string&);
 
 
-private:
-	void sriChanged(const std::string&);
-	void updateSocket(const std::string&);
-	void updateMaxBytes(const std::string&);
-	void updateXferLen(const std::string&);
-
-
-	BULKIO::StreamSRI theSri;
-	server* server_;
-	client* client_;
-	QuickStats stats_;
-	std::vector<char> data_;
-	boost::recursive_mutex socketLock_;
-	boost::recursive_mutex xferLock_;
-	BULKIO::PrecisionUTCTime tstamp_;
-	size_t multSize_;
-	std::vector<std::string> activePorts_;
+    	BULKIO::StreamSRI theSri;
+    	server* server_;
+    	client* client_;
+    	QuickStats stats_;
+    	std::vector<char> data_;
+    	boost::recursive_mutex socketLock_;
+    	boost::recursive_mutex xferLock_;
+    	BULKIO::PrecisionUTCTime tstamp_;
+    	size_t multSize_;
+    	std::vector<std::string> activePorts_;
 };
 
 #endif

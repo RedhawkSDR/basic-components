@@ -23,13 +23,7 @@
     functionality to the base class can be extended here. Access to
     the ports can also be done from this class
 
- 	Source: sinksocket.spd.xml
- 	Generated on: Mon Jun 10 13:10:38 EDT 2013
- 	REDHAWK IDE
- 	Version: 1.8.4
- 	Build id: R201305151907
-
- **************************************************************************/
+**************************************************************************/
 
 #include "sinksocket.h"
 #include "vectorswap.h"
@@ -37,10 +31,10 @@
 
 PREPARE_LOGGING(sinksocket_i)
 
-sinksocket_i::sinksocket_i(const char *uuid, const char *label) : 
-sinksocket_base(uuid, label),
-server_(NULL),
-client_(NULL)
+sinksocket_i::sinksocket_i(const char *uuid, const char *label) :
+    sinksocket_base(uuid, label),
+    server_(NULL),
+    client_(NULL)
 {
 	setPropertyChangeListener("connection_type", this, &sinksocket_i::updateSocket);
 	setPropertyChangeListener("ip_address", this, &sinksocket_i::updateSocket);
@@ -60,27 +54,25 @@ sinksocket_i::~sinksocket_i()
 		delete client_;
 }
 
-
 int sinksocket_i::serviceFunction()
 {
-  int ret = 0;
-  warn_.clear();
-  ret += serviceFunctionT(dataOctet_in);
-  ret += serviceFunctionT(dataChar_in);
-  ret += serviceFunctionT(dataShort_in);
-  ret += serviceFunctionT(dataUshort_in);
-  ret += serviceFunctionT(dataLong_in);
-  ret += serviceFunctionT(dataUlong_in);
-  ret += serviceFunctionT(dataFloat_in);
-  ret += serviceFunctionT(dataDouble_in);
-  if (ret > 1)
-  {
-	  LOG_WARN(sinksocket_i, "More than one data port received data.  " +  warn_.str());
-  	  return NORMAL;
-  }
-  return ret;
+	  int ret = 0;
+	  warn_.clear();
+	  ret += serviceFunctionT(dataOctet_in);
+	  ret += serviceFunctionT(dataChar_in);
+	  ret += serviceFunctionT(dataShort_in);
+	  ret += serviceFunctionT(dataUshort_in);
+	  ret += serviceFunctionT(dataLong_in);
+	  ret += serviceFunctionT(dataUlong_in);
+	  ret += serviceFunctionT(dataFloat_in);
+	  ret += serviceFunctionT(dataDouble_in);
+	  if (ret > 1)
+	  {
+		  LOG_WARN(sinksocket_i, "More than one data port received data.  " +  warn_.str());
+	  	  return NORMAL;
+	  }
+	  return ret;
 }
-
 
 template<typename T, typename U>
 void sinksocket_i::newData(std::vector<T, U>& newData)

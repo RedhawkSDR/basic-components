@@ -15,3 +15,4 @@ redhawk_SOURCES_auto += sourcesocket.h
 redhawk_SOURCES_auto += sourcesocket_base.cpp
 redhawk_SOURCES_auto += sourcesocket_base.h
 redhawk_SOURCES_auto += struct_props.h
+redhawk_SOURCES_auto += vectorswap.h

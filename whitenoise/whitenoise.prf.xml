@@ -46,6 +46,6 @@ program.  If not, see http://www.gnu.org/licenses/.
       <value>false</value>
     </simple>
     <simple id="streamID" type="string"/>
-    <configurationkind kindtype="configure"/>
+    <value/>
   </struct>
 </properties>

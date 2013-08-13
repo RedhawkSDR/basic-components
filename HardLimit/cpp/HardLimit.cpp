@@ -23,19 +23,13 @@
     functionality to the base class can be extended here. Access to
     the ports can also be done from this class
 
- 	Source: HardLimit.spd.xml
- 	Generated on: Tue Feb 12 16:55:34 EST 2013
- 	Redhawk IDE
- 	Version:M.1.8.2
- 	Build id: v201211201139RC3
-
 **************************************************************************/
 
 #include "HardLimit.h"
 
 PREPARE_LOGGING(HardLimit_i)
 
-HardLimit_i::HardLimit_i(const char *uuid, const char *label) : 
+HardLimit_i::HardLimit_i(const char *uuid, const char *label) :
     HardLimit_base(uuid, label)
 {
 }
@@ -43,7 +37,6 @@ HardLimit_i::HardLimit_i(const char *uuid, const char *label) :
 HardLimit_i::~HardLimit_i()
 {
 }
-
 
 /***********************************************************************************************
 
@@ -57,32 +50,13 @@ HardLimit_i::~HardLimit_i()
         
     SRI:
         To create a StreamSRI object, use the following code:
-        	stream_id = "";
-	    	sri = BULKIO::StreamSRI();
-	    	sri.hversion = 1;
-	    	sri.xstart = 0.0;
-	    	sri.xdelta = 0.0;
-	    	sri.xunits = BULKIO::UNITS_TIME;
-	    	sri.subsize = 0;
-	    	sri.ystart = 0.0;
-	    	sri.ydelta = 0.0;
-	    	sri.yunits = BULKIO::UNITS_NONE;
-	    	sri.mode = 0;
-	    	sri.streamID = this->stream_id.c_str();
+                std::string stream_id = "testStream";
+                BULKIO::StreamSRI sri = bulkio::sri::create(stream_id);
 
 	Time:
 	    To create a PrecisionUTCTime object, use the following code:
-	        struct timeval tmp_time;
-	        struct timezone tmp_tz;
-	        gettimeofday(&tmp_time, &tmp_tz);
-	        double wsec = tmp_time.tv_sec;
-	        double fsec = tmp_time.tv_usec / 1e6;;
-	        BULKIO::PrecisionUTCTime tstamp = BULKIO::PrecisionUTCTime();
-	        tstamp.tcmode = BULKIO::TCM_CPU;
-	        tstamp.tcstatus = (short)1;
-	        tstamp.toff = 0.0;
-	        tstamp.twsec = wsec;
-	        tstamp.tfsec = fsec;
+                BULKIO::PrecisionUTCTime tstamp = bulkio::time::utils::now();
+
         
     Ports:
 
@@ -92,7 +66,8 @@ HardLimit_i::~HardLimit_i()
 
         The argument to the getPacket function is a floating point number that specifies
         the time to wait in seconds. A zero value is non-blocking. A negative value
-        is blocking.
+        is blocking.  Constants have been defined for these values, bulkio::Const::BLOCKING and
+        bulkio::Const::NON_BLOCKING.
 
         Each received dataTransfer is owned by serviceFunction and *MUST* be
         explicitly deallocated.
@@ -105,12 +80,12 @@ HardLimit_i::~HardLimit_i()
 
         Example:
             // this example assumes that the component has two ports:
-            //  A provides (input) port of type BULKIO::dataShort called short_in
-            //  A uses (output) port of type BULKIO::dataFloat called float_out
+            //  A provides (input) port of type bulkio::InShortPort called short_in
+            //  A uses (output) port of type bulkio::OutFloatPort called float_out
             // The mapping between the port and the class is found
             // in the component base class header file
 
-            BULKIO_dataShort_In_i::dataTransfer *tmp = short_in->getPacket(-1);
+            bulkio::InShortPort::dataTransfer *tmp = short_in->getPacket(bulkio::Const::BLOCKING);
             if (not tmp) { // No data is available
                 return NOOP;
             }
@@ -129,6 +104,16 @@ HardLimit_i::~HardLimit_i()
 
             delete tmp; // IMPORTANT: MUST RELEASE THE RECEIVED DATA BLOCK
             return NORMAL;
+
+        If working with complex data (i.e., the "mode" on the SRI is set to
+        true), the std::vector passed from/to BulkIO can be typecast to/from
+        std::vector< std::complex<dataType> >.  For example, for short data:
+
+            bulkio::InShortPort::dataTransfer *tmp = myInput->getPacket(bulkio::Const::BLOCKING);
+            std::vector<std::complex<short> >* intermediate = (std::vector<std::complex<short> >*) &(tmp->dataBuffer);
+            // do work here
+            std::vector<short>* output = (std::vector<short>*) intermediate;
+            myOutput->pushPacket(*output, tmp->T, tmp->EOS, tmp->streamID);
 
         Interactions with non-BULKIO ports are left up to the component developer's discretion
 
@@ -161,7 +146,7 @@ HardLimit_i::~HardLimit_i()
             
         A callback method can be associated with a property so that the method is
         called each time the property value changes.  This is done by calling 
-        setPropertyChangeListener(<property name>, this, &HardLimit::<callback method>)
+        setPropertyChangeListener(<property name>, this, &HardLimit_i::<callback method>)
         in the constructor.
             
         Example:
@@ -186,10 +171,10 @@ HardLimit_i::~HardLimit_i()
 ************************************************************************************************/
 int HardLimit_i::serviceFunction()
 {
-    LOG_DEBUG(HardLimit_i, "serviceFunction()");
-
+    LOG_DEBUG(HardLimit_i, "serviceFunction() example log message");
+    
     // Get data from input port.  -1 means non-blocking, return immediately if no data
-    BULKIO_dataDouble_In_i::dataTransfer *tmp = dataDouble_in->getPacket(-1);
+    bulkio::InDoublePort::dataTransfer *tmp = dataDouble_in->getPacket(-1);
 
     // if no data is available then return NOOP which will sleep briefly and then call process() again
     if (not tmp) { // No data is available
@@ -208,7 +193,8 @@ int HardLimit_i::serviceFunction()
         }
 
      //Output sri equals the input sri for this component.  If anything is updated, then push that update out.
-     if (tmp->sriChanged || (dataDouble_out->currentSRIs.count(tmp->streamID)==0)) {
+    std::cerr<<"To Do - uncomment out this line of code after next release candidate for 1.9.0"<<std::endl;
+    if (tmp->sriChanged){ // || (dataDouble_out->currentSRIs.count(tmp->streamID)==0)) {
     	 dataDouble_out->pushSRI(tmp->SRI);
      }
 

@@ -23,33 +23,11 @@
     functionality to the base class can be extended here. Access to
     the ports can also be done from this class
 
- 	Source: sourcesocket.spd.xml
- 	Generated on: Mon Jun 10 16:49:00 EDT 2013
- 	REDHAWK IDE
- 	Version: 1.8.4
- 	Build id: R201305151907
-
- **************************************************************************/
+**************************************************************************/
 
 #include "sourcesocket.h"
 #include <sstream>
 #include "vectorswap.h"
-
-//Just now.  We're at now now
-//When will then be now?  Soon.
-void now(BULKIO::PrecisionUTCTime& tstamp)
-{
-	struct timeval tmp_time;
-	struct timezone tmp_tz;
-	gettimeofday(&tmp_time, &tmp_tz);
-	double wsec = tmp_time.tv_sec;
-	double fsec = tmp_time.tv_usec / 1e6;;
-	tstamp.tcmode = BULKIO::TCM_CPU;
-	tstamp.tcstatus = (short)1;
-	tstamp.toff = 0.0;
-	tstamp.twsec = wsec;
-	tstamp.tfsec = fsec;
-}
 
 size_t gcd(size_t a, size_t b)
 {
@@ -65,13 +43,12 @@ size_t lcm(size_t a, size_t b)
 	return a*b/(gcd(a,b));
 }
 
-
 PREPARE_LOGGING(sourcesocket_i)
 
-sourcesocket_i::sourcesocket_i(const char *uuid, const char *label) : 
-sourcesocket_base(uuid, label),
-server_(NULL),
-client_(NULL)
+sourcesocket_i::sourcesocket_i(const char *uuid, const char *label) :
+    sourcesocket_base(uuid, label),
+    server_(NULL),
+    client_(NULL)
 {
 	theSri.hversion = 1;
 	theSri.xunits = BULKIO::UNITS_TIME;
@@ -101,39 +78,7 @@ sourcesocket_i::~sourcesocket_i()
 		delete server_;
 	if (client_)
 		delete client_;
-
 }
-
-template<typename T, typename U>
-void sourcesocket_i::pushData(T* port, char* start, size_t numBytes, unsigned int numSwap)
-{
-	if (port->state()!=BULKIO::IDLE)
-	{
-		std::string name(port->getName());
-		if (std::find(activePorts_.begin(), activePorts_.end(), name) != activePorts_.end())
-			activePorts_.push_back(name);
-		assert(numBytes%sizeof(U)==0);
-		std::string streamID(theSri.streamID._ptr);
-		std::vector<U> output(numBytes/sizeof(U));
-		if (numSwap==1)
-			numSwap = sizeof(U);
-		if (numSwap>1)
-		{
-			if (numSwap != sizeof(U))
-			{
-				std::stringstream ss;
-				ss<<"data size "<<sizeof(U)<<" is not equal to byte swap size "<< numSwap<<". ";
-				LOG_WARN(sourcesocket_i, ss.str());
-			}
-			vectorSwap(start, output, numSwap);
-		}
-		else
-			memcpy(&output[0], start, numBytes);
-		now(tstamp_);
-		port->pushPacket(output, tstamp_, false, streamID);
-	}
-}
-
 
 int sourcesocket_i::serviceFunction()
 {
@@ -162,14 +107,14 @@ int sourcesocket_i::serviceFunction()
 	    size_t numLoops = data_.size()/maxBytes;
 		for(size_t i=0; i!=numLoops; i++)
 		{
-			pushData<BULKIO_dataOctet_Out_i, CORBA::Octet>(dataOctet_out, &data_[i*maxBytes], maxBytes, byteSwap);
-			pushData<BULKIO_dataChar_Out_i, char>(dataChar_out, &data_[i*maxBytes], maxBytes, byteSwap);
-			pushData<BULKIO_dataUshort_Out_i, CORBA::UShort>(dataUshort_out, &data_[i*maxBytes], maxBytes, byteSwap);
-			pushData<BULKIO_dataShort_Out_i, CORBA::Short>(dataShort_out, &data_[i*maxBytes], maxBytes, byteSwap);
-			pushData<BULKIO_dataUlong_Out_i, CORBA::ULong>(dataUlong_out, &data_[i*maxBytes], maxBytes, byteSwap);
-			pushData<BULKIO_dataLong_Out_i, CORBA::Long> (dataLong_out, &data_[i*maxBytes], maxBytes, byteSwap);
-			pushData<BULKIO_dataDouble_Out_i, CORBA::Double>(dataDouble_out, &data_[i*maxBytes], maxBytes, byteSwap);
-			pushData<BULKIO_dataFloat_Out_i, CORBA::Float>(dataFloat_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<bulkio::OutOctetPort, CORBA::Octet>(dataOctet_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<bulkio::OutCharPort, signed char>(dataChar_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<bulkio::OutUShortPort, CORBA::UShort>(dataUshort_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<bulkio::OutShortPort, CORBA::Short>(dataShort_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<bulkio::OutULongPort, CORBA::ULong>(dataUlong_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<bulkio::OutLongPort, CORBA::Long> (dataLong_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<bulkio::OutDoublePort, CORBA::Double>(dataDouble_out, &data_[i*maxBytes], maxBytes, byteSwap);
+			pushData<bulkio::OutFloatPort, CORBA::Float>(dataFloat_out, &data_[i*maxBytes], maxBytes, byteSwap);
 		}
 		data_.erase(data_.begin(), data_.begin()+numLoops*maxBytes);
 	}
@@ -228,14 +173,14 @@ int sourcesocket_i::serviceFunction()
 		size_t numLeft = data_.size()%multSize;
 		size_t pushBytes = data_.size() - numLeft;
 
-		pushData<BULKIO_dataOctet_Out_i, CORBA::Octet>(dataOctet_out,&data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataChar_Out_i, char>(dataChar_out, &data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataUshort_Out_i, CORBA::UShort>(dataUshort_out, &data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataShort_Out_i, CORBA::Short>(dataShort_out, &data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataUlong_Out_i, CORBA::ULong>(dataUlong_out, &data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataLong_Out_i, CORBA::Long> (dataLong_out, &data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataDouble_Out_i, CORBA::Double>(dataDouble_out,&data_[0], pushBytes,byteSwap);
-		pushData<BULKIO_dataFloat_Out_i, CORBA::Float>(dataFloat_out, &data_[0], pushBytes, byteSwap);
+		pushData<bulkio::OutOctetPort, CORBA::Octet>(dataOctet_out,&data_[0], pushBytes,byteSwap);
+		pushData<bulkio::OutCharPort, signed char>(dataChar_out, &data_[0], pushBytes,byteSwap);
+		pushData<bulkio::OutUShortPort, CORBA::UShort>(dataUshort_out, &data_[0], pushBytes,byteSwap);
+		pushData<bulkio::OutShortPort, CORBA::Short>(dataShort_out, &data_[0], pushBytes,byteSwap);
+		pushData<bulkio::OutULongPort, CORBA::ULong>(dataUlong_out, &data_[0], pushBytes,byteSwap);
+		pushData<bulkio::OutLongPort, CORBA::Long> (dataLong_out, &data_[0], pushBytes,byteSwap);
+		pushData<bulkio::OutDoublePort, CORBA::Double>(dataDouble_out,&data_[0], pushBytes,byteSwap);
+		pushData<bulkio::OutFloatPort, CORBA::Float>(dataFloat_out, &data_[0], pushBytes, byteSwap);
 
 		data_.erase(data_.begin(), data_.end()-numLeft);
 		if (activePorts_.size()>1)

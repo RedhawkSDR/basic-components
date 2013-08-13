@@ -20,23 +20,27 @@
 # AUTO-GENERATED
 #
 # Source: DataWriter.spd.xml
-# Generated on: Mon Feb 25 12:02:16 EST 2013
-# Redhawk IDE
-# Version:M.1.8.3
-# Build id: v201302191304
 from ossie.resource import Resource, start_component
 import logging
 
 from DataWriter_base import *
 
 import os
+import struct
 import ConfigParser
 
 class DataWriter_i(DataWriter_base):
-    """Component that writes a bulkIO dataFloat stream to a file"""
+    """<DESCRIPTION GOES HERE>"""
     def initialize(self):
+        """
+        This is called by the framework immediately after your component registers with the NameService.
+        
+        In general, you should add customization here and not in the __init__ constructor.  If you have 
+        a custom port implementation you can override the specific implementation here with a statement
+        similar to the following:
+          self.some_port = MyPortImplementation()
+        """
         DataWriter_base.initialize(self)
-                
         self.complex_data = None
         self._file = None
         self._metadata_config = None
@@ -189,8 +193,9 @@ class MetadataSectionNames(object):
     SRI = "SRI"
     KEYWORDS = "SRI Keywords"
     TIME_SECTIONS = ["First Packet Time", "Last Packet Time"]
-
+  
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.WARN)
     logging.debug("Starting Component")
     start_component(DataWriter_i)
+

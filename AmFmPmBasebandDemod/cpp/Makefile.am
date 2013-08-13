@@ -15,13 +15,12 @@
 # You should have received a copy of the GNU Lesser General Public License along with this 
 # program.  If not, see http://www.gnu.org/licenses/.
 #
- 
 ossieName = AmFmPmBasebandDemod
-bindir = $(prefix)/dom/components/BasebandDemod/cpp/
+bindir = $(prefix)/dom/components/AmFmPmBasebandDemod/cpp/
 bin_PROGRAMS = AmFmPmBasebandDemod
 
-xmldir = $(prefix)/dom/components/BasebandDemod/
-dist_xml_DATA = ../AmFmPmBasebandDemod.prf.xml ../AmFmPmBasebandDemod.scd.xml ../AmFmPmBasebandDemod.spd.xml
+xmldir = $(prefix)/dom/components/AmFmPmBasebandDemod/
+dist_xml_DATA = ../AmFmPmBasebandDemod.scd.xml ../AmFmPmBasebandDemod.prf.xml ../AmFmPmBasebandDemod.spd.xml
 
 distclean-local:
 	rm -f config.*
@@ -41,6 +40,6 @@ distclean-local:
 # you wish to manually control these options.
 include $(srcdir)/Makefile.am.ide
 AmFmPmBasebandDemod_SOURCES = $(redhawk_SOURCES_auto)
-AmFmPmBasebandDemod_CXXFLAGS = -Wall $(PROJECTDEPS_CFLAGS) $(BOOST_CPPFLAGS) $(INTERFACEDEPS_CFLAGS) $(redhawk_INCLUDES_auto) -I../../dsp/inc
+AmFmPmBasebandDemod_CXXFLAGS = -Wall $(PROJECTDEPS_CFLAGS) $(BOOST_CPPFLAGS) $(INTERFACEDEPS_CFLAGS) $(redhawk_INCLUDES_auto)  -I../../dsp/inc
 AmFmPmBasebandDemod_LDADD = $(PROJECTDEPS_LIBS) $(BOOST_LDFLAGS) $(BOOST_THREAD_LIB) $(INTERFACEDEPS_LIBS) $(redhawk_LDADD_auto) -ldsp
 AmFmPmBasebandDemod_LDFLAGS = -Wall $(redhawk_LDFLAGS_auto) -L../../dsp/Release

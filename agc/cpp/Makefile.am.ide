@@ -8,6 +8,3 @@ redhawk_SOURCES_auto += agc.h
 redhawk_SOURCES_auto += agc_base.cpp
 redhawk_SOURCES_auto += agc_base.h
 redhawk_SOURCES_auto += main.cpp
-redhawk_SOURCES_auto += port_impl.cpp
-redhawk_SOURCES_auto += port_impl.h
-redhawk_SOURCES_auto += struct_props.h

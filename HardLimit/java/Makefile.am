@@ -18,11 +18,24 @@
  
 HardLimit.jar: $(HardLimit_jar_SOURCES)
 	mkdir -p bin
-	$(JAVAC) -cp $(OSSIE_HOME)/lib/CFInterfaces.jar:$(OSSIE_HOME)/lib/log4j.jar:$(OSSIE_HOME)/lib/log4j-1.2.15.jar:$(OSSIE_HOME)/lib/ossie.jar:$(OSSIE_HOME)/lib/BULKIOInterfaces.jar -d bin $(HardLimit_jar_SOURCES)
+	$(JAVAC) -cp $(OSSIE_HOME)/lib/CFInterfaces.jar:$(OSSIE_HOME)/lib/log4j-1.2.15.jar:$(OSSIE_HOME)/lib/ossie.jar:$(OSSIE_HOME)/lib/BULKIOInterfaces.jar:$(OSSIE_HOME)/lib/bulkio.jar -d bin $(HardLimit_jar_SOURCES)
 	$(JAR) cf ./HardLimit.jar -C bin .
 
 clean-local:
 	rm -rf bin
+
+distclean-local:
+	rm -f config.*
+	rm -rf autom4te.cache
+	rm -f acinclude.m4
+	rm -f aclocal.m4
+	rm -f configure
+	rm -f depcomp
+	rm -f install-sh
+	rm -f ltmain.sh
+	rm -f Makefile.in
+	rm -f missing
+	rm -rf .deps
 
 ossieName = HardLimit
 bindir = $(prefix)/dom/components/HardLimit/java/
@@ -30,7 +43,7 @@ bin_PROGRAMS = HardLimit.jar
 HardLimit_jar_SOURCES := $(shell find ./src -name "*.java")
 
 xmldir = $(prefix)/dom/components/HardLimit/
-dist_xml_DATA = ../HardLimit.prf.xml ../HardLimit.scd.xml ../HardLimit.spd.xml 
+dist_xml_DATA = ../HardLimit.scd.xml ../HardLimit.prf.xml ../HardLimit.spd.xml
 
 domdir = $(prefix)/dom/components/HardLimit/java/
 dist_dom_SCRIPTS = startJava.sh

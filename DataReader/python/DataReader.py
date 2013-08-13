@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 #
 # This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
 # source distribution.
@@ -20,23 +20,29 @@
 # AUTO-GENERATED
 #
 # Source: DataReader.spd.xml
-# Generated on: Mon Jul 16 19:00:36 EDT 2012
-# Redhawk IDE
-# Version:T.1.8.X
-# Build id: v201207131522-r8855
 from ossie.resource import Resource, start_component
 import logging
 import os, time
 import math
+import struct
 from decimal import *
 
-from DataReader_base import * 
+from bulkio.bulkioInterfaces import BULKIO
+from omniORB import CORBA
+from DataReader_base import *
 
 class DataReader_i(DataReader_base):
-    """Opens a data file and plays out float data via a BULKIO:dataFloat"""
+    """<DESCRIPTION GOES HERE>"""
     def initialize(self):
+        """
+        This is called by the framework immediately after your component registers with the NameService.
+        
+        In general, you should add customization here and not in the __init__ constructor.  If you have 
+        a custom port implementation you can override the specific implementation here with a statement
+        similar to the following:
+          self.some_port = MyPortImplementation()
+        """
         DataReader_base.initialize(self)
-
         # Initialize file pointer and end of stream (EOS) and end of file (EOF) flags.
         # Note that EOS is never set to true in this program
         self.inFd = None
@@ -80,6 +86,8 @@ class DataReader_i(DataReader_base):
         self.outputPort.defaultStreamSRI = sri
         self.outputPort.refreshSRI = True
         
+                
+
     def onconfigure_prop_StreamID(self, oldvalue, newvalue):
         self.StreamID = newvalue
         if not self.StreamID:
@@ -184,9 +192,9 @@ class DataReader_i(DataReader_base):
             self.EOF = False
         self.t_out = time.time()
         return NORMAL
-        
   
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.WARN)
     logging.debug("Starting Component")
     start_component(DataReader_i)
+

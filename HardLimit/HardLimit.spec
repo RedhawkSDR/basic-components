@@ -36,88 +36,76 @@ Group: REDHAWK/Components
 Source: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-root
 
-Requires: redhawk >= 1.8
-BuildRequires: redhawk >= 1.8
+Requires: redhawk >= 1.9
+BuildRequires: redhawk-devel >= 1.9
 BuildRequires: autoconf automake libtool
 
 # Interface requirements
 Requires: bulkioInterfaces
 BuildRequires: bulkioInterfaces
 
-# C++ requirements
-Requires: libomniORB4.1
-Requires: boost >= 1.41
-Requires: apache-log4cxx >= 0.10
-BuildRequires: boost-devel >= 1.41
-BuildRequires: libomniORB4.1-devel
-BuildRequires: apache-log4cxx-devel >= 0.10
-
-# Java requirements
-Requires: java
-BuildRequires: jdk
-
-# Python requirements
-Requires: python omniORBpy
-BuildRequires: libomniORBpy3-devel
-BuildRequires: python-devel >= 2.3
-
-
 %description
 Component %{name}
+
 
 %prep
 %setup
 
+
 %build
-# Implementation java
-pushd java
+# Implementation cpp
+pushd cpp
 ./reconf
-%define _bindir %{_prefix}/dom/components/HardLimit/java
+%define _bindir %{_prefix}/dom/components/HardLimit/cpp
 %configure
-make
+make %{?_smp_mflags}
 popd
 # Implementation python
 pushd python
 ./reconf
 %define _bindir %{_prefix}/dom/components/HardLimit/python
 %configure
-make
+make %{?_smp_mflags}
 popd
-# Implementation cpp
-pushd cpp
+# Implementation java
+pushd java
 ./reconf
-%define _bindir %{_prefix}/dom/components/HardLimit/cpp
+%define _bindir %{_prefix}/dom/components/HardLimit/java
 %configure
-make
+make %{?_smp_mflags}
 popd
+
 
 %install
 rm -rf $RPM_BUILD_ROOT
-# Implementation java
-pushd java
-%define _bindir %{_prefix}/dom/components/HardLimit/java 
+# Implementation cpp
+pushd cpp
+%define _bindir %{_prefix}/dom/components/HardLimit/cpp
 make install DESTDIR=$RPM_BUILD_ROOT
 popd
 # Implementation python
 pushd python
-%define _bindir %{_prefix}/dom/components/HardLimit/python 
+%define _bindir %{_prefix}/dom/components/HardLimit/python
 make install DESTDIR=$RPM_BUILD_ROOT
 popd
-# Implementation cpp
-pushd cpp
-%define _bindir %{_prefix}/dom/components/HardLimit/cpp 
+# Implementation java
+pushd java
+%define _bindir %{_prefix}/dom/components/HardLimit/java
 make install DESTDIR=$RPM_BUILD_ROOT
 popd
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+
 %files
 %defattr(-,redhawk,redhawk)
 %dir %{_prefix}/dom/components/%{name}
-%{_prefix}/dom/components/%{name}/HardLimit.spd.xml
-%{_prefix}/dom/components/%{name}/HardLimit.prf.xml
 %{_prefix}/dom/components/%{name}/HardLimit.scd.xml
-%{_prefix}/dom/components/%{name}/java
-%{_prefix}/dom/components/%{name}/python
+%{_prefix}/dom/components/%{name}/HardLimit.prf.xml
+%{_prefix}/dom/components/%{name}/HardLimit.spd.xml
 %{_prefix}/dom/components/%{name}/cpp
+%{_prefix}/dom/components/%{name}/python
+%{_prefix}/dom/components/%{name}/java
+

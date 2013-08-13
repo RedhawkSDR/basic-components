@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #
 # This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
 # source distribution.
@@ -15,24 +16,31 @@
 # You should have received a copy of the GNU Lesser General Public License along with this 
 # program.  If not, see http://www.gnu.org/licenses/.
 #
-AC_INIT(fcalc, 1.0.0)
-AM_INIT_AUTOMAKE(nostdinc)
+#!/bin/sh
 
-AC_PROG_INSTALL
-
-AC_CORBA_ORB
-OSSIE_CHECK_OSSIE
-OSSIE_SDRROOT_AS_PREFIX
-AM_PATH_PYTHON([2.4])
-
-PKG_CHECK_MODULES([OSSIE], [ossie >= 1.9])
-AC_CHECK_PYMODULE(ossie, [], [AC_MSG_ERROR([the python ossie module is required])])
-PKG_CHECK_MODULES([OMNIORB], [omniORB4 >= 4.1.0])
-AC_CHECK_PYMODULE(omniORB, [], [AC_MSG_ERROR([the python omniORB module is required])])
-
-PKG_CHECK_MODULES(bulkioInterfaces, bulkioInterfaces >= 1.8) 
-AC_CHECK_PYMODULE(bulkio.bulkioInterfaces, [], [AC_MSG_ERROR([the python bulkio.bulkioInterfaces module is required])])
-
-AC_CONFIG_FILES(Makefile)
-
-AC_OUTPUT
+if [ "$1" = "rpm" ]; then
+    # A very simplistic RPM build scenario
+    if [ -e sourcesocket.spec ]; then
+        mydir=`dirname $0`
+        tmpdir=`mktemp -d`
+        cp -r ${mydir} ${tmpdir}/sourcesocket-1.0.0
+        tar czf ${tmpdir}/sourcesocket-1.0.0.tar.gz --exclude=".svn" -C ${tmpdir} sourcesocket-1.0.0
+        rpmbuild -ta ${tmpdir}/sourcesocket-1.0.0.tar.gz
+        rm -rf $tmpdir
+    else
+        echo "Missing RPM spec file in" `pwd`
+        exit 1
+    fi
+else
+    for impl in cpp ; do
+        cd $impl
+        if [ -e build.sh ]; then
+            ./build.sh $*
+        elif [ -e reconf ]; then
+            ./reconf && ./configure && make
+        else
+            echo "No build.sh found for $impl"
+        fi
+        cd -
+    done
+fi

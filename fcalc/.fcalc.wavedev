@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <!-- 
-This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
-source distribution.
+     This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+     source distribution.
 
 This file is part of REDHAWK Basic Components.
 
@@ -18,7 +18,7 @@ program.  If not, see http://www.gnu.org/licenses/.
 -->
 <codegen:WaveDevSettings xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:codegen="http://www.redhawk.gov/model/codegen">
   <implSettings key="python">
-    <value outputDir="python" template="gov.redhawk.ide.codegen.jet.python.pattern.PullPortDataTemplate" generatorId="gov.redhawk.ide.codegen.jet.python.PythonGenerator">
+    <value outputDir="python" template="redhawk.codegen.jinja.python.component.pull" generatorId="gov.redhawk.ide.codegen.jinja.python.PythonGenerator">
       <generatedFileCRCs crc="289104679" file="../fcalc.spec"/>
       <generatedFileCRCs crc="1530317913" file="Makefile.am"/>
       <generatedFileCRCs crc="4180066440" file="configure.ac"/>

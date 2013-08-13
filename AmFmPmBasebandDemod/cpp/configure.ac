@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License along with this 
 # program.  If not, see http://www.gnu.org/licenses/.
 #
-AC_INIT(BasebandDemod, 1.0.0)
+AC_INIT(AmFmPmBasebandDemod, 1.0.0)
 AM_INIT_AUTOMAKE(nostdinc)
 
 AC_PROG_CC
@@ -28,12 +28,11 @@ OSSIE_SDRROOT_AS_PREFIX
 
 # Dependencies
 export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig"
-PKG_CHECK_MODULES([PROJECTDEPS], [ossie >= 1.8 omniORB4 >= 4.0.0])
-PKG_CHECK_MODULES([INTERFACEDEPS], [bulkioInterfaces >= 1.8])
+PKG_CHECK_MODULES([PROJECTDEPS], [ossie >= 1.9 omniORB4 >= 4.1.0])
+PKG_CHECK_MODULES([INTERFACEDEPS], [bulkio >= 1.0 bulkioInterfaces >= 1.9])
 OSSIE_ENABLE_LOG4CXX
 AX_BOOST_BASE([1.41])
 AX_BOOST_THREAD
-CHECK_VECTOR_IMPL
 
-AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

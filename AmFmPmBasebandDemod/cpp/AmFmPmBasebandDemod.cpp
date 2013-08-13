@@ -1,18 +1,18 @@
 /*
- * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+ * This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This file is part of REDHAWK Basic Components.
- * 
- * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of 
- * the GNU Lesser General Public License as published by the Free Software Foundation, either 
+ *
+ * REDHAWK Basic Components is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
- * 
- * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ *
+ * REDHAWK Basic Components is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  * PURPOSE.  See the GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along with this 
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this
  * program.  If not, see http://www.gnu.org/licenses/.
  */
 
@@ -22,12 +22,6 @@
     custom functionality can be added to the component. Custom
     functionality to the base class can be extended here. Access to
     the ports can also be done from this class
-
- 	Source: AmFmPmBasebandDemod.spd.xml
- 	Generated on: Wed Feb 13 17:33:10 EST 2013
- 	Redhawk IDE
- 	Version:R.1.8.2
- 	Build id: v201212041901
 
 **************************************************************************/
 
@@ -92,17 +86,22 @@ void AmFmPmBasebandDemod_i::configure(const CF::Properties & props) throw (CORBA
     }
 }
 
+
 int AmFmPmBasebandDemod_i::serviceFunction()
 {
     debugOut("serviceFunction()");
-    BULKIO_dataFloat_In_i::dataTransfer *pkt = dataFloat_In->getPacket(0.0);
+    bulkio::InFloatPort::dataTransfer *pkt = dataFloat_In->getPacket(0.0);
     if (pkt==NULL)
         return NOOP;
 
+    bool forceSriUpdate = false;
     if (streamID!=pkt->streamID)
     {
     	if (streamID=="")
+    	{
+    		forceSriUpdate=true;
     		streamID=pkt->streamID;
+    	}
     	else
     	{
     		std::cout<<"AmFmPmBasebandDemod_i::WARNING -- pkt streamID "<<pkt->streamID<<" differs from streamID "<< streamID<<". Throw the data on the floor"<<std::endl;
@@ -112,7 +111,7 @@ int AmFmPmBasebandDemod_i::serviceFunction()
     }
 
     //Check if SRI has been changed
-    if (pkt->sriChanged || (am_dataFloat_out->currentSRIs.count(pkt->streamID)==0)) {
+    if (pkt->sriChanged || forceSriUpdate) {
         debugOut("@ serviceFunction() - sriChanges ");
     	configureSRI(pkt->SRI); //Process and/or update the SRI
     	am_dataFloat_out->pushSRI(pkt->SRI);
@@ -255,4 +254,3 @@ void AmFmPmBasebandDemod_i::remakeDemod()
 	demod = new AmFmPmBasebandDemod(demodInput, amBuf, pmBuf, fmBuf, freqGain, phaseDeviation,inialPhase);
 	DemodParamsChanged = false;
 }
-
