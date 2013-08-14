@@ -46,7 +46,7 @@ popd
 # Build components
 for dir in agc/cpp AmFmPmBasebandDemod/cpp DataConverter/DataConverter DataReader/python \
            DataWriter/python fcalc/python freqfilter/python HardLimit/cpp HardLimit/java \
-           HardLimit/python medianfilter/python SCAAudioTagger/python SigGen/cpp \
+           HardLimit/python medianfilter/python SigGen/cpp \
            SigGen/python SigGen/java sinksocket/cpp sourcesocket/cpp \
            TuneFilterDecimate/cpp whitenoise/cpp;
 do
@@ -64,7 +64,7 @@ rm -rf %{buildroot}
 # Install the components
 for dir in agc/cpp AmFmPmBasebandDemod/cpp DataConverter/DataConverter DataReader/python \
            DataWriter/python fcalc/python freqfilter/python HardLimit/cpp HardLimit/java \
-           HardLimit/python medianfilter/python SCAAudioTagger/python SigGen/cpp \
+           HardLimit/python medianfilter/python SigGen/cpp \
            SigGen/python SigGen/java sinksocket/cpp sourcesocket/cpp \
            TuneFilterDecimate/cpp whitenoise/cpp;
 do
@@ -94,7 +94,6 @@ rm -rf %{buildroot}
 %{_sdrroot}/dom/components/freqfilter
 %{_sdrroot}/dom/components/HardLimit
 %{_sdrroot}/dom/components/medianfilter
-%{_sdrroot}/dom/components/SCAAudioTagger
 %{_sdrroot}/dom/components/SigGen
 %{_sdrroot}/dom/components/sinksocket
 %{_sdrroot}/dom/components/sourcesocket
