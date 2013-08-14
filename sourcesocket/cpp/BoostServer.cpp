@@ -16,6 +16,7 @@
  * program.  If not, see http://www.gnu.org/licenses/.
  */
 
+#include <omniORB4/CORBA.h>
 #include "BoostServer.h"
 
 void session::start()
@@ -192,10 +193,9 @@ template void server::read(std::vector<char, std::allocator<char> >&, size_t);
 template void server::write(std::vector<unsigned char, std::allocator<unsigned char> >&);
 template void server::write(std::vector<char, std::allocator<char> >&);
 template void server::write(std::vector<signed char, std::allocator<signed char> >&);
-template void server::write(std::vector<short, std::allocator<short> >&);
-template void server::write(std::vector<unsigned short, std::allocator<unsigned short> >&);
-template void server::write(std::vector<int, std::allocator<int> >&);
-template void server::write(std::vector<unsigned int, std::allocator<unsigned int> >&);
-template void server::write(std::vector<float, std::allocator<float> >&);
-template void server::write(std::vector<double, std::allocator<double> >&);
-
+template void server::write(std::vector<CORBA::Short, std::allocator<CORBA::Short> >&);
+template void server::write(std::vector<CORBA::UShort, std::allocator<CORBA::UShort> >&);
+template void server::write(std::vector<CORBA::Long, std::allocator<CORBA::Long> >&);
+template void server::write(std::vector<CORBA::ULong, std::allocator<CORBA::ULong> >&);
+template void server::write(std::vector<CORBA::Float, std::allocator<CORBA::Float> >&);
+template void server::write(std::vector<CORBA::Double, std::allocator<CORBA::Double> >&);

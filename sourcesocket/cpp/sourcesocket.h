@@ -20,7 +20,6 @@
 #define SOURCESOCKET_IMPL_H
 
 #include "sourcesocket_base.h"
-#include "port_impl.h"
 #include "BoostServer.h"
 #include "BoostClient.h"
 #include "quickstats.h"
