@@ -85,7 +85,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-,redhawk,redhawk,-)
 %{_sdrroot}/dom/components/agc
-%{_sdrroot}/dom/components/BasebandDemod
+%{_sdrroot}/dom/components/AmFmPmBasebandDemod
 %{_sdrroot}/dom/components/DataConverter
 %{_sdrroot}/dom/components/DataReader
 %{_sdrroot}/dom/components/DataWriter
