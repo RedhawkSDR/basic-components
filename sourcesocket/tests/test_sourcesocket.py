@@ -109,10 +109,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         self.comp.start()
         self.comp.stop()
         
-        #######################################################################
-        # Simulate regular component shutdown
-        self.comp.releaseObject()
-    
+           
     #test a bunch of stuff - vary the start order for client.  Vary which one is the client.  Vary the data ports as well
     def testA(self):
         self.runTest(clientFirst=True, client = 'sinksocket', dataPackets=self.OCTET_DATA,portType='octet')
@@ -632,7 +629,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         self.src = sb.DataSource()
         self.sink = sb.DataSink()
         self.sourceSocket = self.comp
-        self.sinkSocket = sb.Component('../../sinksocket/sinksocket.spd.xml')
+        self.sinkSocket = sb.launch('../../sinksocket/sinksocket.spd.xml')
         
         if client=='sinksocket':
             self.client = self.sinkSocket
@@ -658,8 +655,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         self.sinkSocket.releaseObject()
         self.sourceSocket.releaseObject()
         
-        self.src = self.sink = self.sinkSocket = self.sourceSocket = self.client = self.server = self.comp = None
-     
+        self.src = self.sink = self.sinkSocket = self.sourceSocket = self.client = self.server = None
     # TODO Add additional tests here
     #
     # See:
