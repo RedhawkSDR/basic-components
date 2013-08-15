@@ -48,4 +48,13 @@ program.  If not, see http://www.gnu.org/licenses/.
     <simple id="streamID" type="string"/>
     <value/>
   </struct>
+  <simple id="throttle" mode="readwrite" name="throttle" type="float">
+    <description>val &lt;=0: go as fast as possible
+0&lt;val&lt;1: go slower than real time
+val = 1:  real time
+val >1: faster than real time </description>
+    <value>-1.0</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
 </properties>

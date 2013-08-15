@@ -80,30 +80,11 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         
         self.mean = 10.0
         self.stddev = 100.0
-        self.xfer_len = 500000
+        self.xfer_len = 200000
         self.xdelta = .0001
         self.streamID = 'my_whitenoise_stream'
         #setup my components
         self.setupComponent()
-
-        #note we have to do the manual configuration because props_from_dict doesn't handle float types
-        myProps = [CF.DataType(id='mean',value=CORBA.Any(CORBA.TC_float, self.mean)), 
-                   CF.DataType(id='stddev',value=CORBA.Any(CORBA.TC_float, self.stddev)),
-                   CF.DataType(id='xfer_len',value=CORBA.Any(CORBA.TC_long, self.xfer_len)),
-                   CF.DataType(id='sri', value=CORBA.Any(CORBA.TypeCode("IDL:CF/Properties:1.0"), 
-                                                         [CF.DataType(id='xdelta', value=CORBA.Any(CORBA.TC_float, self.xdelta)), 
-                                                          CF.DataType(id='complex', value=CORBA.Any(CORBA.TC_boolean, False)), 
-                                                          CF.DataType(id='streamID', value=CORBA.Any(CORBA.TC_string, self.streamID))]))]
-        
-        
-        #configure it
-        self.comp.configure(myProps)
-        
-        self.comp.start()
-        self.sink.start()
-        
-        #do the connections        
-        self.comp.connect(self.sink,'floatIn')
         
     def tearDown(self):
         """Finish the unit test - this is run after every method that starts with test
@@ -164,11 +145,40 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             self.assertEqual(port_obj._non_existent(), False)
             self.assertEqual(port_obj._is_a(port.get_repid()),  True)
 
+    def testReal(self):
+        print " ... testReal"
+        self.complex = False
+        self.main()
+
+    def testComplex(self):
+        print " ... testComplex"
+        self.complex = True
+        self.main()
+
                 
-    def testCase(self):
+    def main(self):
         """The main engine for all the test cases - configure the equation, push data, and get output
            As applicable
         """
+                #note we have to do the manual configuration because props_from_dict doesn't handle float types
+        myProps = [CF.DataType(id='mean',value=CORBA.Any(CORBA.TC_float, self.mean)), 
+                   CF.DataType(id='stddev',value=CORBA.Any(CORBA.TC_float, self.stddev)),
+                   CF.DataType(id='xfer_len',value=CORBA.Any(CORBA.TC_long, self.xfer_len)),
+                   CF.DataType(id='sri', value=CORBA.Any(CORBA.TypeCode("IDL:CF/Properties:1.0"), 
+                                                         [CF.DataType(id='xdelta', value=CORBA.Any(CORBA.TC_float, self.xdelta)), 
+                                                          CF.DataType(id='complex', value=CORBA.Any(CORBA.TC_boolean, self.complex)), 
+                                                          CF.DataType(id='streamID', value=CORBA.Any(CORBA.TC_string, self.streamID))]))]
+                
+        #configure it
+        self.comp.configure(myProps)
+        
+        self.comp.start()
+        self.sink.start()
+        
+        #do the connections        
+        self.comp.connect(self.sink,'floatIn')
+
+        
         #data processing is asynchronos - so wait until the data is all processed
         count=0
         while True:
@@ -176,20 +186,27 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             if out:
                 break
             if count==100:
+                print 'no data after 100 tries'
                 break
             time.sleep(.01)
             count+=1
         sriOutput = self.sink.sri()
         self.assertAlmostEquals(sriOutput.xdelta, self.xdelta)
-        self.assertEqual(sriOutput.streamID, self.streamID)        
+        self.assertEqual(sriOutput.streamID, self.streamID)
+        if self.complex:
+             self.assertEqual(sriOutput.mode, 1)
+        else:
+            self.assertEqual(sriOutput.mode, 0)
         self.checkResults(out)
     
     def checkResults(self, out):        
         """check the results to see how good the white noise is doing
         """
-        #print out
         N = len(out)
-        self.assertEqual(N,self.xfer_len)
+        if self.complex:
+            self.assertEqual(N,2*self.xfer_len)
+        else:
+            self.assertEqual(N,self.xfer_len)
         mean = sum(out)/N
         stdDev = math.sqrt(sum([(x-mean)**2 for x in out])/N)
 

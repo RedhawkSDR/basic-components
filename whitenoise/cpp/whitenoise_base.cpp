@@ -155,6 +155,15 @@ void whitenoise_base::loadProperties()
                 "external",
                 "configure");
 
+    addProperty(throttle,
+                -1.0,
+                "throttle",
+                "throttle",
+                "readwrite",
+                "",
+                "external",
+                "configure");
+
     addProperty(sri,
                 sri_struct(),
                 "sri",

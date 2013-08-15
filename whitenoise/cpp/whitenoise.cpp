@@ -31,7 +31,8 @@
 PREPARE_LOGGING(whitenoise_i)
 
 whitenoise_i::whitenoise_i(const char *uuid, const char *label) :
-    whitenoise_base(uuid, label)
+    whitenoise_base(uuid, label),
+    lastTime(0)
 {
 	std::string s = "sri";
 	setPropertyChangeListener(s, this, &whitenoise_i::newSri);
@@ -117,13 +118,27 @@ int whitenoise_i::serviceFunction()
     float s;    //r^squared - u*u+v*v
     float* ptr; // the output pointer
 
-    output.resize(xfer_len);
+    bool resizeOut;
+    size_t numFloats;
+    if (new_sri.mode==1)
+    {
+    	numFloats= 2*xfer_len;
+    	resizeOut = false;
+    }
+    else
+    {
+    	resizeOut = output.size()%2==1;
+    	if (resizeOut)
+    		numFloats = xfer_len+1;
+    	else
+    		numFloats = xfer_len;
+    }
+    output.resize(numFloats);
+    size_t numLoops = numFloats/2;
+    assert(numFloats%2==0);
 
-    int resizeOut = output.size()%1;
-    if (resizeOut)
-    	output.push_back(0.0);
     ptr = &output[0];
-    for (unsigned int i =0; i!=output.size()/2; i++)
+    for (unsigned int i =0; i!=numLoops; i++)
     {
 		while (true)
 		{
@@ -139,14 +154,16 @@ int whitenoise_i::serviceFunction()
 		*ptr = v*k+mean;
 		ptr++;
     }
+    assert(ptr==&output[output.size()]);
     if (resizeOut)
-    	output.pop_back();
+    	//remove the last element if output is requested
+    	output.resize(xfer_len);
 
     //good to go - lets update the time stamp
 
 	double fsec;
 	BULKIO::PrecisionUTCTime tstamp = BULKIO::PrecisionUTCTime();
-	tstamp.tcmode = BULKIO::TCM_CPU;
+	tstamp.tcmode = BULKIO::TCM_OFF;
 	tstamp.tcstatus = (short)1;
 	tstamp.toff = 0.0;
 	double wsec = modf(packetTime,&fsec);
@@ -160,10 +177,35 @@ int whitenoise_i::serviceFunction()
 		dataFloatOut->pushSRI(new_sri);
 		sriChanged = false;
 	}
+
+	double elapsedTime = output.size()*new_sri.xdelta;
+
+	struct timeval tmp_time;
+	struct timezone tmp_tz;
+
+	if (throttle > 0 && lastTime > 1)
+	{
+		double requestedSleepTime = elapsedTime/throttle;
+		gettimeofday(&tmp_time, &tmp_tz);
+		double now = tmp_time.tv_sec + tmp_time.tv_usec / 1e6;
+		double elapsedTime = now - lastTime;
+		long actualSleepTimeUSec=  (requestedSleepTime -elapsedTime)*1000000.0;
+		if (actualSleepTimeUSec > 0)
+		{
+			try {
+					usleep(actualSleepTimeUSec);
+				} catch (...) {
+					return NORMAL;
+				}
+		}
+	}
+	gettimeofday(&tmp_time, &tmp_tz);
+	double now = tmp_time.tv_sec + tmp_time.tv_usec / 1e6;
+	lastTime = now;
 	dataFloatOut->pushPacket(output,tstamp,false, streamID);
 
 	//update the packetTime for the next time stamp
-	packetTime+=output.size()*new_sri.xdelta;
+	packetTime+=elapsedTime;
     return NORMAL;
 }
 

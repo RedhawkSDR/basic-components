@@ -124,6 +124,7 @@ class whitenoise_base : public Resource_impl
         float stddev;
         CORBA::Long xfer_len;
         double packetTime;
+        float throttle;
         sri_struct sri;
 
         // Ports

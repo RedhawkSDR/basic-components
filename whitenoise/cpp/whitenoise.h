@@ -41,6 +41,7 @@ class whitenoise_i : public whitenoise_base
         std::string streamID;
         bool sriChanged;
         BULKIO::StreamSRI new_sri;
+        double lastTime;
 };
 
 #endif
