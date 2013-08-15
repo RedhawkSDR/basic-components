@@ -12,6 +12,7 @@ Group:		Applications/Engineering
 License:	LGPLv3+
 URL:		http://redhawksdr.org/	
 Source0:	%{name}-%{version}.tar.gz
+Vendor:     REDHAWK
 
 BuildRequires:	redhawk-devel >= 1.9
 BuildRequires:	bulkioInterfaces
