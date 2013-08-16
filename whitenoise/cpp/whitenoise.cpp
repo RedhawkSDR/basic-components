@@ -171,8 +171,7 @@ int whitenoise_i::serviceFunction()
 	tstamp.tfsec = fsec;
 
 	//send the output
-	std::cerr<<"to do - remove comment after next 1.9.0 release canddiate"<<std::endl;
-	if(sriChanged) // || (dataFloatOut->currentSRIs.count(streamID)==0))
+	if(sriChanged || (dataFloatOut->getCurrentSRI().count(streamID)==0))
 	{
 		dataFloatOut->pushSRI(new_sri);
 		sriChanged = false;

@@ -193,8 +193,7 @@ int HardLimit_i::serviceFunction()
         }
 
      //Output sri equals the input sri for this component.  If anything is updated, then push that update out.
-    std::cerr<<"To Do - uncomment out this line of code after next release candidate for 1.9.0"<<std::endl;
-    if (tmp->sriChanged){ // || (dataDouble_out->currentSRIs.count(tmp->streamID)==0)) {
+    if (tmp->sriChanged || (dataDouble_out->getCurrentSRI().count(tmp->streamID)==0)) {
     	 dataDouble_out->pushSRI(tmp->SRI);
      }
 

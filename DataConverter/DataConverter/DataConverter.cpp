@@ -383,8 +383,7 @@ void DataConverter_i::pushDataService(std::vector<IN_TYPE, IN_TYPE_ALLOC> *data,
 	//std::cout<<"doing data for output "<<output->getName()<<std::endl;
 
 	// Reconfigure if SRI Changed
-    std::cerr<<"remove uncomented code for next 1.9 release candidate"<<std::endl;
-	if (sriChanged) {// || (output->currentSRIs.count(streamID)==0)) {
+	if (sriChanged || (output->getCurrentSRI().count(streamID)==0)) {
 		output->pushSRI(SRI);
 	}
 
