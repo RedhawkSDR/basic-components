@@ -46,7 +46,6 @@ program.  If not, see http://www.gnu.org/licenses/.
       <value>false</value>
     </simple>
     <simple id="streamID" type="string"/>
-    <value/>
   </struct>
   <simple id="throttle" mode="readwrite" name="throttle" type="float">
     <description>val &lt;=0: go as fast as possible
