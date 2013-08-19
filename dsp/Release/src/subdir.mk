@@ -9,7 +9,8 @@ CPP_SRCS += \
 ../src/RealFIRFilter.cpp \
 ../src/Tuner.cpp \
 ../src/am_fm_pm_baseband_demod.cpp \
-../src/exp_agc.cpp 
+../src/exp_agc.cpp \
+../src/framebuffer.cpp 
 
 OBJS += \
 ./src/Decimate.o \
@@ -17,7 +18,8 @@ OBJS += \
 ./src/RealFIRFilter.o \
 ./src/Tuner.o \
 ./src/am_fm_pm_baseband_demod.o \
-./src/exp_agc.o 
+./src/exp_agc.o \
+./src/framebuffer.o 
 
 CPP_DEPS += \
 ./src/Decimate.d \
@@ -25,7 +27,8 @@ CPP_DEPS += \
 ./src/RealFIRFilter.d \
 ./src/Tuner.d \
 ./src/am_fm_pm_baseband_demod.d \
-./src/exp_agc.d 
+./src/exp_agc.d \
+./src/framebuffer.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

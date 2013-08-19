@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+source distribution.
+
+This file is part of REDHAWK Basic Components fftlib library.
+
+REDHAWK Basic Components fftlib library is free software: you can redistribute it and/or modify it under the terms of 
+the GNU General Public License as published by the Free Software Foundation, either 
+version 3 of the License, or (at your option) any later version.
+
+REDHAWK Basic Components fftlib library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this 
+program.  If not, see http://www.gnu.org/licenses/.
+-->
+<!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
+<softpkg id="DCE:a7172c43-f8c2-4dcd-9767-ce88da4b4b99" name="fftlib" type="sca_compliant">
+  <title></title>
+  <author>
+    <name>null</name>
+  </author>
+  <implementation id="firstImplementation">
+    <description>The implementation contains descriptive information about the template for a software component.</description>
+    <code type="SharedLibrary">
+      <localfile name="Release"/>
+    </code>
+    <compiler name="/usr/bin/gcc" version="4.1.2"/>
+    <programminglanguage name="C++"/>
+    <humanlanguage name="EN"/>
+    <os name="Linux"/>
+    <dependency type="runtime_requirements">
+      <softpkgref>
+        <localfile name="/components/dsp/dsp.spd.xml"/>
+        <implref refid="firstImplementation"/>
+      </softpkgref>
+    </dependency>
+    <processor name="x86"/>
+    <processor name="x86_64"/>
+  </implementation>
+</softpkg>
