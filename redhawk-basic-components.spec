@@ -16,9 +16,11 @@ Vendor:     REDHAWK
 
 BuildRequires:	redhawk-devel >= 1.9
 BuildRequires:	bulkioInterfaces
+BuildRequires:  fftw-devel
 Requires:	redhawk >= 1.9
 Requires:	bulkioInterfaces
 Requires:	scipy
+Requires:       fftw
 
 AutoReqProv:	no
 
@@ -44,10 +46,16 @@ pushd dsp/Release
 make %{?_smp_mflags}
 popd
 
+#Next build the fftlib library
+
+pushd fftlib/Release
+make %{?_smp_mflags}
+popd
+
 # Build components
 for dir in agc/cpp AmFmPmBasebandDemod/cpp DataConverter/DataConverter DataReader/python \
-           DataWriter/python fcalc/python freqfilter/python HardLimit/cpp HardLimit/java \
-           HardLimit/python medianfilter/python SigGen/cpp \
+           DataWriter/python fastfilter/cpp fcalc/python freqfilter/python HardLimit/cpp HardLimit/java \
+           HardLimit/python medianfilter/python psd/cpp SigGen/cpp \
            SigGen/python SigGen/java sinksocket/cpp sourcesocket/cpp \
            TuneFilterDecimate/cpp whitenoise/cpp;
 do
@@ -64,8 +72,8 @@ rm -rf %{buildroot}
 
 # Install the components
 for dir in agc/cpp AmFmPmBasebandDemod/cpp DataConverter/DataConverter DataReader/python \
-           DataWriter/python fcalc/python freqfilter/python HardLimit/cpp HardLimit/java \
-           HardLimit/python medianfilter/python SigGen/cpp \
+           DataWriter/python fastfilter/cpp fcalc/python freqfilter/python HardLimit/cpp HardLimit/java \
+           HardLimit/python medianfilter/python psd/cpp SigGen/cpp \
            SigGen/python SigGen/java sinksocket/cpp sourcesocket/cpp \
            TuneFilterDecimate/cpp whitenoise/cpp;
 do
@@ -77,6 +85,12 @@ mkdir -p %{buildroot}%{_sdrroot}/dom/components/dsp
 install dsp/dsp.spd.xml %{buildroot}%{_sdrroot}/dom/components/dsp/dsp.spd.xml
 mkdir -p %{buildroot}%{_sdrroot}/dom/components/dsp/Release
 install dsp/Release/libdsp.so %{buildroot}%{_sdrroot}/dom/components/dsp/Release/libdsp.so
+
+# Install the FFTLIB library
+mkdir -p %{buildroot}%{_sdrroot}/dom/components/fftlib
+install fftlib/fftlib.spd.xml %{buildroot}%{_sdrroot}/dom/components/fftlib/fftlib.spd.xml
+mkdir -p %{buildroot}%{_sdrroot}/dom/components/fftlib/Release
+install fftlib/Release/libfftlib.so %{buildroot}%{_sdrroot}/dom/components/fftlib/Release/libfftlib.so
 
 
 %clean
@@ -91,10 +105,13 @@ rm -rf %{buildroot}
 %{_sdrroot}/dom/components/DataReader
 %{_sdrroot}/dom/components/DataWriter
 %{_sdrroot}/dom/components/dsp
+%{_sdrroot}/dom/components/fastfilter
 %{_sdrroot}/dom/components/fcalc
+%{_sdrroot}/dom/components/fftlib
 %{_sdrroot}/dom/components/freqfilter
 %{_sdrroot}/dom/components/HardLimit
 %{_sdrroot}/dom/components/medianfilter
+%{_sdrroot}/dom/components/psd
 %{_sdrroot}/dom/components/SigGen
 %{_sdrroot}/dom/components/sinksocket
 %{_sdrroot}/dom/components/sourcesocket
