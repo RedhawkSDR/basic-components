@@ -70,7 +70,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         # Launch the component with the default execparams
         execparams = self.getPropertySet(kinds=("execparam",), modes=("readwrite", "writeonly"), includeNil=False)
         execparams = dict([(x.id, any.from_any(x.value)) for x in execparams])
-        self.launch(execparams)
+        self.launch(execparams, initialize=True)
         
         #######################################################################
         # Verify the basic state of the component
