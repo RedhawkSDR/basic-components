@@ -30,7 +30,8 @@
 PREPARE_LOGGING(AmFmPmBasebandDemod_i)
 
 AmFmPmBasebandDemod_i::AmFmPmBasebandDemod_i(const char *uuid, const char *label) :
-    AmFmPmBasebandDemod_base(uuid, label)
+    AmFmPmBasebandDemod_base(uuid, label),
+    listener(*this, &AmFmPmBasebandDemod_i::callBackFunc)
 {
 	debugOut("AmFmPmBasebandDemod_i::BasebandDemod_i() constructor entry");
     demodInput.resize(BUFFER_LENGTH, Complex(0.0,0.0));
@@ -45,6 +46,15 @@ AmFmPmBasebandDemod_i::AmFmPmBasebandDemod_i(const char *uuid, const char *label
     sampleRate=0;
     DemodParamsChanged = false;
     dataFloat_In->setMaxQueueDepth(1000);
+
+    am_dataFloat_out->setNewConnectListener(&listener);
+    am_dataFloat_out->setNewDisconnectListener(&listener);
+    pm_dataFloat_out->setNewConnectListener(&listener);
+    pm_dataFloat_out->setNewDisconnectListener(&listener);
+    fm_dataFloat_out->setNewConnectListener(&listener);
+    fm_dataFloat_out->setNewDisconnectListener(&listener);
+
+
 }
 
 AmFmPmBasebandDemod_i::~AmFmPmBasebandDemod_i()
@@ -117,13 +127,6 @@ int AmFmPmBasebandDemod_i::serviceFunction()
     	am_dataFloat_out->pushSRI(pkt->SRI);
     	fm_dataFloat_out->pushSRI(pkt->SRI);
     	pm_dataFloat_out->pushSRI(pkt->SRI);
-    }
-    if (!DemodParamsChanged)
-    {
-        //check to see if we need to remake our demod because of changes to the connections
-		DemodParamsChanged = ((doingAM !=(am_dataFloat_out->state()!=BULKIO::IDLE)) ||
-							  (doingPM !=(pm_dataFloat_out->state()!=BULKIO::IDLE)) ||
-							  (doingFM !=(fm_dataFloat_out->state()!=BULKIO::IDLE)));
     }
 	if (DemodParamsChanged){
         if (debug)
@@ -253,4 +256,13 @@ void AmFmPmBasebandDemod_i::remakeDemod()
 		std::cout<<"AmFmPmBasebandDemod::remakeDemod() entry\nsampleRate = "<<sampleRate <<"\n"<<"freqGain = "<<freqGain<<"\n"<<"phaseDeviation = "<<phaseDeviation<<" doingAM = "<<doingAM<<" doingPM = "<<doingPM<<" doingFM = "<<doingFM<<"\n";
 	demod = new AmFmPmBasebandDemod(demodInput, amBuf, pmBuf, fmBuf, freqGain, phaseDeviation,inialPhase);
 	DemodParamsChanged = false;
+}
+
+void AmFmPmBasebandDemod_i::callBackFunc( const char* connectionId)
+{
+	std::string s("got connection ");
+	s+=connectionId;
+	debugOut(s);
+	if ((doingAM != (am_dataFloat_out->state()!=BULKIO::IDLE)) || (doingPM != (pm_dataFloat_out->state()!=BULKIO::IDLE)) || (doingFM != (fm_dataFloat_out->state()!=BULKIO::IDLE)))
+		remakeDemod();
 }

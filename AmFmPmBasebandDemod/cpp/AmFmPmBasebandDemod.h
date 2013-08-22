@@ -75,6 +75,9 @@ class AmFmPmBasebandDemod_i : public AmFmPmBasebandDemod_base
         size_t inputIndex; //for loading demodInput asychronousy to input packets
         std::string streamID;
 
+        bulkio::MemberConnectionEventListener<AmFmPmBasebandDemod_i> listener;
+
+        void callBackFunc( const char* connectionId);
 };
 
 #endif
