@@ -41,6 +41,9 @@ AmFmPmBasebandDemod_i::AmFmPmBasebandDemod_i(const char *uuid, const char *label
     outputBuffer.reserve(BUFFER_LENGTH);
     //initialize processing classes and private variables
     demod = NULL;
+    doingAM=false;
+    doingPM=false;
+    doingFM=false;
     inputIndex=0;
     squelchThreshold = 0;
     sampleRate=0;
