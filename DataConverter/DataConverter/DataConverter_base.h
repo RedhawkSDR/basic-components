@@ -103,7 +103,6 @@ class DataConverter_base : public Resource_impl
     friend class BULKIO_dataUshort_In_i;
     friend class BULKIO_dataShort_In_i;
     friend class BULKIO_dataUlong_In_i;
-    friend class BULKIO_dataChar_In_i;
     friend class BULKIO_dataDouble_In_i;
     friend class BULKIO_dataFloat_In_i;
     friend class BULKIO_dataLong_In_i;
@@ -111,7 +110,6 @@ class DataConverter_base : public Resource_impl
     friend class BULKIO_dataUshort_Out_i;
     friend class BULKIO_dataShort_Out_i;
     friend class BULKIO_dataUlong_Out_i;
-    friend class BULKIO_dataChar_Out_i;
     friend class BULKIO_dataDouble_Out_i;
     friend class BULKIO_dataFloat_Out_i;
     friend class BULKIO_dataLong_Out_i;
@@ -174,7 +172,6 @@ class DataConverter_base : public Resource_impl
         boost::mutex serviceThreadLock;  
 
         // Member variables exposed as properties
-        Char_struct Char;
         Octet_struct Octet;
         Ushort_struct Ushort;
         Short_struct Short;
@@ -182,7 +179,6 @@ class DataConverter_base : public Resource_impl
         Long_struct Long;
         Float_struct Float;
         Double_struct Double;
-        Char_out_struct Char_out;
         Octet_out_struct Octet_out;
         Ushort_out_struct Ushort_out;
         Short_out_struct Short_out;
@@ -192,7 +188,6 @@ class DataConverter_base : public Resource_impl
         Double_out_struct Double_out;
 
         // Ports
-        BULKIO_dataChar_In_i *dataChar;
         BULKIO_dataOctet_In_i *dataOctet;
         BULKIO_dataUshort_In_i *dataUshort;
         BULKIO_dataShort_In_i *dataShort;
@@ -200,7 +195,6 @@ class DataConverter_base : public Resource_impl
         BULKIO_dataLong_In_i *dataLong;
         BULKIO_dataFloat_In_i *dataFloat;
         BULKIO_dataDouble_In_i *dataDouble;
-        BULKIO_dataChar_Out_i *dataChar_out;
         BULKIO_dataOctet_Out_i *dataOctet_out;
         BULKIO_dataShort_Out_i *dataShort_out;
         BULKIO_dataUshort_Out_i *dataUshort_out;

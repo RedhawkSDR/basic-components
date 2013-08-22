@@ -50,8 +50,6 @@ void DataConverter_base::construct()
     serviceThread = 0;
     
     PortableServer::ObjectId_var oid;
-    dataChar = new BULKIO_dataChar_In_i("dataChar", this);
-    oid = ossie::corba::RootPOA()->activate_object(dataChar);
     dataOctet = new BULKIO_dataOctet_In_i("dataOctet", this);
     oid = ossie::corba::RootPOA()->activate_object(dataOctet);
     dataUshort = new BULKIO_dataUshort_In_i("dataUshort", this);
@@ -66,8 +64,6 @@ void DataConverter_base::construct()
     oid = ossie::corba::RootPOA()->activate_object(dataFloat);
     dataDouble = new BULKIO_dataDouble_In_i("dataDouble", this);
     oid = ossie::corba::RootPOA()->activate_object(dataDouble);
-    dataChar_out = new BULKIO_dataChar_Out_i("dataChar_out", this);
-    oid = ossie::corba::RootPOA()->activate_object(dataChar_out);
     dataOctet_out = new BULKIO_dataOctet_Out_i("dataOctet_out", this);
     oid = ossie::corba::RootPOA()->activate_object(dataOctet_out);
     dataShort_out = new BULKIO_dataShort_Out_i("dataShort_out", this);
@@ -83,7 +79,6 @@ void DataConverter_base::construct()
     dataDouble_out = new BULKIO_dataDouble_Out_i("dataDouble_out", this);
     oid = ossie::corba::RootPOA()->activate_object(dataDouble_out);
 
-    registerInPort(dataChar);
     registerInPort(dataOctet);
     registerInPort(dataUshort);
     registerInPort(dataShort);
@@ -91,7 +86,6 @@ void DataConverter_base::construct()
     registerInPort(dataLong);
     registerInPort(dataFloat);
     registerInPort(dataDouble);
-    registerOutPort(dataChar_out, dataChar_out->_this());
     registerOutPort(dataOctet_out, dataOctet_out->_this());
     registerOutPort(dataShort_out, dataShort_out->_this());
     registerOutPort(dataUshort_out, dataUshort_out->_this());
@@ -113,7 +107,6 @@ void DataConverter_base::start() throw (CORBA::SystemException, CF::Resource::St
 {
     boost::mutex::scoped_lock lock(serviceThreadLock);
     if (serviceThread == 0) {
-        dataChar->unblock();
         dataOctet->unblock();
         dataUshort->unblock();
         dataShort->unblock();
@@ -135,7 +128,6 @@ void DataConverter_base::stop() throw (CORBA::SystemException, CF::Resource::Sto
     boost::mutex::scoped_lock lock(serviceThreadLock);
     // release the child thread (if it exists)
     if (serviceThread != 0) {
-        dataChar->block();
         dataOctet->block();
         dataUshort->block();
         dataShort->block();
@@ -160,12 +152,6 @@ CORBA::Object_ptr DataConverter_base::getPort(const char* _id) throw (CORBA::Sys
     std::map<std::string, Port_Provides_base_impl *>::iterator p_in = inPorts.find(std::string(_id));
     if (p_in != inPorts.end()) {
 
-        if (!strcmp(_id,"dataChar")) {
-            BULKIO_dataChar_In_i *ptr = dynamic_cast<BULKIO_dataChar_In_i *>(p_in->second);
-            if (ptr) {
-                return BULKIO::dataChar::_duplicate(ptr->_this());
-            }
-        }
         if (!strcmp(_id,"dataOctet")) {
             BULKIO_dataOctet_In_i *ptr = dynamic_cast<BULKIO_dataOctet_In_i *>(p_in->second);
             if (ptr) {
@@ -231,7 +217,6 @@ void DataConverter_base::releaseObject() throw (CORBA::SystemException, CF::Life
     releaseInPorts();
     releaseOutPorts();
 
-    delete(dataChar);
     delete(dataOctet);
     delete(dataUshort);
     delete(dataShort);
@@ -239,7 +224,6 @@ void DataConverter_base::releaseObject() throw (CORBA::SystemException, CF::Life
     delete(dataLong);
     delete(dataFloat);
     delete(dataDouble);
-    delete(dataChar_out);
     delete(dataOctet_out);
     delete(dataShort_out);
     delete(dataUshort_out);
@@ -253,14 +237,6 @@ void DataConverter_base::releaseObject() throw (CORBA::SystemException, CF::Life
 
 void DataConverter_base::loadProperties()
 {
-    addProperty(Char,
-               "Char",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
-
     addProperty(Octet,
                "Octet",
                "",
@@ -311,14 +287,6 @@ void DataConverter_base::loadProperties()
 
     addProperty(Double,
                "Double",
-               "",
-               "readwrite",
-               "",
-               "external",
-               "configure");
-
-    addProperty(Char_out,
-               "Char_out",
                "",
                "readwrite",
                "",

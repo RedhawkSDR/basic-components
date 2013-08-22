@@ -44,7 +44,6 @@ class DataConverter_i : public DataConverter_base
         template <typename OUT_TYPE> bool isEnabled(OUT_TYPE* min, OUT_TYPE* max);
         template <typename IN_TYPE> void getMinMax(IN_TYPE* min, IN_TYPE* max);
 
-        std::vector<char> charVec;
         std::vector<unsigned char> uCharVec;
         std::vector<unsigned short> uShortVec;
         std::vector<short> shortVec;

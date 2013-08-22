@@ -31,10 +31,8 @@ import pprint
 class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     """Test for all component implementations in fcalc"""
 
-    TYPES = ("char", "short", "long", "float", "ulong", "double", "octet", "ushort")
-    MAP = {'Char':CORBA.TC_char,
-           'Char_out':CORBA.TC_char, 
-           'Octet':CORBA.TC_octet, 
+    TYPES = ("short", "long", "float", "ulong", "double", "octet", "ushort")
+    MAP = {'Octet':CORBA.TC_octet, 
            'Octet_out':CORBA.TC_octet,
            'Short':CORBA.TC_short, 
            'Short_out':CORBA.TC_short, 
@@ -48,8 +46,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
            'Float_out':CORBA.TC_float, 
            'Double':CORBA.TC_double, 
            'Double_out':CORBA.TC_double}
-    MAP_OUT = {'char':'Char_out',
-           'octet':'Octet_out', 
+    MAP_OUT = {'octet':'Octet_out', 
            'short':'Short_out', 
            'ushort':'Ushort_out', 
            'long':'Long_out', 
@@ -57,7 +54,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
            'float':'Float_out', 
            'double':'Double_out'} 
 
-    def setProps(self, Char=None,Char_out=None, Octet=None, Octet_out=None, Short=None, Short_out=None, Ushort=None, Ushort_out=None, Long=None, Long_out=None, ULong=None, Ulong_out=None, Float=None, Float_out=None, Double=None, Double_out=None):
+    def setProps(self, Octet=None, Octet_out=None, Short=None, Short_out=None, Ushort=None, Ushort_out=None, Long=None, Long_out=None, ULong=None, Ulong_out=None, Float=None, Float_out=None, Double=None, Double_out=None):
         """Each guy that you pass in is a dictionary with keys: "min", "max", and _out also has "enabled"
         """
         lcls = locals().copy()
@@ -82,14 +79,14 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             #configure it
             self.comp.configure(myProps)
 
-    def mySetUp(self,char=True,short=True,long=True,float=True,ulong=True,double=True,octet=True,ushort=True):
+    def mySetUp(self,short=True,long=True,float=True,ulong=True,double=True,octet=True,ushort=True):
         """Set up the unit test - this is run before every method that starts with test
         """
         l = locals()
         self.inputs={}
         self.outputs={}
         ossie.utils.testing.ScaComponentTestCase.setUp(self)
-        for s in ("char", "short", "long", "float", "ulong", "double", "octet", "ushort"):
+        for s in ("short", "long", "float", "ulong", "double", "octet", "ushort"):
             inPort = sb.DataSource(dataFormat=s)
             setattr(self,"%sIn", inPort)
             self.inputs[s]=inPort
@@ -174,9 +171,6 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             self.assertNotEqual(port_obj, None)
             self.assertEqual(port_obj._non_existent(), False)
             self.assertEqual(port_obj._is_a(port.get_repid()),  True)
-
-    def testChar(self):            
-        self.main('char')
     
     def testShort(self):
         self.main('short')
@@ -198,15 +192,6 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     
     def testUShort(self):
         self.main('ushort')
-
-    def testNoChar(self):
-        self.mySetUp(char=False)
-        out = self.main('short')
-        for key, output in out.items():
-            if key=='char':
-                self.assertTrue(output==[])
-            else:
-                self.assertTrue(output!=[])
     
     def testNoShort(self):
         self.mySetUp(short=False)
@@ -265,8 +250,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     def testScaleOutFull(self):
         #self.mySetUp(char=False,short=False,long=False,float=False,double=False,octet=False,ushort=False)
         self.mySetUp()
-        self.setProps(Char_out={"max":chr(127),"min":chr(255),'enabled':True}, 
-                      Octet_out={"max":255,"min":0,'enabled':True}, 
+        self.setProps(Octet_out={"max":255,"min":0,'enabled':True}, 
                       Short_out={"max":32767,'min':-32768, 'enabled':True}, 
                       Ushort_out={"max":65535,'min':0, 'enabled':True}, 
                       Ulong_out={"max": 4294967295,'min':0, 'enabled':True},
@@ -279,8 +263,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     def testScaleOutCustom(self):
         #self.mySetUp(char=False,short=False,long=False,float=False,double=False,octet=False,ushort=False)
         self.mySetUp()
-        self.setProps(Char_out={"max":chr(100),"min":chr(130),'enabled':True}, 
-                      Octet_out={"max":200,"min":100,'enabled':True}, 
+        self.setProps(Octet_out={"max":200,"min":100,'enabled':True}, 
                       Short_out={"max":30000,'min':-30000, 'enabled':True}, 
                       Ushort_out={"max":60000,'min':100, 'enabled':True}, 
                       Long_out={"max": 2000000000,'min':-2000000000, 'enabled':True},
@@ -293,9 +276,8 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     def testClipGain(self):
         """do a test where there is clipping with the gains set
         """
-        self.mySetUp(char=True,short=True,long=False,float=False,double=False,octet=True,ushort=True,ulong=False)
-        self.setProps(Char_out={"max":chr(127),"min":chr(255),'enabled':True}, 
-                      Octet_out={"max":255,"min":0,'enabled':True}, 
+        self.mySetUp(short=True,long=False,float=False,double=False,octet=True,ushort=True,ulong=False)
+        self.setProps(Octet_out={"max":255,"min":0,'enabled':True}, 
                       Short_out={"max":32767,'min':-32768, 'enabled':True}, 
                       Ushort_out={"max":65535,'min':0, 'enabled':True}, 
                       Ulong_out={"max": 4294967295,'min':0, 'enabled':True},
@@ -310,7 +292,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     def testClipNoGain(self):
         """Do a test where there is clipping in the pass threw mode and ensure data is OK
         """
-        self.mySetUp(char=True,short=True,long=False,float=False,double=False,octet=True,ushort=True,ulong=False)
+        self.mySetUp(short=True,long=False,float=False,double=False,octet=True,ushort=True,ulong=False)
 
         inData = [100*x for x in xrange(-400,700)]
         output = self.main('float',inData)
@@ -388,16 +370,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         return outputs      
 
     def castType(self,type,inVal):
-        if type=='char':
-            if isinstance(inVal,str):
-                ordVal = ord(inVal)
-            else:
-                ordVal =(inVal)
-            if ordVal > 127:
-                return ordVal-256
-            else:
-                return ordVal
-        elif type=='octet':
+        if type=='octet':
             if isinstance(inVal,str):
                 return ord(inVal)
             else:
