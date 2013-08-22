@@ -33,7 +33,7 @@ program.  If not, see http://www.gnu.org/licenses/.
     <kind kindtype="configure"/>
     <action type="external"/>
   </simple>
-  <simple id="packetTime" mode="readwrite" type="string">
+  <simple id="packetTime" mode="readwrite" type="double">
     <value>0.0</value>
     <kind kindtype="configure"/>
     <action type="external"/>

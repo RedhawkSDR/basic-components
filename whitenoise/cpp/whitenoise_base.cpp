@@ -139,6 +139,7 @@ void whitenoise_base::loadProperties()
                "configure");
 
     addProperty(stddev,
+                1.0, 
                "stddev",
                "",
                "readwrite",
