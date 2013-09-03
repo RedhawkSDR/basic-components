@@ -30,6 +30,8 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 A collection of starter components for REDHAWK
+ * Commit: __REVISION__
+ * Source Date/Time: __DATETIME__
 
 
 %prep
