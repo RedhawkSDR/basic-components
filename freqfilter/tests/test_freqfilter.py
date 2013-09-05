@@ -166,11 +166,14 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     def designIIR(self):
         """Design an iir filter with a passband from .3 to .35 using iirdesign from scipy
         """
-        b, a = iirdesign([.3, .35], [.1, .5],.1,20)
+        #note - the default filter returned with the default ftype for these
+        #parameters was UNSTABLE leading to random unit test failures with nans 
+        #cheby2 returns a stable filter
+        b, a = iirdesign([.3, .35], [.1, .5],.1,20, ftype='cheby2')
         return b.tolist(), a.tolist()
     
     def designFIR(self):
-        """Design a fir filter with a passband from .3 to .35 using iirdesign from scipy
+        """Design a fir filter with a passband from .3 to .35 using remez from scipy
         """
         taps =  remez(64,[0,.1,.3,.35,.5,1.0],[.01,1,.01],Hz=2)
         return taps.tolist()  
