@@ -28,11 +28,12 @@
 #include <ossie/PropertyInterface.h>
 
 struct sri_struct {
-    sri_struct ()
-    {
-        xdelta = 1.0;
-        complex = false;
-    };
+	sri_struct ()
+	{
+		xdelta = 1.0;
+		complex = false;
+		streamID = "streamid";
+	};
 
     std::string getId() {
         return std::string("sri");
