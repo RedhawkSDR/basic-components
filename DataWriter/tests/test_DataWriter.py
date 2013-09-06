@@ -22,7 +22,7 @@ import os
 from omniORB import any
 import test_utils
 from bulkio.bulkioInterfaces import BULKIO, BULKIO__POA
-from ossie.properties import props_from_dict
+from ossie.properties import props_from_dict, props_to_dict
 import time
 import struct
 import ConfigParser
@@ -122,13 +122,14 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
 
         if os.path.exists(data_filename):
             os.remove(data_filename)
-            time.sleep(2)
+            while os.path.exists(data_filename):
+                time.sleep(self.t_delta)
 
         self.comp.configure(props_from_dict(config_dict))
         self._generate_keywords()
         
         self._send_data()
-        time.sleep(self.t_data_wait) # Hack to wait for DataWriter to finish writing to disk before we verify contents
+        self._sleepTillDone(data_filename)
         self._validate_data(data_filename, self.expected_data, config_dict["endian"])
         self._validate_metadata(sri_filename, self.t_delta, self.stream_id1, self.keywords_dict, self.first_pkt_time, self.last_pkt_time)
     
@@ -139,7 +140,8 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
 
         if os.path.exists(data_filename):
             os.system("rm %s" % (data_filename+"*"))
-            time.sleep(2)
+            while os.path.exists(data_filename):
+                time.sleep(self.t_delta)
                 
         self._generate_keywords()
         self.comp.configure(props_from_dict(config_dict))
@@ -166,7 +168,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             self.keywords_dict["pass"] = i
             
             self._send_data()
-            time.sleep(self.t_data_wait) # Hack to wait for DataWriter to finish writing to disk before we verify contents
+            self._sleepTillDone(data_filename) # Hack to wait for DataWriter to finish writing to disk before we verify contents
             self._validate_data(data_filename, self.expected_data, config_dict["endian"])
             self._validate_metadata(sri_filename, self.t_delta, self.stream_id1, self.keywords_dict, self.first_pkt_time, self.last_pkt_time)
 
@@ -177,7 +179,8 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
 
         if os.path.exists(data_filename):
             os.system("rm %s" % (data_filename+"*"))
-            time.sleep(2)
+            while os.path.exists(data_filename):
+                time.sleep(self.t_delta)
         
         config_dict["overwrite"] = True
         self._generate_keywords()
@@ -189,7 +192,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         for i in range(5):
             self.keywords_dict["pass"] = i
             self._send_data()
-            time.sleep(self.t_data_wait) # Hack to wait for DataWriter to finish writing to disk before we verify contents
+            self._sleepTillDone(data_filename)
             self._validate_data(data_filename, self.expected_data, config_dict["endian"])
             self._validate_metadata(sri_filename, self.t_delta, self.stream_id1, self.keywords_dict, self.first_pkt_time, self.last_pkt_time)
 
@@ -200,7 +203,8 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
 
         if os.path.exists(data_filename):
             os.system("rm %s" % (data_filename+"*"))
-            time.sleep(2)
+            while os.path.exists(data_filename):
+                time.sleep(self.t_delta)
                 
         self._generate_keywords()
         config_dict["write"] = False
@@ -230,9 +234,11 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             
             if i == 5:
                 self.comp.configure(props_from_dict({"write": True}))
+                while self.comp.write!=True:
+                    time.sleep(self.t_delta)
             self._send_data()
-            time.sleep(self.t_data_wait) # Hack to wait for DataWriter to finish writing to disk before we verify contents
-            
+            self._sleepTillDone(data_filename) 
+                        
             if i >= 5:
                 # expecting output
                 self._validate_data(data_filename, self.expected_data, config_dict["endian"])
@@ -249,7 +255,8 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
 
         if os.path.exists(data_filename):
             os.system("rm %s" % (data_filename+"*"))
-            time.sleep(2)
+            while os.path.exists(data_filename):
+                time.sleep(self.t_delta)
                 
         self._generate_keywords()
         self.comp.configure(props_from_dict(config_dict))
@@ -261,22 +268,25 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         expected_data = []
         results = []
         for i in xrange(6):
-            enabled_write = True
-            if (i+1) % 2 == 0:
-                enabled_write = False
-                # Disable file writing, this should cause the current file to be written out
-                # and a new file to be created the next time write in enabled
-            time.sleep(self.t_data_wait)  # Hack to wait for DataWriter to finish writing to disk before we verify contents
+            # Disable file writing, this should cause the current file to be written out
+            # and a new file to be created the next time write in enabled
+            enabled_write = not ((i+1) % 2 == 0)
+
+            
             self.comp.configure(props_from_dict({"write": enabled_write}))
+            while props_to_dict(self.comp.query([]))['write']!=enabled_write:
+                time.sleep(self.t_delta)
             
             first_pkt_time = None
             for j in xrange(3):
-                time.sleep(self.t_data_wait)
                 self._send_data(last_pkt_eos=False) # send data but don't send eos (not stopping streaming just yet)
                 first_pkt_time = first_pkt_time or self.first_pkt_time
                 last_pkt_time = self.last_pkt_time
                 if enabled_write:
                     expected_data.extend(self.expected_data)
+                    self._sleepTillDone(data_filename, expected_data=expected_data)
+                else:
+                    time.sleep(self.t_data_wait)   
             
             if not enabled_write:
                 # File should have been closed at the start of this pass
@@ -296,7 +306,8 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
 
         if os.path.exists(data_filename):
             os.system("rm %s" % (data_filename+"*"))
-            time.sleep(2)
+            while os.path.exists(data_filename):
+                time.sleep(self.t_delta)
                 
         self._generate_keywords()
         self.comp.configure(props_from_dict(config_dict))
@@ -307,22 +318,24 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         expected_data = []
         results = []
         for i in xrange(6):
-            enabled_write = True
-            if (i+1) % 2 == 0:
-                enabled_write = False
-                # Disable file writing, this should cause the current file to be written out
-                # and a new file to be created the next time write in enabled
-            time.sleep(self.t_data_wait)  # Hack to wait for DataWriter to finish writing to disk before we verify contents
+            # Disable file writing, this should cause the current file to be written out
+            # and a new file to be created the next time write in enabled
+            enabled_write = not ((i+1) % 2 == 0)
+           
             self.comp.configure(props_from_dict({"write": enabled_write}))
+            while props_to_dict(self.comp.query([]))['write'] !=enabled_write:
+                time.sleep(self.t_delta)
             
             first_pkt_time = None
             for j in xrange(3):
-                time.sleep(self.t_data_wait)
                 self._send_data(last_pkt_eos=False) # send data but don't send eos (not stopping streaming just yet)
                 first_pkt_time = first_pkt_time or self.first_pkt_time
                 last_pkt_time = self.last_pkt_time
                 if enabled_write:
                     expected_data.extend(self.expected_data)
+                    self._sleepTillDone(data_filename, expected_data=expected_data)
+                else:
+                    time.sleep(self.t_data_wait)   
             
             if not enabled_write:
                 # File should have been closed at the start of this pass
@@ -331,6 +344,26 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
                 self._validate_metadata(sri_filename, self.t_delta, self.stream_id1, self.keywords_dict, first_pkt_time, last_pkt_time)
                 # reset for the next file
                 expected_data = []
+    
+    def _sleepTillDone(self, filename, timeout=None, expected_data=None):
+        if timeout==None:
+            timeout=self.t_data_wait
+        if expected_data==None:
+           expected_data = self.expected_data
+        done=False
+        numSleeps  = self.t_data_wait / self.t_delta
+        count=0
+        fileSize=None
+        while not done and count !=numSleeps:
+            try:
+                fileSize=os.path.getsize(filename)
+                done = fileSize == len(expected_data)*4 #float data
+            except OSError:
+                done = False                
+            
+            time.sleep(self.t_delta)
+            count +=1
+        return done
              
     def _generate_config(self):
         config_params = {}
@@ -374,6 +407,18 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         self.last_pkt_time = self.pkt_time
         
     def _validate_metadata(self, filename, xdelta, stream_id, keyword_dict, first_pkt_time, last_pkt_time):
+        numSleeps  = self.t_data_wait / self.t_delta
+        count=0
+        ret = False
+        while not ret and count!=numSleeps:
+            try:
+                ret = self._really_validate_metadata(filename, xdelta, stream_id, keyword_dict, first_pkt_time, last_pkt_time)
+            except AssertionError:
+                pass
+            time.sleep(self.t_delta)
+            count+=1              
+    
+    def _really_validate_metadata(self, filename, xdelta, stream_id, keyword_dict, first_pkt_time, last_pkt_time):
         metadata = ConfigParser.ConfigParser()
         metadata.read(filename)
         
@@ -420,6 +465,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             self.assertEqual(metadata.getfloat(pkt_n_section, "toff"), 0.0)
             self.assertEqual(metadata.getfloat(pkt_n_section, "twsec"), int(last_pkt_time))
             self.assertAlmostEqual(metadata.getfloat(pkt_n_section, "tfsec"), last_pkt_time - int(last_pkt_time))
+        return True
     
     def _validate_data(self, filename, expected_data, endian):
         if endian == "big":
