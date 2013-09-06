@@ -45,7 +45,9 @@ program.  If not, see http://www.gnu.org/licenses/.
     <simple id="complex" type="boolean">
       <value>false</value>
     </simple>
-    <simple id="streamID" type="string"/>
+    <simple id="streamID" type="string">
+      <value>streamid</value>
+    </simple>
     <configurationkind kindtype="configure"/>
   </struct>
 </properties>
