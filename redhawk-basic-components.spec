@@ -4,7 +4,7 @@
 
 Name:		redhawk-basic-components
 Version:	1.9.0
-Release:	4.1%{?dist}
+Release:	5%{?dist}
 Summary:	A collection of starter components for REDHAWK
 Prefix:		%{_sdrroot}
 
