@@ -25,7 +25,7 @@ import time
 from ossie.cf import CF
 from omniORB import CORBA
 import math
-from scipy.signal import iirdesign, remez, correlate
+from scipy.signal import iirdesign, remez, correlate, tf2zpk
 from scipy.fftpack import fft, rfft
 from numpy import log10
 import operator
@@ -54,10 +54,15 @@ def muxZeros(input):
 class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     """Test for all component implementations in fcalc"""
     
-    B = [random.random() for _ in xrange(10)]
-    A = [random.random() for _ in xrange(6)]
+    #make some random taps but lets make sure we are stable
+    while True:
+        B = [random.random() for _ in xrange(10)]
+        A = [random.random() for _ in xrange(6)]
+        poles = tf2zpk(B,A)[1]
+        if all([abs(x)<1 for x in poles]):
+            break    
     INPUT = [random.random() for _ in xrange(1024)]
-    
+        
     REALOUT = None
     CXOUT = None
 
