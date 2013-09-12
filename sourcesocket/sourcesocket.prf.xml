@@ -90,7 +90,9 @@ Otherwise data will be swapped according to this value
     <simple id="mode" type="short">
       <value>0</value>
     </simple>
-    <simple id="streamID" type="string"/>
+    <simple id="streamID" type="string">
+      <value>default_stream_id</value>
+    </simple>
     <simple id="blocking" type="boolean">
       <value>True</value>
     </simple>

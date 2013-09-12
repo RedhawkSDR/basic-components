@@ -34,10 +34,11 @@ struct sri_struct {
         xstart = 0.0;
         xdelta = 1.0;
         mode = 0;
+        streamID = "default_stream_id";
         blocking = true;
     };
 
-    std::string getId() {
+    static std::string getId() {
         return std::string("sri");
     };
 
