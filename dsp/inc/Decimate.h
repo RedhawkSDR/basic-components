@@ -22,18 +22,17 @@
 
 #include "DataTypes.h"
 
-
 class Decimate
 {
 public:
-	Decimate(ComplexArray &input, ComplexVector &output, size_t d);
+    Decimate(ComplexVector& input, ComplexVector& output, size_t d);
     virtual ~Decimate();
 
     bool run(void);
 
 private:
-    ComplexArray    &_input;    // Reference to input buffer
-    ComplexVector	&_output;	// Reference to output buffer
+    ComplexVector& _input;		// Reference to input buffer
+    ComplexVector& _output;		// Reference to output buffer
 
     size_t _inputOffset;
     size_t _d;					// Decimation factor

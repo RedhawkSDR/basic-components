@@ -36,7 +36,7 @@
 class Tuner
 {
 public:
-    Tuner(ComplexArray &input, ComplexArray &output, const Real normFc);
+    Tuner(ComplexVector &input, ComplexVector &output, const Real normFc);
     virtual ~Tuner();
 
     bool run(void);
@@ -44,8 +44,8 @@ public:
     void reset(void);
 
 private:
-    ComplexArray    &_input;               // Reference to input buffer
-    ComplexArray    &_output;              // Reference to output buffer
+    ComplexVector    &_input;               // Reference to input buffer
+    ComplexVector    &_output;              // Reference to output buffer
 
     Complex          _phasor;              // Current phase
     Complex          _dphasor;             // Phase increment

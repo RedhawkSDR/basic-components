@@ -92,7 +92,7 @@ private:
 //
 //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
-Tuner::Tuner(ComplexArray &input, ComplexArray &output, const Real normFc) :
+Tuner::Tuner(ComplexVector &input, ComplexVector &output, const Real normFc) :
     _input(input),
     _output(output)
 {
@@ -179,7 +179,7 @@ void Tuner::reset(void)
 
 bool Tuner::run(void)
 {
-	//transform(&_input[0], &_input[_input.size()], &_output[0], Phasor<ComplexArray::value_type>());
+	//transform(&_input[0], &_input[_input.size()], &_output[0], Phasor<ComplexVector::value_type>());
     for (Complex *x= &_input[0],
                  *xend = &_input[_input.size()],
                  *y    = &_output[0];

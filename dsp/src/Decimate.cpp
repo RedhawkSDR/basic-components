@@ -24,7 +24,6 @@
 
 using namespace std;
 
-
 //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 //
 // Description:
@@ -40,7 +39,7 @@ using namespace std;
 //
 //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
-Decimate::Decimate(ComplexArray &input, ComplexVector &output, size_t d) :
+Decimate::Decimate(ComplexVector& input, ComplexVector& output, size_t d) :
     _input(input),
     _output(output),
 	_inputOffset(0),
